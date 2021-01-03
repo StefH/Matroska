@@ -55,6 +55,10 @@ namespace Matroska
                 {
                     SetPropertyValue(instance, info, reader);
                 }
+                else
+                {
+                    Console.WriteLine(reader.GetName());
+                }
             }
 
             if (isMasterElement)

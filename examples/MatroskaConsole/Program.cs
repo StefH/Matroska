@@ -155,6 +155,9 @@ namespace Matroska
 
             var doc = MatroskaSerializer.Deserialize(dataStream);
 
+            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
+            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
+            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Clusters.First().SimpleBlocks.Take(10), new JsonSerializerOptions { WriteIndented = true }));
 
             var ms1 = new MemoryStream();
