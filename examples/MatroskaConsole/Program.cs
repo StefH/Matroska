@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ATL;
 using Commons;
+using Matroska.Models;
 using NEbml.Core;
 
 namespace Matroska
@@ -64,9 +65,9 @@ namespace Matroska
             w.Write(InputSampleRate);
             w.Write(OutputGain);
             w.Write(ChannelMappingFamily);
-            w.Write(StreamCount);
-            w.Write(CoupledStreamCount);
-            w.Write(ChannelMapping);
+            // w.Write(StreamCount);
+            //w.Write(CoupledStreamCount);
+            //w.Write(ChannelMapping);
         }
     }
 
@@ -91,24 +92,24 @@ namespace Matroska
         public string ID = "OggS";                                               // Always "OggS"
         public byte StreamVersion;                           // Stream structure version
         public byte TypeFlag;                                        // Header type flag
-        public ulong AbsolutePosition;                      // Absolute granule position
+        public ulong GranulePosition;                      // Absolute granule position
         public int Serial;                                       // Stream serial number
         public int PageNumber;                                   // Page sequence number
         public uint Checksum;                                              // Page CRC32
         public byte Segments;                                 // Number of page segments
-        public byte[] LacingValues;                     // Lacing values - segment sizes
+        public byte[] SegmentTable;                     // Lacing values - segment sizes
 
         public void ReadFromStream(BinaryReader r)
         {
             ID = Encoding.ASCII.GetString(r.ReadBytes(4));
             StreamVersion = r.ReadByte();
             TypeFlag = r.ReadByte();
-            AbsolutePosition = r.ReadUInt64();
+            GranulePosition = r.ReadUInt64();
             Serial = r.ReadInt32();
             PageNumber = r.ReadInt32();
             Checksum = r.ReadUInt32();
             Segments = r.ReadByte();
-            LacingValues = r.ReadBytes(Segments);
+            SegmentTable = r.ReadBytes(Segments);
         }
 
         public void WriteToStream(BinaryWriter w)
@@ -116,12 +117,12 @@ namespace Matroska
             w.Write(Encoding.ASCII.GetBytes(ID));
             w.Write(StreamVersion);
             w.Write(TypeFlag);
-            w.Write(AbsolutePosition);
+            w.Write(GranulePosition);
             w.Write(Serial);
             w.Write(PageNumber);
             w.Write(Checksum);
             w.Write(Segments);
-            w.Write(LacingValues);
+            w.Write(SegmentTable);
         }
 
         public int GetPageLength()
@@ -129,28 +130,56 @@ namespace Matroska
             int length = 0;
             for (int i = 0; i < Segments; i++)
             {
-                length += LacingValues[i];
+                length += SegmentTable[i];
             }
             return length;
         }
 
         public int GetHeaderSize()
         {
-            return 27 + LacingValues.Length;
+            return 27 + SegmentTable.Length;
         }
     }
 
+
+
     class Program
     {
-        static async Task Main(string[] args)
+        static byte[] ClusterToOggSegmentTable(Cluster cluster)
+        {
+            using var ms = new MemoryStream();
+            using var br = new BinaryWriter(ms);
+
+            foreach (var block in cluster.SimpleBlocks)
+            {
+                if (block.Data != null)
+                {
+                    if (block.Data.Length < 255)
+                    {
+                        br.Write((byte)block.Data.Length);
+                    }
+                    else
+                    {
+                        br.Write((byte)255);
+                        br.Write((byte)block.Data.Length - 255);
+                    }
+                }
+            }
+
+            br.Flush();
+
+            return ms.ToArray();
+        }
+
+        static void Main(string[] args)
         {
             string downloads = @"C:\Users\StefHeyenrath\Downloads\";
 
-            var org = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_track1_[eng]_DELAY 0ms.opus");
+            var orgData = File.ReadAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_track1_[eng]_DELAY 0ms.opus");
 
-            var oggHeader1 = new OggHeader();
-            var source = new BinaryReader(org);
-            oggHeader1.ReadFromStream(source);
+            //var oggHeader1 = new OggHeader();
+            //var source = new BinaryReader(org);
+            //oggHeader1.ReadFromStream(source);
 
             var dataStream = new FileStream(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm", FileMode.Open, FileAccess.Read);
 
@@ -159,7 +188,11 @@ namespace Matroska
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
-            // Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Clusters.First().SimpleBlocks.Take(10), new JsonSerializerOptions { WriteIndented = true }));
+
+            for (int bid = 0; bid < doc.Segment.Clusters[0].SimpleBlocks.Count; bid++)
+            {
+                Console.WriteLine(bid + " " + doc.Segment.Clusters[0].SimpleBlocks[bid].Data.Length);
+            }
 
             var ms1 = new MemoryStream();
 
@@ -168,61 +201,69 @@ namespace Matroska
             {
                 StreamVersion = 0,
                 TypeFlag = 2, // Beginning Of Stream
-                AbsolutePosition = 0,
+                GranulePosition = 0,
                 Serial = serial,
                 PageNumber = 0,
-                Checksum = 0, //3713372948,
+                Checksum = 3713372948,
                 Segments = 1,
-                LacingValues = new byte[] { 0x13 } // Single byte giving the length of the following segment_table data. So there is 13(hex) bytes (16 decimal) bytes of segment_table data.
+                SegmentTable = new byte[] { 0x13 } // Single byte giving the length of the following segment_table data. So there is 13(hex) bytes (16 decimal) bytes of segment_table data.
             };
-
-            
-
-           
 
             var bw = new BinaryWriter(ms1);
             newOggHeader1.WriteToStream(bw);
             bw.Flush();
 
-            var o = ms1.ToArray();
-
-            var checksum = OggCRC32.CalculateCRC(0, o, (uint) o.Length);
-
-
-
             var opusHeader = new OpusHeader
             {
+                Version = 1,
+                OutputChannelCount = 2,
+                PreSkip = 312, //? ??????
                 InputSampleRate = 48000,
-                ChannelMapping = new byte[0]
+                OutputGain = 0,
+                ChannelMappingFamily = 0,
+                StreamCount = 0
+                //ChannelMapping = new byte[0]  //{ 0, 0 }
             };
             opusHeader.Write(bw);
             bw.Flush();
 
-            //var buffer = new byte[0xe8];
-            //org.Position = 0;
 
-            //org.ReadFully(buffer, 0, buffer.Length);
-            //ms1.Write(buffer, 0x1C, buffer.Length - 0x1C);
-
-            int len = 0x115B - 0xE8;
-
-            foreach (var cluster in doc.Segment.Clusters)
+            int page = 1;
+            foreach (var cluster in doc.Segment.Clusters.Take(1))
             {
-                if (ms1.Position > len)
-                {
-                    //continue;
-                }
+                var segments = ClusterToOggSegmentTable(cluster);
 
-                // ms1.Write(System.Text.Encoding.ASCII.GetBytes("X"));
+                byte[] x = new byte[0];
+                do
+                {
+                   // x = segments.Slice(0, 255)
+
+
+                } while (x.Length > 0);
+
+
+
+                var newOggHeaderForEachCluster = new OggHeader
+                {
+                    StreamVersion = 0,
+                    TypeFlag = 0,
+                    GranulePosition = cluster.Timecode, //18240,
+                    Serial = serial,
+                    PageNumber = page, // eigenlijk moet dit 1 zijn..
+                    Checksum = 845169684,
+                    Segments = (byte) x.Length, // 0x20, // ??
+                    SegmentTable = x
+                };
+
+                newOggHeaderForEachCluster.WriteToStream(bw);
+                bw.Flush();
+
                 foreach (var b in cluster.SimpleBlocks)
                 {
-                    if (ms1.Position > len)
-                    {
-                      //  continue;
-                    }
-
                     ms1.Write(b.Data);
                 }
+
+                page++;
             }
 
             File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", ms1.ToArray());
