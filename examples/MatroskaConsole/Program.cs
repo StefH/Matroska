@@ -159,6 +159,8 @@ namespace Matroska
 
             var ms1 = new MemoryStream();
 
+            int len = 0x115B - 0xE8; 
+
             foreach (var cluster in doc.Segment.Clusters)
             {
                 if (ms1.Position > 4210)
