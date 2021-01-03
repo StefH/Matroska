@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1078C845-29AD-475F-9DB7-9DACB4422ABC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{0A5440F7-A395-41CA-ACE5-817920F2172C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B2BED7F-A089-4A26-999B-F0F96CCAD905}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matroska", "src\Matroska\Matroska.csproj", "{B6269AAC-170A-4346-1234-579DED3D1234}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatroskaConsole", "examples\MatroskaConsole\MatroskaConsole.csproj", "{6113E57F-C635-45A2-B49D-2BB76193D6E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Matroska.Muxer", "src\Matroska.Muxer\Matroska.Muxer.csproj", "{4C05193C-5952-4099-B7CE-F927AC953780}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6269AAC-170A-4346-1234-579DED3D1234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6269AAC-170A-4346-1234-579DED3D1234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6269AAC-170A-4346-1234-579DED3D1234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6269AAC-170A-4346-1234-579DED3D1234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6113E57F-C635-45A2-B49D-2BB76193D6E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6113E57F-C635-45A2-B49D-2BB76193D6E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6113E57F-C635-45A2-B49D-2BB76193D6E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6113E57F-C635-45A2-B49D-2BB76193D6E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C05193C-5952-4099-B7CE-F927AC953780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C05193C-5952-4099-B7CE-F927AC953780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C05193C-5952-4099-B7CE-F927AC953780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C05193C-5952-4099-B7CE-F927AC953780}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B6269AAC-170A-4346-1234-579DED3D1234} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
+		{6113E57F-C635-45A2-B49D-2BB76193D6E9} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
+		{4C05193C-5952-4099-B7CE-F927AC953780} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DE2715BA-336F-4774-B880-BE171CE1018B}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,13 @@
+<Project>
+	<PropertyGroup>
+		<Version>0.0.1-preview-02</Version>
+		<Nullable>enable</Nullable>
+		<LangVersion>8.0</LangVersion>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/StefH/Matroska</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/StefH/Matroska</RepositoryUrl>
+		<Authors>Stef Heyenrath</Authors>
+		<Copyright>Stef Heyenrath</Copyright>
+	</PropertyGroup>
+</Project>

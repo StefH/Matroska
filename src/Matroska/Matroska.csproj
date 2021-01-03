@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
+		<PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
+		<ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
+		<LangVersion>8.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="NEbml" Version="0.9.0" />
+		<PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
+		<PackageReference Include="System.Memory" Version="4.5.0" />
+	</ItemGroup>
+
+</Project>
