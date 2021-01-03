@@ -3,7 +3,7 @@ using System.Runtime.Caching;
 
 namespace Matroska.Extensions
 {
-    public static class ObjectCacheExtensions
+    internal static class ObjectCacheExtensions
     {
         private static CacheItemPolicy CacheItemPolicy = new CacheItemPolicy
         {

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using NEbml.Core;
+﻿using NEbml.Core;
 
 namespace Matroska.Extensions
 {
@@ -9,16 +8,6 @@ namespace Matroska.Extensions
         {
             return MatroskaSpecification.ElementDescriptors.TryGetValue(reader.ElementId, out var descriptor) && descriptor.Type == ElementType.MasterElement;
         }
-
-        //public static ElementDescriptor? GetElementDescriptor(this EbmlReader reader)
-        //{
-        //    if (MatroskaSpecification.ElementDescriptors.TryGetValue(reader.ElementId, out var descriptor))
-        //    {
-        //        return descriptor;
-        //    }
-
-        //    throw new KeyNotFoundException();
-        //}
 
         public static string GetName(this EbmlReader r, bool dumpValue = false)
         {

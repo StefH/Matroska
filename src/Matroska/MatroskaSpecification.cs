@@ -22,6 +22,9 @@ namespace Matroska
         /// </summary>
         public static IReadOnlyDictionary<VInt, ElementDescriptor> ElementDescriptors => _elementDescriptorsByVInt;
 
+        /// <summary>
+        /// Gets a dictionary of all Matroska elements.
+        /// </summary>
         public static IReadOnlyDictionary<ulong, ElementDescriptor> ElementDescriptorsByIdentifier => _elementDescriptorsByIdentifier;
 
         static MatroskaSpecification()
@@ -37,7 +40,7 @@ namespace Matroska
             foreach (FieldInfo field in fields.Where(ft => ft.FieldType == typeof(ulong)))
             {
                 var identifier = (ulong)field.GetValue(null);
-                _elementDescriptorsByIdentifier.Add(identifier, _elementDescriptorsByVInt[NEbml.Core.VInt.FromEncoded(identifier)]);
+                _elementDescriptorsByIdentifier.Add(identifier, _elementDescriptorsByVInt[VInt.FromEncoded(identifier)]);
             }
         }
         #endregion
