@@ -11,7 +11,7 @@ namespace Matroska
     {
         public const string ID = "OggS";                                               // Always "OggS"
         public byte StreamVersion;                           // Stream structure version
-        public byte TypeFlag;                                        // Header type flag
+        public OggHeaderType TypeFlag;                                        // Header type flag
         public ulong GranulePosition;                      // Absolute granule position
         public int Serial;                                       // Stream serial number
         public int PageNumber;                                   // Page sequence number
@@ -36,7 +36,7 @@ namespace Matroska
         {
             w.Write(Encoding.ASCII.GetBytes(ID));
             w.Write(StreamVersion);
-            w.Write(TypeFlag);
+            w.Write((byte) TypeFlag);
             w.Write(GranulePosition);
             w.Write(Serial);
             w.Write(PageNumber);
