@@ -4,6 +4,9 @@ using NEbml.Core;
 
 namespace Matroska.Models
 {
+    /// <summary>
+    /// http://matroska.sourceforge.net/technical/specs/index.html#simpleblock_structure
+    /// </summary>
     public sealed class SimpleBlock : IParseRawBinary
     {
         /// <summary>
@@ -43,15 +46,21 @@ namespace Matroska.Models
 
         public byte[]? Data { get; private set; }
 
-        //public byte[]? Raw { get; set; }
-
         public void Parse(byte[] raw)
         {
-            using var stream = new MemoryStream(raw);
+            if (raw.Length > 7)
+            {
+                int y = 0;
+            }
 
+            int size = Math.Min(raw.Length, 16);
+            byte[] small = new byte[size];
+            Buffer.BlockCopy(raw, 0, small, 0, size);
+
+            using var stream = new MemoryStream(small);
             using var bn = new BinaryReader(stream);
 
-            var trackNumberAsVInt = VInt.Read(stream, 4, new byte[8]);
+            var trackNumberAsVInt = VInt.Read(stream, 8, null);
             TrackNumber = trackNumberAsVInt.Value;
 
             TimeCode = bn.ReadInt16();
@@ -62,21 +71,18 @@ namespace Matroska.Models
             IsInvisible = (flags & 0x08) > 0;
             Lacing = (Lacing)(flags & (byte)Lacing.Any);
 
-            NumFrames = 0;
-
             int laceCodedSizeOfEachFrame = 0;
             if (Lacing != Lacing.No)
             {
                 NumFrames = bn.ReadByte();
 
-                var fixed_sizeLacing = (flags & 0x04) > 0;
                 if (Lacing != Lacing.FixedSize)
                 {
                     laceCodedSizeOfEachFrame = bn.ReadByte();
                 }
             }
 
-            Data = raw.AsSpan().Slice((int) stream.Position).ToArray();
+            Data = raw.AsSpan().Slice((int)stream.Position).ToArray();
         }
     }
 }
