@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Matroska
 {
-    class OpusHeader
+    struct OpusHeader
     {
         /*
          * typedef struct {
@@ -24,8 +24,8 @@ namespace Matroska
         unsigned char dmatrix[OPUS_DEMIXING_MATRIX_SIZE_MAX];
     }
     OpusHeader;*/
-        public string ID = "OpusHead";
-        public string OpusTags = "OpusTags";
+        public const string ID = "OpusHead";
+        public const string OpusTags = "OpusTags";
         public byte Version;
         public byte OutputChannelCount;
         public ushort PreSkip;

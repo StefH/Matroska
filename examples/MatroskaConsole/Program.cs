@@ -81,10 +81,9 @@ namespace Matroska
                 GranulePosition = 0,
                 Serial = serial,
                 PageNumber = 0,
-                Checksum = 4209813745, //3713372948,
+                Checksum = 4209813745,
+                
                 Segments = 2,
-
-                // Single byte giving the length of the following segment_table data. So there is 13(hex) bytes (16 decimal) bytes of segment_table data.
                 SegmentTable = new byte[] { 0x13, 0x10 } // OpusHead , OpusTags
             };
 
