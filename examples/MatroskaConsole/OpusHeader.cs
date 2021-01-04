@@ -32,11 +32,7 @@ namespace Matroska
         public uint InputSampleRate;
         public short OutputGain;
         public byte ChannelMappingFamily;
-
-        public byte StreamCount;
-        public byte CoupledStreamCount;
-        public byte[] ChannelMapping;
-
+                
         public void Write(BinaryWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(ID));
@@ -46,10 +42,6 @@ namespace Matroska
             w.Write(InputSampleRate);
             w.Write(OutputGain);
             w.Write(ChannelMappingFamily);
-            // w.Write(StreamCount);
-            //w.Write(CoupledStreamCount);
-            //w.Write(ChannelMapping);
-
             w.Write(Encoding.ASCII.GetBytes(OpusTags));
             w.Write(0L);
         }

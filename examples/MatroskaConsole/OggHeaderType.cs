@@ -5,6 +5,8 @@ namespace Matroska
     [Flags]
     public enum OggHeaderType : byte
     {
+        None = 0x00,
+
         /// <summary>
         /// The first packet on this page is a continuation of the previous packet in the logical bitstream.
         /// </summary>

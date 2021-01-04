@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ATL;
 using Commons;
+using Concentus.Structs;
 using Matroska.Models;
 using NEbml.Core;
 
@@ -19,21 +20,34 @@ namespace Matroska
         public byte[] Data { get; set; }
 
         public short TimeCode { get; set; }
+
+        public int NumberOfFrames { get; set; }
+
+        public int NumberOfSamples { get; set; }
     }
 
     class Program
     {
-        static List<SegmentEntry> ClusterToOggSegmentTable(Cluster cluster)
+        static List<SegmentEntry> ClusterToOggOpusSegmentTable(Cluster cluster)
         {
             var list = new List<SegmentEntry>();
             foreach (var block in cluster.SimpleBlocks)
             {
                 if (block.Data != null)
                 {
+                    int len = block.Data.Length;
+                    //var numFrames = GetNumFrames(block.Data, 0, len);
+
+                    //var p = OpusPacketInfo.ParseOpusPacket(block.Data, 0, len);
+
+                    //   
+                    //var numS = OpusPacketInfo.GetNumSamples(block.Data, 0, len, 48000);
+                    //var numFrames2 = OpusPacketInfo.GetNumFrames(block.Data, 0, len);
+
                     byte[] segmentTable;
                     if (block.Data.Length < 255)
                     {
-                        segmentTable = new byte[] { (byte)block.Data.Length };
+                        segmentTable = new byte[] { (byte)len };
                     }
                     else
                     {
@@ -44,7 +58,9 @@ namespace Matroska
                     {
                         SegmentBytes = segmentTable,
                         Data = block.Data,
-                        TimeCode = block.TimeCode
+                        TimeCode = block.TimeCode,
+                        NumberOfSamples = OpusPacketInfo.GetNumSamples(block.Data, 0, len, 48000),
+                        NumberOfFrames = OpusPacketInfoParser.GetNumFrames(block.Data, 0, len)
                     });
                 }
             }
@@ -54,8 +70,8 @@ namespace Matroska
 
         static void Main(string[] args)
         {
-            // string downloads = @"C:\Users\StefHeyenrath\Downloads\";
-            string downloads = @"C:\Users\azurestef\Downloads\";
+            string downloads = @"C:\Users\StefHeyenrath\Downloads\";
+            //string downloads = @"C:\Users\azurestef\Downloads\";
 
             var orgData = File.ReadAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_track1_[eng]_DELAY 0ms.opus");
 
@@ -63,7 +79,9 @@ namespace Matroska
             //var source = new BinaryReader(org);
             //oggHeader1.ReadFromStream(source);
 
-            var dataStream = new FileStream(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm", FileMode.Open, FileAccess.Read);
+            var r = "Roxette - Listen To Your Heart (Official Music Video).webm";
+            var f = "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm";
+            var dataStream = new FileStream(downloads + f, FileMode.Open, FileAccess.Read);
 
             var doc = MatroskaSerializer.Deserialize(dataStream);
 
@@ -82,14 +100,17 @@ namespace Matroska
                 Serial = serial,
                 PageNumber = 0,
                 Checksum = 4209813745,
-                
-                Segments = 2,
+
+                // Segments = 1,
+                //SegmentTable = new byte[] { 0x13 } // OpusHead , OpusTags
+
+                NumberOfSegments = 2,
                 SegmentTable = new byte[] { 0x13, 0x10 } // OpusHead , OpusTags
             };
 
             var bw = new BinaryWriter(ms1);
-            newOggHeader1.WriteToStream(bw);
-            bw.Flush();
+            //  newOggHeader1.WriteToStream(bw);
+            //bw.Flush();
 
             var opusHeader = new OpusHeader
             {
@@ -98,34 +119,31 @@ namespace Matroska
                 PreSkip = 312,
                 InputSampleRate = 48000,
                 OutputGain = 0,
-                ChannelMappingFamily = 0,
-                StreamCount = 0
+                ChannelMappingFamily = 0
             };
-            opusHeader.Write(bw);
-            bw.Flush();
+            //opusHeader.Write(bw);
+            //bw.Flush();
 
-            int page = 1;
+            ms1.Write(orgData, 0, 0xAD);
+
+            int page = 2;
             ulong granulePosition = 0;
 
-            void WriteOggPage(ulong timeCode, byte len, List<SegmentEntry> oggPages)
+            void WriteOggPage(ulong timeCode, byte numberOfSegments, List<SegmentEntry> oggPages)
             {
                 var data = oggPages.SelectMany(o => o.Data).ToArray();
 
-                var sumTimeCodes = oggPages.Sum(o => o.TimeCode);
+                granulePosition += (ulong)oggPages.Sum(op => op.NumberOfSamples * op.NumberOfFrames);
 
-                //granulePosition += (ulong)(data[0] * 2 * len);
-
-                // g1 = 18240
-                // g2 = 29760 (11520)
                 var oggHeader = new OggHeader
                 {
                     StreamVersion = 0,
-                    TypeFlag = page == 1 ? OggHeaderType.BeginningOfStream : OggHeaderType.Continuation,
-                    GranulePosition = 18240, //timeCode + 8240, //cluster.Timecode, //18240,
+                    TypeFlag = OggHeaderType.None,
+                    GranulePosition = granulePosition, //18240,
                     Serial = serial,
                     PageNumber = page,
-                    Checksum = 0, // 2519159819, //845169684,
-                    Segments = len, // 0x20, // ??
+                    Checksum = 0,
+                    NumberOfSegments = numberOfSegments,
                     SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
                 };
 
@@ -150,36 +168,37 @@ namespace Matroska
 
             var oggPageWithSegments = new List<SegmentEntry>();
             granulePosition = 0;
-            foreach (var cluster in doc.Segment.Clusters)
+            foreach (var cluster in doc.Segment.Clusters.Take(1))
             {
-                var oggSegmentTable = ClusterToOggSegmentTable(cluster);
+                var oggSegmentTable = ClusterToOggOpusSegmentTable(cluster);
 
-                oggPageWithSegments.Clear();
-
-                byte segmentParts = 0;
                 foreach (var oggSegmentEntry in oggSegmentTable)
                 {
-                    if (segmentParts >= 0x20)
-                    {
-                        if (segmentParts == 0x21)
-                        {
-                            int y = 0;
-                        }
-                        WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
-
-                        segmentParts = 0;
-                        oggPageWithSegments.Clear();
-                    }
-
-                    oggPageWithSegments.Add(oggSegmentEntry);
-
-                    segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
+                    WriteOggPage(cluster.Timecode, (byte) oggSegmentEntry.SegmentBytes.Length, new List<SegmentEntry> { oggSegmentEntry });
                 }
 
-                if (segmentParts > 0)
-                {
-                    WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
-                }
+                //oggPageWithSegments.Clear();
+
+                //byte segmentParts = 0;
+                //foreach (var oggSegmentEntry in oggSegmentTable)
+                //{
+                //    if (segmentParts >= 1)
+                //    {
+                //        WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
+
+                //        segmentParts = 0;
+                //        oggPageWithSegments.Clear();
+                //        continue;
+                //    }
+
+                //    oggPageWithSegments.Add(oggSegmentEntry);
+                //    segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
+                //}
+
+                //if (segmentParts > 0)
+                //{
+                //    // WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
+                //}
             }
 
             File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", ms1.ToArray());

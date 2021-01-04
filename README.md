@@ -7,3 +7,5 @@ var fileStream = new FileStream("test.webm", FileMode.Open, FileAccess.Read);
 
 var doc = MatroskaSerializer.Deserialize(fileStream);
 ```
+
+# Credits

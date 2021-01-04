@@ -16,7 +16,7 @@ namespace Matroska
         public int Serial;                                       // Stream serial number
         public int PageNumber;                                   // Page sequence number
         public uint Checksum;                                              // Page CRC32
-        public byte Segments;                                 // Number of page segments
+        public byte NumberOfSegments;                                 // Number of page segments
         public byte[] SegmentTable;                     // Lacing values - segment sizes
 
         //public void ReadFromStream(BinaryReader r)
@@ -41,14 +41,14 @@ namespace Matroska
             w.Write(Serial);
             w.Write(PageNumber);
             w.Write(Checksum);
-            w.Write(Segments);
+            w.Write(NumberOfSegments);
             w.Write(SegmentTable);
         }
 
         public int GetPageLength()
         {
             int length = 0;
-            for (int i = 0; i < Segments; i++)
+            for (int i = 0; i < NumberOfSegments; i++)
             {
                 length += SegmentTable[i];
             }
