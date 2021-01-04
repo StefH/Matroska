@@ -137,12 +137,6 @@ namespace Matroska
 
                 var oggPageBytes = oggPageStream.ToArray();
 
-                //using var oggPageAndDataStream = new MemoryStream();
-                //oggPageAndDataStream.Write(oggPageBytes);
-                //oggPageAndDataStream.Write(data);
-
-                //var oggPageAndDataBytes = oggPageAndDataStream.ToArray();
-
                 oggHeader.Checksum = OggCRC32.CalculateCRC(0, oggPageBytes);
 
                 oggPageWriter = new BinaryWriter(ms1);
