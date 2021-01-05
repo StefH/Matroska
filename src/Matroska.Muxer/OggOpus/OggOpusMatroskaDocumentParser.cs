@@ -28,7 +28,7 @@ namespace Matroska.Muxer.OggOpus
             _channels = (int)doc.Segment.Tracks.TrackEntry.Audio.Channels;
         }
 
-        public void Parse(Stream outputStream)
+        public void Write(Stream outputStream)
         {
             if (outputStream == null)
             {
@@ -43,12 +43,22 @@ namespace Matroska.Muxer.OggOpus
             var oggPageWriter = new OggPageWriter(outputStream);
             var oggOpusHeaderWriter = new OggOpusHeaderWriter(oggPageWriter);
 
+            // Write OpusHeader (+ OpusTags)
             oggOpusHeaderWriter.WriteHeaders(_channels, _sampleRate);
 
-            var oggHeaderType = OggHeaderType.None;
 
-            var oggPageWithSegments = new List<SegmentEntry>();
+
+            var oggHeaderType = OggHeaderType.None;
             byte segmentParts = 0;
+            var oggPageWithSegments = new List<SegmentEntry>();
+
+            void WriteOggPageAndResetParts(OggHeaderType oggHeaderType)
+            {
+                oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
+
+                segmentParts = 0;
+                oggPageWithSegments.Clear();
+            }
 
             foreach (var oggSegmentTable in _doc.Segment.Clusters.Select(ConvertClusterToSegmentTable))
             {
@@ -59,19 +69,13 @@ namespace Matroska.Muxer.OggOpus
 
                     if (segmentParts >= MaxSegmentParts)
                     {
-                        oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
-
-                        segmentParts = 0;
-                        oggPageWithSegments.Clear();
+                        WriteOggPageAndResetParts(oggHeaderType);
                     }
                 }
 
                 if (segmentParts > 0)
                 {
-                    oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
-
-                    segmentParts = 0;
-                    oggPageWithSegments.Clear();
+                    WriteOggPageAndResetParts(oggHeaderType);
                 }
             }
         }

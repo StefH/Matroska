@@ -33,7 +33,7 @@ namespace Matroska
 
             var stream = new MemoryStream();
             var oggOpusMatroskaDocumentParser = new OggOpusMatroskaDocumentParser(doc);
-            oggOpusMatroskaDocumentParser.Parse(stream);
+            oggOpusMatroskaDocumentParser.Write(stream);
 
             File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", stream.ToArray());
 
