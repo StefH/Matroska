@@ -9,46 +9,48 @@ namespace Matroska
 {
     struct OggHeader
     {
-        public const string ID = "OggS";                                               // Always "OggS"
+        public const string OggS = "OggS";
+
+        public string ID;                                               // Always "OggS"
         public byte StreamVersion;                           // Stream structure version
         public OggHeaderType TypeFlag;                                        // Header type flag
         public ulong GranulePosition;                      // Absolute granule position
         public int Serial;                                       // Stream serial number
         public int PageNumber;                                   // Page sequence number
         public uint Checksum;                                              // Page CRC32
-        public byte NumberOfSegments;                                 // Number of page segments
+        public byte TotalSegments;                                 // Number of page segments
         public byte[] SegmentTable;                     // Lacing values - segment sizes
 
-        //public void ReadFromStream(BinaryReader r)
-        //{
-        //    ID = Encoding.ASCII.GetString(r.ReadBytes(4));
-        //    StreamVersion = r.ReadByte();
-        //    TypeFlag = r.ReadByte();
-        //    GranulePosition = r.ReadUInt64();
-        //    Serial = r.ReadInt32();
-        //    PageNumber = r.ReadInt32();
-        //    Checksum = r.ReadUInt32();
-        //    Segments = r.ReadByte();
-        //    SegmentTable = r.ReadBytes(Segments);
-        //}
+        public void ReadFromStream(BinaryReader r)
+        {
+            ID = Encoding.ASCII.GetString(r.ReadBytes(4));
+            StreamVersion = r.ReadByte();
+            TypeFlag = (OggHeaderType) r.ReadByte();
+            GranulePosition = r.ReadUInt64();
+            Serial = r.ReadInt32();
+            PageNumber = r.ReadInt32();
+            Checksum = r.ReadUInt32();
+            TotalSegments = r.ReadByte();
+            SegmentTable = r.ReadBytes(TotalSegments);
+        }
 
         public void WriteToStream(BinaryWriter w)
         {
-            w.Write(Encoding.ASCII.GetBytes(ID));
+            w.Write(Encoding.ASCII.GetBytes(OggS));
             w.Write(StreamVersion);
             w.Write((byte) TypeFlag);
             w.Write(GranulePosition);
             w.Write(Serial);
             w.Write(PageNumber);
             w.Write(Checksum);
-            w.Write(NumberOfSegments);
+            w.Write(TotalSegments);
             w.Write(SegmentTable);
         }
 
         public int GetPageLength()
         {
             int length = 0;
-            for (int i = 0; i < NumberOfSegments; i++)
+            for (int i = 0; i < TotalSegments; i++)
             {
                 length += SegmentTable[i];
             }

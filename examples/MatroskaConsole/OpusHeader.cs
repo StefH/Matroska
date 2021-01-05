@@ -42,8 +42,8 @@ namespace Matroska
             w.Write(InputSampleRate);
             w.Write(OutputGain);
             w.Write(ChannelMappingFamily);
-            w.Write(Encoding.ASCII.GetBytes(OpusTags));
-            w.Write(0L);
+            //w.Write(Encoding.ASCII.GetBytes(OpusTags));
+            //w.Write(0L);
         }
     }
 }
