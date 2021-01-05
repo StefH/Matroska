@@ -57,7 +57,7 @@ namespace Matroska
                 }
                 else
                 {
-                    Console.WriteLine(reader.GetName());
+                    Console.WriteLine("Not mapped:" + reader.GetName(true));
                 }
             }
 
