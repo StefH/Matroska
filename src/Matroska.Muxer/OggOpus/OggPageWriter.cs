@@ -6,6 +6,9 @@ using Matroska.Muxer.OggOpus.Models;
 
 namespace Matroska.Muxer.OggOpus
 {
+    /// <summary>
+    /// https://en.wikipedia.org/wiki/Ogg_page
+    /// </summary>
     internal class OggPageWriter
     {
         private readonly int _serial;

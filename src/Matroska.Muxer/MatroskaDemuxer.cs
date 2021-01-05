@@ -6,9 +6,9 @@ namespace Matroska.Muxer
 {
     public static class MatroskaDemuxer
     {
-        public static void ExtractOggOpusAudio(MatroskaDocument doc, Stream stream)
+        public static void ExtractOggOpusAudio(MatroskaDocument doc, Stream outputStream)
         {
-            new OggOpusDemuxer(doc).CopyTo(stream);
+            new OggOpusAudioStreamDemuxer(doc).CopyTo(outputStream);
         }
     }
 }
