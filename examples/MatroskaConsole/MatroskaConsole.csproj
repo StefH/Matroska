@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Matroska.Muxer\Matroska.Muxer.csproj" />
     <ProjectReference Include="..\..\src\Matroska\Matroska.csproj" />
   </ItemGroup>
 

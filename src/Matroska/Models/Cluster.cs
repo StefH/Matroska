@@ -10,5 +10,8 @@ namespace Matroska.Models
 
         [MatroskaElementDescriptor(MatroskaSpecification.SimpleBlock, typeof(SimpleBlock))]
         public List<SimpleBlock>? SimpleBlocks { get; set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.BlockGroup, typeof(BlockGroup))]
+        public List<BlockGroup>? BlockGroups { get; set; }
     }
 }

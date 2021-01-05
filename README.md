@@ -1,12 +1,32 @@
-# Matroska
+# Projects
+
+## Matroska
 An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)
 
-# Usage
-``` c#
-var fileStream = new FileStream("test.webm", FileMode.Open, FileAccess.Read);
+[![NuGet](https://buildstats.info/nuget/Matroska.Demux)](https://www.nuget.org/packages/Matroska.Demux)
 
-var doc = MatroskaSerializer.Deserialize(fileStream);
+### Usage
+Deserialize a stream to a MatroskaDocument
+``` c#
+var stream = new FileStream("test.webm", FileMode.Open, FileAccess.Read);
+
+var doc = MatroskaSerializer.Deserialize(stream);
+```
+
+
+## Matroska.Demux
+A Matroska demuxer to extract Ogg Opus audio from a .webm file
+
+[![NuGet](https://buildstats.info/nuget/Matroska)](https://www.nuget.org/packages/Matroska)
+
+### Usage
+Todo
+``` c#
+...
 ```
 
 # Credits
 - [Ellié Computing](http://www.elliecomputing.com) contributes to this project by giving free licences of ECMerge, comparison/merge tool.
+- [NEbml](https://github.com/OlegZee/NEbml)
+- [concentus](https://github.com/lostromb/concentus)
+- [atldotnet](https://github.com/Zeugma440/atldotnet)
