@@ -9,53 +9,57 @@ namespace Matroska.Muxer.OggOpus
 {
     public class OggOpusMatroskaDocumentParser
     {
-        private readonly MatroskaDocument _doc;
-        private readonly Stream _outputStream;
-        private readonly OggPageWriter _oggPageWriter;
-        private readonly OggOpusHeaderWriter _oggOpusHeaderWriter;
-        private readonly int _sampleRate;
+        private const byte MaxSegmentParts = 0x64;
 
-        public OggOpusMatroskaDocumentParser(MatroskaDocument doc, Stream outputStream)
+        private readonly MatroskaDocument _doc;
+        private readonly int _sampleRate;
+        private readonly int _channels;
+
+        public OggOpusMatroskaDocumentParser(MatroskaDocument doc)
         {
             _doc = doc ?? throw new ArgumentNullException(nameof(doc));
-            _outputStream = outputStream ?? throw new ArgumentNullException(nameof(outputStream));
-
-            _oggPageWriter = new OggPageWriter(outputStream);
-            _oggOpusHeaderWriter = new OggOpusHeaderWriter(_oggPageWriter);
 
             if (doc?.Segment?.Tracks?.TrackEntry?.Audio?.SamplingFrequency == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("SamplingFrequency");
             }
 
-
             _sampleRate = (int)doc.Segment.Tracks.TrackEntry.Audio.SamplingFrequency;
+            _channels = (int)doc.Segment.Tracks.TrackEntry.Audio.Channels;
         }
 
-        public void Parse()
+        public void Parse(Stream outputStream)
         {
+            if (outputStream == null)
+            {
+                throw new ArgumentNullException(nameof(outputStream));
+            }
+
             if (_doc?.Segment?.Clusters == null)
             {
                 throw new ArgumentException();
             }
 
-            _oggOpusHeaderWriter.WriteHeaders();
+            var oggPageWriter = new OggPageWriter(outputStream);
+            var oggOpusHeaderWriter = new OggOpusHeaderWriter(oggPageWriter);
+
+            oggOpusHeaderWriter.WriteHeaders(_channels, _sampleRate);
 
             var oggHeaderType = OggHeaderType.None;
 
             var oggPageWithSegments = new List<SegmentEntry>();
             byte segmentParts = 0;
 
-            foreach (var oggSegmentTable in _doc.Segment.Clusters.Select(ClusterToOggOpusSegmentTable))
+            foreach (var oggSegmentTable in _doc.Segment.Clusters.Select(ConvertClusterToSegmentTable))
             {
                 foreach (var oggSegmentEntry in oggSegmentTable)
                 {
                     oggPageWithSegments.Add(oggSegmentEntry);
                     segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
 
-                    if (segmentParts >= 0x64)
+                    if (segmentParts >= MaxSegmentParts)
                     {
-                        _oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
+                        oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
 
                         segmentParts = 0;
                         oggPageWithSegments.Clear();
@@ -64,7 +68,7 @@ namespace Matroska.Muxer.OggOpus
 
                 if (segmentParts > 0)
                 {
-                    _oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
+                    oggPageWriter.WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
 
                     segmentParts = 0;
                     oggPageWithSegments.Clear();
@@ -72,7 +76,7 @@ namespace Matroska.Muxer.OggOpus
             }
         }
 
-        private List<SegmentEntry> ClusterToOggOpusSegmentTable(Cluster cluster)
+        private List<SegmentEntry> ConvertClusterToSegmentTable(Cluster cluster)
         {
             var list = new List<SegmentEntry>();
 

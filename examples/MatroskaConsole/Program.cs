@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using ATL;
+using CSCore;
+using CSCore.Codecs.OPUS;
+using CSCore.SoundOut;
 using Matroska.Muxer.OggOpus;
 
 namespace Matroska
@@ -27,11 +31,33 @@ namespace Matroska
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
 
-            var ms = new MemoryStream();
-            var o = new OggOpusMatroskaDocumentParser(doc, ms);
-            o.Parse();
+            var stream = new MemoryStream();
+            var oggOpusMatroskaDocumentParser = new OggOpusMatroskaDocumentParser(doc);
+            oggOpusMatroskaDocumentParser.Parse(stream);
 
-            File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", ms.ToArray());
+            File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", stream.ToArray());
+
+            ISoundOut soundOut;
+            if (WasapiOut.IsSupportedOnCurrentPlatform)
+            {
+                soundOut = new WasapiOut();
+            }
+            else
+            {
+                soundOut = new DirectSoundOut();
+            }
+
+            stream.Position = 0;
+            
+            var track = new Track(stream, ".opus");
+            Console.WriteLine(JsonSerializer.Serialize(track, new JsonSerializerOptions { WriteIndented = true }));
+
+            var waveSource = new OpusSource(stream, (int)track.SampleRate, 2);
+
+            Console.WriteLine("len = {0} {1}", waveSource.Length, waveSource.GetLength());
+
+            soundOut.Initialize(waveSource);
+            soundOut.Play();
         }
     }
 }

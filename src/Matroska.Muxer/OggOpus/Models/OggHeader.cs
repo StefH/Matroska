@@ -30,7 +30,7 @@ namespace Matroska.Muxer.OggOpus.Models
             SegmentTable = r.ReadBytes(TotalSegments);
         }
 
-        public void WriteToStream(BinaryWriter w)
+        public void Write(BinaryWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(OggS));
             w.Write(StreamVersion);

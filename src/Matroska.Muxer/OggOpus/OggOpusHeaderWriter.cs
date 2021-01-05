@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 
 namespace Matroska.Muxer.OggOpus
@@ -13,47 +14,38 @@ namespace Matroska.Muxer.OggOpus
             _oggPageWriter = oggPageWriter;
         }
 
-        public void WriteHeaders()
+        public void WriteHeaders(int channels, int sampleRate)
         {
             using var opusHeadStream = new MemoryStream();
             using var opusHeadWriter = new BinaryWriter(opusHeadStream);
-            var opusHeader = new OpusHead
+            var opusHead = new OpusHead
             {
                 Version = 1,
-                OutputChannelCount = 2,
+                OutputChannelCount = (byte) channels,
                 PreSkip = 0,
-                InputSampleRate = 48000,
+                InputSampleRate = (uint) sampleRate,
                 OutputGain = 0,
                 ChannelMappingFamily = 0
             };
-            opusHeader.Write(opusHeadWriter);
+            opusHeadWriter.Write(opusHead);
             opusHeadWriter.Flush();
-
-            var opusHeaderData = opusHeadStream.ToArray();
-
-            _oggPageWriter.WriteOggPage(OggHeaderType.BeginningOfStream, 1, new List<SegmentEntry> {
-                new SegmentEntry
-                {
-                    Data = opusHeaderData,
-                    SegmentBytes = new byte[] { (byte) opusHeaderData.Length }
-                }
-            });
+            WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
 
             using var opusTagsStream = new MemoryStream();
             using var opusTagsWriter = new BinaryWriter(opusTagsStream);
-            var opusTags = new OpusTags
-            {
-            };
-            opusTags.Write(opusTagsWriter);
+            opusTagsWriter.Write(new OpusTags());
             opusTagsWriter.Flush();
 
-            var opustagsData = opusTagsStream.ToArray();
+            WriteOggPage(OggHeaderType.None, opusTagsStream.ToArray());
+        }
 
-            _oggPageWriter.WriteOggPage(OggHeaderType.None, 1, new List<SegmentEntry> {
+        private void WriteOggPage(OggHeaderType oggHeaderType, byte[] data)
+        {
+            _oggPageWriter.WriteOggPage(oggHeaderType, 1, new List<SegmentEntry> {
                 new SegmentEntry
                 {
-                    Data = opustagsData,
-                    SegmentBytes = new byte[] { (byte)opustagsData.Length }
+                    Data = data,
+                    SegmentBytes = new byte[] { (byte)data.Length }
                 }
             });
         }

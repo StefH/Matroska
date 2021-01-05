@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 
 namespace Matroska.Muxer.OggOpus
@@ -9,14 +9,14 @@ namespace Matroska.Muxer.OggOpus
     internal class OggPageWriter
     {
         private readonly int _serial;
-        private readonly Stream _stream;
+        private readonly BinaryWriter _writer;
 
         private ulong _granulePosition;
         private int _page;
 
         public OggPageWriter(Stream stream, int? serial = null)
         {
-            _stream = stream ?? throw new ArgumentNullException(nameof(stream));
+            _writer = new BinaryWriter(stream);
             _serial = serial ?? -1071269784;
         }
 
@@ -38,28 +38,24 @@ namespace Matroska.Muxer.OggOpus
                 SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
             };
 
+            oggHeader.Checksum = CalculateCheckSum(oggHeader, data);
+
+            _writer.Write(oggHeader);
+            _writer.Write(data);
+            _writer.Flush();
+
+            _page++;
+        }
+
+        private static uint CalculateCheckSum(OggHeader oggHeader, byte[] data)
+        {
             using var oggPageStream = new MemoryStream();
             using var oggPageWriter = new BinaryWriter(oggPageStream);
-
-            oggHeader.WriteToStream(oggPageWriter); // TODO ext
+            oggPageWriter.Write(oggHeader);
             oggPageWriter.Write(data);
             oggPageWriter.Flush();
 
-            //var oggPageBytes = oggPageStream.ToArray();
-
-            oggHeader.Checksum = OggCRC32.CalculateCRC(0, oggPageStream.ToArray());
-
-            var oggPageWriterFinal = new BinaryWriter(_stream);
-            oggHeader.WriteToStream(oggPageWriterFinal);
-            oggPageWriterFinal.Write(data);
-            oggPageWriterFinal.Flush();
-
-            //oggPageWriterFinal.Write(data);
-            //oggPageWriterFinal.Flush();
-
-            //_stream.Write(data);
-
-            _page++;
+            return OggCRC32.CalculateCRC(0, oggPageStream.ToArray());
         }
     }
 }
