@@ -55,9 +55,9 @@ namespace Matroska
                         int numberOfSegmentTableBytes = len / 255;
                         segmentTable = new byte[1 + numberOfSegmentTableBytes];
                         segmentTable.AsSpan().Fill(255);
-                        segmentTable[numberOfSegmentTableBytes] = (byte) (len - (numberOfSegmentTableBytes * 255));
+                        segmentTable[numberOfSegmentTableBytes] = (byte)(len - (numberOfSegmentTableBytes * 255));
                     }
-                    
+
                     //else if (block.Data.Length < 3 * 255)
                     //{
                     //    segmentTable = new byte[] { 255, 255, (byte)(block.Data.Length - 2 * 255) };
@@ -83,6 +83,55 @@ namespace Matroska
 
         static void Main(string[] args)
         {
+            var ms1 = new MemoryStream();
+
+            int serial = -1071269784;
+            int page = 0;
+            ulong granulePosition = 0;
+
+            void WriteOggPage(OggHeaderType oggHeaderType, byte numberOfSegments, List<SegmentEntry> oggPages)
+            {
+                var data = oggPages.SelectMany(o => o.Data).ToArray();
+
+                granulePosition += (ulong)oggPages.Sum(op => op.NumberOfSamples * op.NumberOfFrames);
+
+                var oggHeader = new OggHeader
+                {
+                    StreamVersion = 0,
+                    TypeFlag = oggHeaderType,
+                    GranulePosition = granulePosition,
+                    Serial = serial,
+                    PageNumber = page,
+                    Checksum = 0,
+                    TotalSegments = numberOfSegments,
+                    SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
+                };
+
+                
+
+                using var oggPageStream = new MemoryStream();
+                using var oggPageWriter = new BinaryWriter(oggPageStream);
+
+                oggHeader.WriteToStream(oggPageWriter); // TODO ext
+                oggPageWriter.Write(data);
+                oggPageWriter.Flush();
+
+                //var oggPageBytes = oggPageStream.ToArray();
+
+                oggHeader.Checksum = OggCRC32.CalculateCRC(0, oggPageStream.ToArray());
+
+                var oggPageWriterFinal = new BinaryWriter(ms1);
+                oggHeader.WriteToStream(oggPageWriterFinal);
+                oggPageWriterFinal.Flush();
+
+                //oggPageWriterFinal.Write(data);
+                //oggPageWriterFinal.Flush();
+
+                ms1.Write(data);
+
+                page++;
+            }
+
             //string downloads = @"C:\Users\StefHeyenrath\Downloads\";
             string downloads = @"C:\Users\azurestef\Downloads\";
 
@@ -104,40 +153,68 @@ namespace Matroska
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
 
-            var ms1 = new MemoryStream();
 
-            int serial = -1071269784; // 68 B8 25 C0
-            var newOggHeader1 = new OggHeader
-            {
-                StreamVersion = 0,
-                TypeFlag = OggHeaderType.BeginningOfStream,
-                GranulePosition = 0,
-                Serial = serial,
-                PageNumber = 0,
-                Checksum = 3476425714, //4209813745,
+            //var newOggHeader1 = new OggHeader
+            //{
+            //    StreamVersion = 0,
+            //    TypeFlag = OggHeaderType.BeginningOfStream,
+            //    GranulePosition = 0,
+            //    Serial = serial,
+            //    PageNumber = 0,
+            //    Checksum = 3476425714, //4209813745,
 
-                TotalSegments = 1,
-                SegmentTable = new byte[] { 0x13 } // OpusHead 
+            //    TotalSegments = 1,
+            //    SegmentTable = new byte[] { 0x13 } // OpusHead 
 
-                //TotalSegments = 2,
-                //SegmentTable = new byte[] { 0x13, 0x10 } // OpusHead , OpusTags
-            };
+            //    //TotalSegments = 2,
+            //    //SegmentTable = new byte[] { 0x13, 0x10 } // OpusHead , OpusTags
+            //};
 
-            var bw = new BinaryWriter(ms1);
+            //var bw = new BinaryWriter(ms1);
             //newOggHeader1.WriteToStream(bw);
             //bw.Flush();
 
-            var opusHeader = new OpusHeader
+            using var opusHeadStream = new MemoryStream();
+            using var opusHeadWriter = new BinaryWriter(opusHeadStream);
+            var opusHeader = new OpusHead
             {
                 Version = 1,
                 OutputChannelCount = 2,
-                PreSkip = 312,
+                PreSkip = 0, //312,
                 InputSampleRate = 48000,
                 OutputGain = 0,
                 ChannelMappingFamily = 0
             };
-            //opusHeader.Write(bw);
-            //bw.Flush();
+            opusHeader.Write(opusHeadWriter);
+            opusHeadWriter.Flush();
+
+            var opusHeaderData = opusHeadStream.ToArray();
+
+            WriteOggPage(OggHeaderType.BeginningOfStream, 1, new List<SegmentEntry> {
+                new SegmentEntry
+                {
+                    Data = opusHeaderData,
+                    SegmentBytes = new byte[] { (byte) opusHeaderData.Length }
+                }
+            });
+
+            using var opusTagsStream = new MemoryStream();
+            using var opusTagsWriter = new BinaryWriter(opusTagsStream);
+            var opusTags = new OpusTags
+            {
+            };
+            opusTags.Write(opusTagsWriter);
+            opusTagsWriter.Flush();
+
+            var opustagsData = opusTagsStream.ToArray();
+
+            WriteOggPage(OggHeaderType.None, 1, new List<SegmentEntry> {
+                new SegmentEntry
+                {
+                    Data = opustagsData,
+                    SegmentBytes = new byte[] { (byte)opustagsData.Length }
+                }
+            });
 
             //var newOggHeaderForTags = new OggHeader
             //{
@@ -152,48 +229,12 @@ namespace Matroska
             //    SegmentTable = new byte[] { 0x13 } // OpusHead 
             //};
 
-            ms1.Write(orgData, 0, 0x91);
+            //ms1.Write(orgData, 0, 0x91);
 
 
-            int page = 2;
-            ulong granulePosition = 0;
 
-            void WriteOggPage(ulong timeCode, byte numberOfSegments, List<SegmentEntry> oggPages)
-            {
-                var data = oggPages.SelectMany(o => o.Data).ToArray();
 
-                granulePosition += (ulong)oggPages.Sum(op => op.NumberOfSamples * op.NumberOfFrames);
 
-                var oggHeader = new OggHeader
-                {
-                    StreamVersion = 0,
-                    TypeFlag = OggHeaderType.None,
-                    GranulePosition = granulePosition,
-                    Serial = serial,
-                    PageNumber = page,
-                    Checksum = 0,
-                    TotalSegments = numberOfSegments,
-                    SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
-                };
-
-                using var oggPageStream = new MemoryStream();
-                var oggPageWriter = new BinaryWriter(oggPageStream);
-                oggHeader.WriteToStream(oggPageWriter);
-                oggPageWriter.Flush();
-                oggPageStream.Write(data);
-
-                var oggPageBytes = oggPageStream.ToArray();
-
-                oggHeader.Checksum = OggCRC32.CalculateCRC(0, oggPageBytes);
-
-                oggPageWriter = new BinaryWriter(ms1);
-                oggHeader.WriteToStream(oggPageWriter);
-                oggPageWriter.Flush();
-
-                ms1.Write(data);
-
-                page++;
-            }
 
             var d = new Dictionary<int, byte>
             {
@@ -210,23 +251,45 @@ namespace Matroska
             var oggPageWithSegments = new List<SegmentEntry>();
             granulePosition = 0;
             byte segmentParts = 0;
-            foreach (var cluster in doc.Segment.Clusters)
-            {
-                var oggSegmentTable = ClusterToOggOpusSegmentTable(cluster);
 
+            OggHeaderType oggHeaderType = OggHeaderType.None;
+            //foreach (var cluster in doc.Segment.Clusters)
+            //{
+            //    var oggSegmentTable = ClusterToOggOpusSegmentTable(cluster);
+
+            //    foreach (var oggSegmentEntry in oggSegmentTable)
+            //    {
+            //        oggPageWithSegments.Add(oggSegmentEntry);
+            //        segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
+
+            //        if (segmentParts >= (d.ContainsKey(page) ? d[page] : 0x64))
+            //        {
+            //            WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
+
+            //            segmentParts = 0;
+            //            oggPageWithSegments.Clear();
+            //        }
+            //    }
+
+            //    if (segmentParts > 0)
+            //    {
+            //        WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
+
+            //        segmentParts = 0;
+            //        oggPageWithSegments.Clear();
+            //    }
+            //}
+
+            foreach (var oggSegmentTable in doc.Segment.Clusters.Select(ClusterToOggOpusSegmentTable))
+            {
                 foreach (var oggSegmentEntry in oggSegmentTable)
                 {
                     oggPageWithSegments.Add(oggSegmentEntry);
                     segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
 
-                    if (page == 6)
-                    {
-                        int uuuuy = 0;
-                    }
-
                     if (segmentParts >= (d.ContainsKey(page) ? d[page] : 0x64))
                     {
-                        WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
+                        WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
 
                         segmentParts = 0;
                         oggPageWithSegments.Clear();
@@ -235,7 +298,7 @@ namespace Matroska
 
                 if (segmentParts > 0)
                 {
-                    WriteOggPage(cluster.Timecode, segmentParts, oggPageWithSegments);
+                    WriteOggPage(oggHeaderType, segmentParts, oggPageWithSegments);
 
                     segmentParts = 0;
                     oggPageWithSegments.Clear();
