@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Matroska
+namespace Matroska.Muxer.OggOpus.Models
 {
-    struct OggHeader
+    internal struct OggHeader
     {
         public const string OggS = "OggS";
 
-        public string ID;                                               // Always "OggS"
-        public byte StreamVersion;                           // Stream structure version
-        public OggHeaderType TypeFlag;                                        // Header type flag
-        public ulong GranulePosition;                      // Absolute granule position
-        public int Serial;                                       // Stream serial number
-        public int PageNumber;                                   // Page sequence number
-        public uint Checksum;                                              // Page CRC32
-        public byte TotalSegments;                                 // Number of page segments
-        public byte[] SegmentTable;                     // Lacing values - segment sizes
+        public string ID;
+        public byte StreamVersion;
+        public OggHeaderType TypeFlag;
+        public ulong GranulePosition;
+        public int Serial;
+        public int PageNumber;
+        public uint Checksum;
+        public byte TotalSegments;
+        public byte[] SegmentTable;
 
         public void ReadFromStream(BinaryReader r)
         {

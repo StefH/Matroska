@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Matroska
+namespace Matroska.Muxer.OggOpus.Models
 {
     [Flags]
-    public enum OggHeaderType : byte
+    internal enum OggHeaderType : byte
     {
         None = 0x00,
 
