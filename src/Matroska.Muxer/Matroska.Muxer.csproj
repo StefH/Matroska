@@ -24,4 +24,8 @@
 		<ProjectReference Include="..\Matroska\Matroska.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Settings\" />
+	</ItemGroup>
+
 </Project>

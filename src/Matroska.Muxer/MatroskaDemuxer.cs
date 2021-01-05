@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.IO;
+using Matroska.Models;
+using Matroska.Muxer.OggOpus;
 
 namespace Matroska.Muxer
 {
-    class MatroskaDemuxer
+    public static class MatroskaDemuxer
     {
+        public static void ExtractOggOpusAudio(MatroskaDocument doc, Stream stream)
+        {
+            new OggOpusDemuxer(doc).CopyTo(stream);
+        }
     }
 }

@@ -5,6 +5,7 @@ using ATL;
 using CSCore;
 using CSCore.Codecs.OPUS;
 using CSCore.SoundOut;
+using Matroska.Muxer;
 using Matroska.Muxer.OggOpus;
 
 namespace Matroska
@@ -13,8 +14,8 @@ namespace Matroska
     {
         static void Main(string[] args)
         {
-            //string downloads = @"C:\Users\StefHeyenrath\Downloads\";
-            string downloads = @"C:\Users\azurestef\Downloads\";
+            string downloads = @"C:\Users\StefHeyenrath\Downloads\";
+            //string downloads = @"C:\Users\azurestef\Downloads\";
 
             //var orgStream = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_org.opus");
             //var oggHeader1 = new OggHeader();
@@ -32,9 +33,9 @@ namespace Matroska
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
 
             var stream = new MemoryStream();
-            var oggOpusMatroskaDocumentParser = new OggOpusMatroskaDocumentParser(doc);
-            oggOpusMatroskaDocumentParser.Write(stream);
 
+            MatroskaDemuxer.ExtractOggOpusAudio(doc, stream);
+            
             File.WriteAllBytes(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus", stream.ToArray());
 
             ISoundOut soundOut;
