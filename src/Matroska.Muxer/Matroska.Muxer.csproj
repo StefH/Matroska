@@ -3,14 +3,19 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Description>Demux a Matroska file (.mkv or .webm) into multiple streams</Description>
-		<PackageTags>Matroska;WebM;mkv;demux</PackageTags>
+		<PackageTags>Matroska;WebM;mkv;demux;ogg;opus</PackageTags>
 		<ProjectGuid>{4C05193C-5952-4099-B7CE-F927AC956754}</ProjectGuid>
 		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
+		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -25,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Settings\" />
+		<Folder Include="Settings\" />
 	</ItemGroup>
 
 </Project>

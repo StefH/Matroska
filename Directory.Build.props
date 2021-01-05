@@ -9,5 +9,6 @@
 		<RepositoryUrl>https://github.com/StefH/Matroska</RepositoryUrl>
 		<Authors>Stef Heyenrath</Authors>
 		<Copyright>Stef Heyenrath</Copyright>
+		<PackageReleaseNotes>ReleaseNotes.md</PackageReleaseNotes>
 	</PropertyGroup>
 </Project>

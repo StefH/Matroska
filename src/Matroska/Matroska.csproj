@@ -10,7 +10,12 @@
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>
+		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
