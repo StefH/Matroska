@@ -5,6 +5,9 @@ namespace Matroska.Models
 {
     public sealed class BlockGroup
     {
+        [MatroskaElementDescriptor(MatroskaSpecification.ReferenceBlock)]
+        public long? ReferenceBlock { get; private set; }
+
         [MatroskaElementDescriptor(MatroskaSpecification.DiscardPadding)]
         public long DiscardPadding { get; private set; }
 

@@ -27,20 +27,13 @@ namespace Matroska
             var f = "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm";
             var dataStream = new FileStream(downloads + f, FileMode.Open, FileAccess.Read);
 
-            var test5 = MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test5.mkv", FileMode.Open, FileAccess.Read));
-            Console.WriteLine(JsonSerializer.Serialize(test5.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
-            Console.WriteLine(JsonSerializer.Serialize(test5.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
-            try
-            {
-                MatroskaDemuxer.ExtractOggOpusAudio(test5, new MemoryStream());
-            }
-            catch (ValidationException ve)
-            {
-                foreach (var error in ve.Errors)
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
-            }
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test1.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test2.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test3.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test5.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test6.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test1.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test8.mkv", FileMode.Open, FileAccess.Read));
 
             var doc = MatroskaSerializer.Deserialize(dataStream);
 

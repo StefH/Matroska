@@ -3,13 +3,10 @@ using Matroska.Attributes;
 
 namespace Matroska.Models
 {
-    public sealed class Segment
+    public sealed class Segment : BaseCRC32
     {
         [MatroskaElementDescriptor(MatroskaSpecification.Void)]
         public byte[]? Void { get; set; }
-
-        [MatroskaElementDescriptor(MatroskaSpecification.CRC32)]
-        public byte[]? CRC32 { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.SeekHead)]
         public SeekHead SeekHead { get; set; } = null!;

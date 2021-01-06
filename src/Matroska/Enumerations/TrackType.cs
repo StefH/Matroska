@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Matroska.Models
+namespace Matroska.Enumerations
 {
     [Flags]
     public enum TrackType : ulong

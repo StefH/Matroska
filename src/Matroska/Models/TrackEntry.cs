@@ -1,8 +1,9 @@
 ﻿using Matroska.Attributes;
+using Matroska.Enumerations;
 
 namespace Matroska.Models
 {
-    public sealed class TrackEntry
+    public sealed class TrackEntry : BaseCRC32
     {
         [MatroskaElementDescriptor(MatroskaSpecification.TrackNumber)]
         public ulong TrackNumber { get; private set; }
@@ -50,7 +51,10 @@ namespace Matroska.Models
         public ulong? MinCache { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.DefaultDuration)]
-        public ulong? DefaultDuration { get; private set; } = null!;
+        public ulong? DefaultDuration { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.ContentEncodings)]
+        public ContentEncodings? ContentEncodings { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Audio)]
         public Audio? Audio { get; private set; }
