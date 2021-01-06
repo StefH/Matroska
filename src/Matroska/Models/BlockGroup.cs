@@ -6,9 +6,12 @@ namespace Matroska.Models
     public sealed class BlockGroup
     {
         [MatroskaElementDescriptor(MatroskaSpecification.DiscardPadding)]
-        public long DiscardPadding { get; set; }
+        public long DiscardPadding { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.BlockDuration)]
+        public ulong BlockDuration { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Block, typeof(Block))]
-        public List<Block>? Blocks { get; set; }
+        public List<Block>? Blocks { get; private set; } = null!;
     }
 }

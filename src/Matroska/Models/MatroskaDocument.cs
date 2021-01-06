@@ -2,8 +2,8 @@
 {
     public sealed class MatroskaDocument
     {
-        public Ebml? Ebml { get; set; }
+        public Ebml Ebml { get; set; } = null!;
 
-        public Segment? Segment { get; set; }
+        public Segment Segment { get; set; } = null!;
     }
 }

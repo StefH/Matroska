@@ -84,7 +84,7 @@ namespace Matroska
 
         /// <summary>The CRC is computed on all the data of the Master-element it's in. The CRC Element should be the first in it's parent master for easier reading. All level 1 Elements should include a CRC-32. The CRC in use is the IEEE CRC32 Little Endian</summary>
         public const ulong CRC32 = 0x000000BF;
-        public static readonly ElementDescriptor CRC32Descriptor = new ElementDescriptor((long)CRC32, "CRC-32", ElementType.Binary);
+        public static readonly ElementDescriptor CRC32Descriptor = new ElementDescriptor((long)CRC32, nameof(CRC32), ElementType.Binary);
 
         /// <summary>Contain signature of some (coming) Elements in the stream.</summary>
         public const ulong SignatureSlot = 0x1B538667;

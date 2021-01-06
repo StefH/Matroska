@@ -5,7 +5,9 @@ using ATL;
 using CSCore;
 using CSCore.Codecs.OPUS;
 using CSCore.SoundOut;
+using FluentValidation;
 using Matroska.Muxer;
+using Matroska.Muxer.OggOpus.Settings;
 
 namespace Matroska
 {
@@ -13,8 +15,8 @@ namespace Matroska
     {
         static void Main(string[] args)
         {
-            string downloads = @"C:\Users\StefHeyenrath\Downloads\";
-            //string downloads = @"C:\Users\azurestef\Downloads\";
+            //string downloads = @"C:\Users\StefHeyenrath\Downloads\";
+            string downloads = @"C:\Users\azurestef\Downloads\";
 
             //var orgStream = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_org.opus");
             //var oggHeader1 = new OggHeader();
@@ -25,11 +27,27 @@ namespace Matroska
             var f = "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm";
             var dataStream = new FileStream(downloads + f, FileMode.Open, FileAccess.Read);
 
+            var test5 = MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test5.mkv", FileMode.Open, FileAccess.Read));
+            Console.WriteLine(JsonSerializer.Serialize(test5.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
+            Console.WriteLine(JsonSerializer.Serialize(test5.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
+            try
+            {
+                MatroskaDemuxer.ExtractOggOpusAudio(test5, new MemoryStream());
+            }
+            catch (ValidationException ve)
+            {
+                foreach (var error in ve.Errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
             var doc = MatroskaSerializer.Deserialize(dataStream);
 
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
+
 
             var fileStream = File.OpenWrite(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus");
             MatroskaDemuxer.ExtractOggOpusAudio(doc, fileStream);

@@ -26,7 +26,7 @@ namespace Matroska.Extensions
                             dump = r.ReadAscii();
                             break;
                         case ElementType.Binary:
-                            dump = "binary data";
+                            dump = "'Binary Data'";
                             break;
                         case ElementType.Date:
                             dump = r.ReadDate().ToString();
@@ -44,7 +44,7 @@ namespace Matroska.Extensions
                             dump = r.ReadUtf();
                             break;
                         case ElementType.MasterElement:
-                            dump = "'Master'";
+                            dump = "'MasterElement'";
                             break;
                         default:
                             dump = $"unknown (id:{r})";
