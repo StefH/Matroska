@@ -17,10 +17,10 @@ namespace Matroska.Muxer.OggOpus
         private ulong _granulePosition;
         private int _page;
 
-        public OggPageWriter(Stream stream, int? serial = null)
+        public OggPageWriter(Stream stream, int serial)
         {
             _writer = new BinaryWriter(stream);
-            _serial = serial ?? -1071269784;
+            _serial = serial;
         }
 
         public void WriteOggPage(OggHeaderType oggHeaderType, byte numberOfSegments, List<SegmentEntry> oggPages)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Matroska.Enumerations;
 using NEbml.Core;
 
 namespace Matroska.Models

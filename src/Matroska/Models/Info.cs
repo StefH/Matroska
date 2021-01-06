@@ -3,7 +3,7 @@ using Matroska.Attributes;
 
 namespace Matroska.Models
 {
-    public sealed class Info
+    public sealed class Info : BaseCRC32
     {
         [MatroskaElementDescriptor(MatroskaSpecification.SegmentUID)]
         public byte[]? SegmentUID { get; set; }

@@ -49,16 +49,23 @@ namespace Matroska
 
             var instance = Activator.CreateInstance(type);
 
-            while (reader.ReadNext())
+            try
             {
-                if (TryGetInfoByIdentifier(type, reader.ElementId.EncodedValue, out var info))
+                while (reader.ReadNext())
                 {
-                    SetPropertyValue(instance, info, reader);
+                    if (TryGetInfoByIdentifier(type, reader.ElementId.EncodedValue, out var info))
+                    {
+                        SetPropertyValue(instance, info, reader);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"WARNING: {instance.GetType().Name}: property {reader.GetName(true)} not mapped.");
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("Not mapped:" + reader.GetName(true));
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"ERROR: {instance.GetType().Name} at position {reader.ElementPosition} not mapped. Exception: {ex}");
             }
 
             if (isMasterElement)

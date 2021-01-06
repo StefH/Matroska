@@ -2,7 +2,7 @@
 
 namespace Matroska.Models
 {
-    public sealed class Seek
+    public sealed class Seek : BaseCRC32
     {
         [MatroskaElementDescriptor(MatroskaSpecification.SeekID)]
         public byte[]? SeekID { get; set; }

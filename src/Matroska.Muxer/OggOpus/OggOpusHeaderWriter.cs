@@ -14,7 +14,7 @@ namespace Matroska.Muxer.OggOpus
             _oggPageWriter = oggPageWriter;
         }
 
-        public void WriteHeaders(int channels, int sampleRate)
+        public void WriteHeaders(int channels, int sampleRate, ushort preSkip)
         {
             using var opusHeadStream = new MemoryStream();
             using var opusHeadWriter = new BinaryWriter(opusHeadStream);
@@ -22,7 +22,7 @@ namespace Matroska.Muxer.OggOpus
             {
                 Version = 1,
                 OutputChannelCount = (byte) channels,
-                PreSkip = 0,
+                PreSkip = preSkip,
                 InputSampleRate = (uint) sampleRate,
                 OutputGain = 0,
                 ChannelMappingFamily = 0

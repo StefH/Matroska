@@ -1,52 +1,65 @@
 ﻿using Matroska.Attributes;
+using Matroska.Enumerations;
 
 namespace Matroska.Models
 {
-    public sealed class TrackEntry
+    public sealed class TrackEntry : BaseCRC32
     {
         [MatroskaElementDescriptor(MatroskaSpecification.TrackNumber)]
-        public ulong TrackNumber { get; set; }
+        public ulong TrackNumber { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.TrackUID)]
-        public ulong TrackUID { get; set; }
+        public ulong TrackUID { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.TrackType)]
-        public TrackType TrackType { get; set; }
+        public TrackType TrackType { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.FlagEnabled)]
-        public ulong FlagEnabled { get; set; }
+        public ulong FlagEnabled { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.FlagDefault)]
-        public ulong FlagDefault { get; set; }
+        public ulong FlagDefault { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.FlagForced)]
-        public ulong FlagForced { get; set; }
+        public ulong FlagForced { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.FlagLacing)]
-        public ulong FlagLacing { get; set; }
+        public ulong FlagLacing { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Name)]
-        public string? Name { get; set; }
+        public string? Name { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Language)]
-        public string? Language { get; set; }
+        public string? Language { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.CodecDelay)]
-        public ulong CodecDelay { get; set; }
+        public ulong CodecDelay { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.SeekPreRoll)]
-        public ulong SeekPreRoll { get; set; }
+        public ulong SeekPreRoll { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.CodecID)]
-        public string? CodecID { get; set; }
+        public string? CodecID { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.CodecPrivate)]
-        public byte[]? CodecPrivate { get; set; }
+        public byte[]? CodecPrivate { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.CodecName)]
-        public string? CodecName { get; set; }
+        public string? CodecName { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.MinCache)]
+        public ulong? MinCache { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.DefaultDuration)]
+        public ulong? DefaultDuration { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.ContentEncodings)]
+        public ContentEncodings? ContentEncodings { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Audio)]
-        public Audio? Audio { get; set; }
+        public Audio? Audio { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.Video)]
+        public Video? Video { get; private set; }
     }
 }

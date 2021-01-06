@@ -5,7 +5,9 @@ using ATL;
 using CSCore;
 using CSCore.Codecs.OPUS;
 using CSCore.SoundOut;
+using FluentValidation;
 using Matroska.Muxer;
+using Matroska.Muxer.OggOpus.Settings;
 
 namespace Matroska
 {
@@ -25,11 +27,20 @@ namespace Matroska
             var f = "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm";
             var dataStream = new FileStream(downloads + f, FileMode.Open, FileAccess.Read);
 
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test1.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test2.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test3.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test5.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test6.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test1.mkv", FileMode.Open, FileAccess.Read));
+            MatroskaSerializer.Deserialize(new FileStream(downloads + @"matroska_test_w1_1\test8.mkv", FileMode.Open, FileAccess.Read));
+
             var doc = MatroskaSerializer.Deserialize(dataStream);
 
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
             Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
+
 
             var fileStream = File.OpenWrite(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus");
             MatroskaDemuxer.ExtractOggOpusAudio(doc, fileStream);
@@ -57,6 +68,9 @@ namespace Matroska
             Console.WriteLine("len = {0} {1}", waveSource.Length, waveSource.GetLength());
 
             soundOut.Initialize(waveSource);
+
+            waveSource.SetPosition(TimeSpan.FromMinutes(6));
+
             soundOut.Play();
         }
     }
