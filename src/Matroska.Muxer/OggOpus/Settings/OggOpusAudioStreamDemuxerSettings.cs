@@ -6,6 +6,6 @@
 
         public byte MaxSegmentPartsPerOggPage { get; set; } = MaxSegmentParts;
 
-        public int AudioTrackNumber { get; set; } = 1;
+        public ulong AudioTrackNumber { get; set; } = 1;
     }
 }

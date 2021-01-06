@@ -10,20 +10,15 @@ using Matroska.Muxer.OggOpus.Settings;
 
 namespace Matroska.Muxer.OggOpus
 {
-    public class OggOpusAudioStreamDemuxer
+    internal static class OggOpusAudioStreamDemuxer
     {
-        private readonly MatroskaDocument _doc;
-
-        public OggOpusAudioStreamDemuxer(MatroskaDocument doc)
+        public static void CopyTo(MatroskaDocument doc, Stream outputStream, OggOpusAudioStreamDemuxerSettings? settings = null)
         {
-            _doc = doc ?? throw new ArgumentNullException(nameof(doc));
+            if (doc == null)
+            {
+                throw new ArgumentNullException(nameof(doc));
+            }
 
-            var validator = new OggOpusMatroskaDocumentValidator();
-            validator.ValidateAndThrow(doc);
-        }
-
-        public void CopyTo(Stream outputStream, OggOpusAudioStreamDemuxerSettings? settings = null)
-        {
             if (outputStream == null)
             {
                 throw new ArgumentNullException(nameof(outputStream));
@@ -31,7 +26,10 @@ namespace Matroska.Muxer.OggOpus
 
             settings ??= new OggOpusAudioStreamDemuxerSettings();
 
-            var opusAudio = _doc.Segment.Tracks.TrackEntries.First(t => t.CodecID == OggOpusConstants.CodecID);
+            var validator = new OggOpusValidator();
+            validator.ValidateAndThrow((settings, doc));
+
+            var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.CodecID == OggOpusConstants.CodecID);
             ushort preSkip;
             try
             {
@@ -70,7 +68,7 @@ namespace Matroska.Muxer.OggOpus
             }
 
             // Loop
-            foreach (var oggSegmentTable in _doc.Segment.Clusters.Select(c => ConvertClusterToSegmentTable(c, sampleRate, settings.AudioTrackNumber)))
+            foreach (var oggSegmentTable in doc.Segment.Clusters.Select(c => ConvertClusterToSegmentTable(c, sampleRate, settings.AudioTrackNumber)))
             {
                 foreach (var oggSegmentEntry in oggSegmentTable)
                 {
@@ -90,7 +88,7 @@ namespace Matroska.Muxer.OggOpus
             }
         }
 
-        private List<SegmentEntry> ConvertClusterToSegmentTable(Cluster cluster, int sampleRate, int trackNumber)
+        private static List<SegmentEntry> ConvertClusterToSegmentTable(Cluster cluster, int sampleRate, ulong trackNumber)
         {
             var list = new List<SegmentEntry>();
 
@@ -99,7 +97,7 @@ namespace Matroska.Muxer.OggOpus
                 return list;
             }
 
-            foreach (var block in cluster.SimpleBlocks.Where(b => (int)b.TrackNumber == trackNumber))
+            foreach (var block in cluster.SimpleBlocks.Where(b => b.TrackNumber == trackNumber))
             {
                 if (block.Data == null)
                 {

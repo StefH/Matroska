@@ -15,7 +15,7 @@ namespace Matroska.Muxer
 
         public static void ExtractOggOpusAudio(MatroskaDocument doc, Stream outputStream, OggOpusAudioStreamDemuxerSettings? settings = null)
         {
-            new OggOpusAudioStreamDemuxer(doc).CopyTo(outputStream, settings);
+            OggOpusAudioStreamDemuxer.CopyTo(doc, outputStream, settings);
         }
     }
 }
