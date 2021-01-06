@@ -11,5 +11,7 @@
         public int NumberOfFrames { get; set; }
 
         public int NumberOfSamples { get; set; }
+
+        public bool IsLast { get; set; }
     }
 }

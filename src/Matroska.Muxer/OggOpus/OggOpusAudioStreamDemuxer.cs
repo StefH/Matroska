@@ -45,7 +45,6 @@ namespace Matroska.Muxer.OggOpus
             oggOpusHeaderWriter.WriteHeaders(channels, sampleRate, preSkip);
 
             // Loop OggSegments
-            var oggHeaderType = OggHeaderType.None;
             byte segmentParts = 0;
             var oggPageWithSegments = new List<SegmentEntry>();
 
@@ -59,37 +58,49 @@ namespace Matroska.Muxer.OggOpus
                 oggPageWithSegments.Clear();
             }
 
-            // Loop
-            foreach (var oggSegmentTable in doc.Segment.Clusters.Select(c => ConvertClusterToSegmentTable(c, sampleRate, settings.AudioTrackNumber)))
+            // Loop SegmentEntries
+            foreach (var oggSegmentEntry in ConvertClustersToSegmentTable(doc.Segment.Clusters, sampleRate, settings.AudioTrackNumber))
             {
-                foreach (var oggSegmentEntry in oggSegmentTable)
-                {
-                    oggPageWithSegments.Add(oggSegmentEntry);
-                    segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
+                oggPageWithSegments.Add(oggSegmentEntry);
+                segmentParts = (byte)(segmentParts + oggSegmentEntry.SegmentBytes.Length);
 
-                    if (segmentParts >= settings.MaxSegmentPartsPerOggPage)
-                    {
-                        WriteOggPageAndResetParts(oggHeaderType);
-                    }
-                }
-
-                if (segmentParts > 0)
+                if (segmentParts >= settings.MaxSegmentPartsPerOggPage)
                 {
-                    WriteOggPageAndResetParts(oggHeaderType);
+                    WriteOggPageAndResetParts(oggPageWithSegments.Any(o => o.IsLast) ? OggHeaderType.EndOfStream : OggHeaderType.None);
                 }
+            }
+
+            if (segmentParts > 0)
+            {
+                WriteOggPageAndResetParts(OggHeaderType.EndOfStream);
             }
         }
 
-        private static List<SegmentEntry> ConvertClusterToSegmentTable(Cluster cluster, int sampleRate, ulong trackNumber)
+        private static List<SegmentEntry> ConvertClustersToSegmentTable(List<Cluster> clusters, int sampleRate, ulong trackNumber)
+        {
+            var simpleBlocks = clusters.SelectMany(c => c.SimpleBlocks.Where(sb => sb?.TrackNumber == trackNumber)).Where(sb => sb != null);
+
+            var segmentEntries = ConvertSimpleBlocksToSegmentEntries(simpleBlocks, sampleRate);
+
+            if (segmentEntries.Count > 0)
+            {
+                var last = segmentEntries.Last();
+                last.IsLast = true;
+            }
+
+            return segmentEntries;
+        }
+
+        private static List<SegmentEntry> ConvertSimpleBlocksToSegmentEntries(IEnumerable<SimpleBlock> blocks, int sampleRate)
         {
             var list = new List<SegmentEntry>();
 
-            if (cluster.SimpleBlocks == null)
+            if (blocks == null)
             {
                 return list;
             }
 
-            foreach (var block in cluster.SimpleBlocks.Where(b => b.TrackNumber == trackNumber))
+            foreach (var block in blocks)
             {
                 if (block.Data == null)
                 {
@@ -131,6 +142,11 @@ namespace Matroska.Muxer.OggOpus
             if (dataSegmentLength < 2 * 255)
             {
                 return new byte[] { 255, (byte)(dataSegmentLength - 255) };
+            }
+
+            if (dataSegmentLength < 3 * 255)
+            {
+                return new byte[] { 255, 255, (byte)(dataSegmentLength - 2 * 255) };
             }
 
             int numberOfSegmentTableBytes = dataSegmentLength / 255;
