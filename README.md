@@ -1,9 +1,9 @@
 # Projects
 
 ## Matroska
-An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)
+An Ebml based serializer to deserialize a Matroska file (.mkv or .webm).
 
-[![NuGet](https://buildstats.info/nuget/Matroska.Demux)](https://www.nuget.org/packages/Matroska.Demux)
+[![NuGet](https://buildstats.info/nuget/Matroska)](https://www.nuget.org/packages/Matroska)
 
 ### Usage
 Deserialize a stream to a MatroskaDocument
@@ -14,10 +14,10 @@ var doc = MatroskaSerializer.Deserialize(stream);
 ```
 
 
-## Matroska.Demux
-A Matroska demuxer to extract Ogg Opus audio from a .webm file
+## Matroska.Muxer
+A Matroska demuxer to extract Ogg Opus audio from a .webm file.
 
-[![NuGet](https://buildstats.info/nuget/Matroska)](https://www.nuget.org/packages/Matroska)
+[![NuGet](https://buildstats.info/nuget/Matroska.Muxer)](https://www.nuget.org/packages/Matroska.Muxer)
 
 ### Usage
 Extract
