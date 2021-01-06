@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using FluentValidation;
 using Matroska.Models;
+using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 using Matroska.Muxer.OggOpus.Settings;
 
@@ -31,6 +32,16 @@ namespace Matroska.Muxer.OggOpus
             settings ??= new OggOpusAudioStreamDemuxerSettings();
 
             var opusAudio = _doc.Segment.Tracks.TrackEntries.First(t => t.CodecID == OggOpusConstants.CodecID);
+            ushort preSkip;
+            try
+            {
+                using var br = new BinaryReader(new MemoryStream(opusAudio.CodecPrivate));
+                preSkip = br.ReadOpusHead().PreSkip;
+            }
+            catch
+            {
+                preSkip = 0;
+            }
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var sampleRate = (int)opusAudio.Audio.SamplingFrequency;
@@ -41,7 +52,7 @@ namespace Matroska.Muxer.OggOpus
             var oggOpusHeaderWriter = new OggOpusHeaderWriter(oggPageWriter);
 
             // Write OpusHeader (+ OpusTags)
-            oggOpusHeaderWriter.WriteHeaders(channels, sampleRate);
+            oggOpusHeaderWriter.WriteHeaders(channels, sampleRate, preSkip);
 
             // Loop OggSegments
             var oggHeaderType = OggHeaderType.None;
@@ -88,7 +99,7 @@ namespace Matroska.Muxer.OggOpus
                 return list;
             }
 
-            foreach (var block in cluster.SimpleBlocks.Where(b => (int) b.TrackNumber == trackNumber))
+            foreach (var block in cluster.SimpleBlocks.Where(b => (int)b.TrackNumber == trackNumber))
             {
                 if (block.Data == null)
                 {
