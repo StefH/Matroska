@@ -75,6 +75,9 @@ namespace Matroska
             Console.WriteLine("len = {0} {1}", waveSource.Length, waveSource.GetLength());
 
             soundOut.Initialize(waveSource);
+
+            waveSource.SetPosition(TimeSpan.FromMinutes(6));
+
             soundOut.Play();
         }
     }

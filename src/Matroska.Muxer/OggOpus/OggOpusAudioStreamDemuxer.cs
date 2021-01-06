@@ -32,13 +32,12 @@ namespace Matroska.Muxer.OggOpus
             var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.TrackNumber == settings.AudioTrackNumber);
             ushort preSkip = GetPreSkipFromCodecPrivate(opusAudio);
 
-
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var sampleRate = (int)opusAudio.Audio.SamplingFrequency;
             var channels = (int)opusAudio.Audio.Channels;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            var oggPageWriter = new OggPageWriter(outputStream);
+            var oggPageWriter = new OggPageWriter(outputStream, settings.AudioStreamSerial);
             var oggOpusHeaderWriter = new OggOpusHeaderWriter(oggPageWriter);
 
             // Write OpusHeader (+ OpusTags)
