@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Caching;
 using Matroska.Attributes;
 using Matroska.Extensions;
 using Matroska.Models;
@@ -14,7 +13,7 @@ namespace Matroska
 {
     public static class MatroskaSerializer
     {
-        private static readonly ObjectCache cache = MemoryCache.Default;
+        private static readonly IDictionary<string, Dictionary<ulong, MatroskaElementInfo>> cache = new Dictionary<string, Dictionary<ulong, MatroskaElementInfo>>();
 
         public static MatroskaDocument Deserialize(Stream stream)
         {
@@ -154,9 +153,10 @@ namespace Matroska
 
         private static Dictionary<ulong, MatroskaElementInfo> GetInfoFromCache(Type type)
         {
-            return cache.AddOrGetExisting(type.FullName, () =>
+            string key = type.FullName;
+            if (!cache.ContainsKey(type.FullName))
             {
-                var dictionary = new Dictionary<ulong, MatroskaElementInfo>();
+                cache[key] = new Dictionary<ulong, MatroskaElementInfo>();
                 foreach (var property in type.GetProperties())
                 {
                     var attribute = property.GetCustomAttributes().OfType<MatroskaElementDescriptorAttribute>().FirstOrDefault();
@@ -173,22 +173,22 @@ namespace Matroska
                         ElementDescriptor = MatroskaSpecification.ElementDescriptorsByIdentifier[attribute.Identifier]
                     };
 
-                    dictionary.Add(attribute.Identifier, info);
+                    cache[key].Add(attribute.Identifier, info);
                 }
+            }
 
-                return dictionary;
-            });
+            return cache[key];
         }
-    }
 
-    struct MatroskaElementInfo
-    {
-        public PropertyInfo PropertyInfo { get; set; }
+        struct MatroskaElementInfo
+        {
+            public PropertyInfo PropertyInfo { get; set; }
 
-        public ulong Identifier { get; set; }
+            public ulong Identifier { get; set; }
 
-        public Type ElementType { get; set; }
+            public Type ElementType { get; set; }
 
-        public ElementDescriptor ElementDescriptor { get; set; }
+            public ElementDescriptor ElementDescriptor { get; set; }
+        }
     }
 }
