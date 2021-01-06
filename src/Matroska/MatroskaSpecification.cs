@@ -543,8 +543,8 @@ namespace Matroska
         public static readonly ElementDescriptor FrameRateDescriptor = new ElementDescriptor((long)FrameRate, nameof(FrameRate), ElementType.Float);
 
         /// <summary> Settings describing the colour format.</summary>
-        public const ulong Colour = 0x000055B0;
-        public static readonly ElementDescriptor ColourDescriptor = new ElementDescriptor((long)Colour, nameof(Colour), ElementType.MasterElement);
+        public const ulong Color = 0x000055B0;
+        public static readonly ElementDescriptor ColourDescriptor = new ElementDescriptor((long)Color, nameof(Color), ElementType.MasterElement);
 
         /// <summary>The Matrix Coefficients of the video used to derive luma and chroma values from reg, green, and blue color primaries. For clarity, the value and meanings for MatrixCoefficients are adopted from Table 4 of ISO/IEC 23001-8:2013/DCOR1. (0:GBR, 1: BT709, 2: Unspecified, 3: Reserved, 4: FCC, 5: BT470BG, 6: SMPTE 170M, 7: SMPTE 240M, 8: YCOCG, 9: BT2020 Non-constant Luminance, 10: BT2020 Constant Luminance)</summary>
         public const ulong MatrixCoefficients = 0x000055B1;

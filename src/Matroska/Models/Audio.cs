@@ -8,7 +8,7 @@ namespace Matroska.Models
         public double SamplingFrequency { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.OutputSamplingFrequency)]
-        public double OutputSamplingFrequency { get; private set; }
+        public double? OutputSamplingFrequency { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Channels)]
         public ulong Channels { get; private set; }

@@ -4,6 +4,24 @@ namespace Matroska.Extensions
 {
     internal static class EbmlReaderExtensions
     {
+        public static bool LocateElement(this EbmlReader reader, ElementDescriptor descriptor)
+        {
+            return reader.LocateElement(descriptor.Identifier.EncodedValue);
+        }
+
+        public static bool LocateElement(this EbmlReader reader, ulong identifier)
+        {
+            while (reader.ReadNext())
+            {
+                if (reader.ElementId == identifier)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static bool IsKnownMasterElement(this EbmlReader reader)
         {
             return MatroskaSpecification.ElementDescriptors.TryGetValue(reader.ElementId, out var descriptor) && descriptor.Type == ElementType.MasterElement;

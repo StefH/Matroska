@@ -54,5 +54,8 @@ namespace Matroska.Models
 
         [MatroskaElementDescriptor(MatroskaSpecification.Audio)]
         public Audio? Audio { get; private set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.Video)]
+        public Video? Video { get; private set; }
     }
 }
