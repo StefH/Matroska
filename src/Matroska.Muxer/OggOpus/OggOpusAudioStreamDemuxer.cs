@@ -29,17 +29,9 @@ namespace Matroska.Muxer.OggOpus
             var validator = new OggOpusValidator();
             validator.ValidateAndThrow((settings, doc));
 
-            var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.CodecID == OggOpusConstants.CodecID);
-            ushort preSkip;
-            try
-            {
-                using var br = new BinaryReader(new MemoryStream(opusAudio.CodecPrivate));
-                preSkip = br.ReadOpusHead().PreSkip;
-            }
-            catch
-            {
-                preSkip = 0;
-            }
+            var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.TrackNumber == settings.AudioTrackNumber);
+            ushort preSkip = GetPreSkipFromCodecPrivate(opusAudio);
+
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             var sampleRate = (int)opusAudio.Audio.SamplingFrequency;
@@ -147,6 +139,22 @@ namespace Matroska.Muxer.OggOpus
             segmentTable[numberOfSegmentTableBytes] = (byte)(dataSegmentLength - (numberOfSegmentTableBytes * 255));
 
             return segmentTable;
+        }
+
+        private static ushort GetPreSkipFromCodecPrivate(TrackEntry opusAudio)
+        {
+            try
+            {
+                using var br = new BinaryReader(new MemoryStream(opusAudio.CodecPrivate));
+                var opusHead = br.ReadOpusHead();
+
+                new OggOpusOpusHeadValidator().ValidateAndThrow(opusHead);
+                return br.ReadOpusHead().PreSkip;
+            }
+            catch
+            {
+                return 0;
+            }
         }
     }
 }

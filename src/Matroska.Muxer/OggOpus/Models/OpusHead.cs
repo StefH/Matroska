@@ -5,7 +5,7 @@ namespace Matroska.Muxer.OggOpus.Models
 {
     internal struct OpusHead
     {
-        private const string OpusHeadID = "OpusHead";
+        public const string OpusHeadID = "OpusHead";
 
         public string ID { get; set; }
         public byte Version { get; set; }

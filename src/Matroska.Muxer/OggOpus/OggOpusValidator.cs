@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using FluentValidation;
 using Matroska.Models;
+using Matroska.Muxer.OggOpus.Models;
 using Matroska.Muxer.OggOpus.Settings;
 
 namespace Matroska.Muxer.OggOpus
@@ -31,6 +32,14 @@ namespace Matroska.Muxer.OggOpus
         public OggOpusTrackEntryValidator()
         {
             // RuleFor(_ => _.Audio).NotNull();
+        }
+    }
+
+    internal class OggOpusOpusHeadValidator : AbstractValidator<OpusHead>
+    {
+        public OggOpusOpusHeadValidator()
+        {
+            RuleFor(_ => _.ID).Equal(OpusHead.OpusHeadID);
         }
     }
 }
