@@ -52,13 +52,11 @@ namespace Matroska.Muxer.OggOpus
 
         private static uint CalculateCheckSum(OggHeader oggHeader, byte[] data)
         {
-            using var oggPageStream = new MemoryStream();
-            using var oggPageWriter = new BinaryWriter(oggPageStream);
-            oggPageWriter.Write(oggHeader);
-            oggPageWriter.Write(data);
-            oggPageWriter.Flush();
+            using var oggHeaderStream = new MemoryStream();
+            using var oggHeaderWriter = new BinaryWriter(oggHeaderStream);
+            oggHeaderWriter.Write(oggHeader);
 
-            return OggCRC32.CalculateCRC(0, oggPageStream.ToArray());
+            return OggCRC32.CalculateCRC(0, oggHeaderStream.ToArray(), data);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Matroska.Models
         public ulong EBMLMaxSizeLength { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.DocType)]
-        public string? DocType { get; set; }
+        public string DocType { get; set; } = string.Empty;
 
         [MatroskaElementDescriptor(MatroskaSpecification.DocTypeVersion)]
         public ulong DocTypeVersion { get; set; }

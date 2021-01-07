@@ -9,18 +9,21 @@ namespace Matroska.Models
         public byte[]? Void { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.SeekHead)]
-        public SeekHead SeekHead { get; set; } = null!;
+        public SeekHead? SeekHead { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Info)]
-        public Info Info { get; set; } = null!;
+        public Info? Info { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Cues)]
-        public Cues Cues { get; set; } = null!;
+        public Cues? Cues { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Tracks)]
-        public Tracks Tracks { get; set; } = null!;
+        public Tracks? Tracks { get; set; }
+
+        [MatroskaElementDescriptor(MatroskaSpecification.Tags)]
+        public Tags? Tags { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Cluster, typeof(Cluster))]
-        public List<Cluster> Clusters { get; set; } = null!;
+        public List<Cluster>? Clusters { get; set; }
     }
 }

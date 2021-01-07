@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#pragma warning disable CS8602 // Dereference of a possibly null reference.
+using System.Linq;
 using FluentValidation;
 using Matroska.Models;
 using Matroska.Muxer.OggOpus.Models;
@@ -16,6 +17,7 @@ namespace Matroska.Muxer.OggOpus
             RuleFor(_ => _.doc).NotNull();
             RuleFor(_ => _.doc.Segment).NotNull();
             RuleFor(_ => _.doc.Segment.Tracks).NotNull();
+
             RuleFor(_ => _.doc.Segment.Tracks.TrackEntries).NotEmpty();
             RuleFor(_ => _.doc.Segment.Tracks.TrackEntries).Must(t => t.Any(te => te.CodecID == OggOpusConstants.CodecID))
                 .WithMessage($"At least 1 Audio Stream with CodecID = '{OggOpusConstants.CodecID}' should be present.");
@@ -43,3 +45,4 @@ namespace Matroska.Muxer.OggOpus
         }
     }
 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
