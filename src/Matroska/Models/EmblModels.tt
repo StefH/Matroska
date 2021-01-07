@@ -51,12 +51,11 @@ namespace Matroska.Models2
 <#
     foreach (var master in elements.Where(e => e.ElementType == "master"))
     {
-        var element = master;
 #>
-    public sealed class <#=element.Name#>
+    public sealed class <#=master.Name#>
     {
     <#
-        var properties = elements.Where(e => e.ElementType != "master" && e.Path.Contains("\\" + element.Name  + "\\"));
+        var properties = elements.Where(e => e == null);
         foreach (var property in properties)
         {
             string propertyType;
@@ -97,7 +96,7 @@ namespace Matroska.Models2
 #>
         public <#=propertyType#><#=(!property.Required || property.ElementType == "binary" ? "?" : "")#> <#=property.Name#> { get; set; }
 <#
-            }
+    }
         #>
     }
 
