@@ -31,8 +31,8 @@ namespace Matroska.Models
         [MatroskaElementDescriptor(MatroskaSpecification.AspectRatioType)]
         public ulong AspectRatioType { get; private set; }
 
-        [MatroskaElementDescriptor(MatroskaSpecification.Color)]
-        public Color? Color { get; private set; }
+        [MatroskaElementDescriptor(MatroskaSpecification.Colour)]
+        public Colour? Color { get; private set; }
 
     }
 }

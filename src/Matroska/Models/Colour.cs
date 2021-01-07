@@ -1,6 +1,6 @@
 ﻿namespace Matroska.Models
 {
-    public sealed class Color
+    public sealed class Colour
     {
     }
 }

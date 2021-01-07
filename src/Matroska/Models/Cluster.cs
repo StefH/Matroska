@@ -5,8 +5,8 @@ namespace Matroska.Models
 {
     public sealed class Cluster : BaseCRC32
     {
-        [MatroskaElementDescriptor(MatroskaSpecification.Timecode)]
-        public ulong Timecode { get; set; }
+        [MatroskaElementDescriptor(MatroskaSpecification.Timestamp)]
+        public ulong Timestamp { get; set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Position)]
         public ulong? Position { get; set; }
