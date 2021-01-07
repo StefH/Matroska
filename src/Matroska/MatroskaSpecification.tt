@@ -49,7 +49,7 @@ namespace Matroska
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
         })
         .Where(e => !e.Name.StartsWith("EBML"))
-        .OrderBy(e => e.Name);
+        .OrderBy(e => e.Path);
 #>
         #region Helper
         private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
@@ -155,6 +155,7 @@ namespace Matroska
         /// <summary>An Element ID whose data will be used to compute the signature.</summary>
         public const ulong SignedElement = 0x00006532;
         public static readonly ElementDescriptor SignedElementDescriptor = new ElementDescriptor((long)SignedElement, nameof(SignedElement), ElementType.Binary);
+
 <#
     foreach (var element in elements)
     {
