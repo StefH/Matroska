@@ -47,7 +47,7 @@ namespace Matroska.Muxer.OggOpus
         /// <param name="packetOffset">Opus packet offset.</param>
         /// <param name="len">The packet's length (must be at least 1)</param>
         /// <returns>The number of frames in the packet</returns>
-        public static int GetNumFrames(Span<byte> packet, int packetOffset, int len)
+        public static int GetNumFrames(ReadOnlySpan<byte> packet, int packetOffset, int len)
         {
             if (len < 1)
             {
@@ -81,7 +81,7 @@ namespace Matroska.Muxer.OggOpus
         /// <param name="len">The packet's length</param>
         /// <param name="Fs">The decoder's sampling rate in Hz. This must be a multiple of 400</param>
         /// <returns>The size of the PCM samples that this packet will be decoded to at the specified sample rate</returns>
-        public static int GetNumSamples(Span<byte> packet, int packetOffset, int len, int Fs)
+        public static int GetNumSamples(ReadOnlySpan<byte> packet, int packetOffset, int len, int Fs)
         {
             int count = GetNumFrames(packet, packetOffset, len);
 
@@ -107,7 +107,7 @@ namespace Matroska.Muxer.OggOpus
         /// <param name="packetOffset">Opus packet offset.</param>
         /// <param name="Fs">Sampling rate in Hz. This must be a multiple of 400, or inaccurate results will be returned.</param>
         /// <returns>Number of samples per frame</returns>
-        public static int GetNumSamplesPerFrame(Span<byte> packet, int packetOffset, int Fs)
+        public static int GetNumSamplesPerFrame(ReadOnlySpan<byte> packet, int packetOffset, int Fs)
         {
             if ((packet[packetOffset] & 0x80) != 0)
             {

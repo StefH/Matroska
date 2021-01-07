@@ -5,9 +5,7 @@ using ATL;
 using CSCore;
 using CSCore.Codecs.OPUS;
 using CSCore.SoundOut;
-using FluentValidation;
 using Matroska.Muxer;
-using Matroska.Muxer.OggOpus.Settings;
 
 namespace Matroska
 {
@@ -15,8 +13,7 @@ namespace Matroska
     {
         static void Main(string[] args)
         {
-            //string downloads = @"C:\Users\StefHeyenrath\Downloads\";
-            string downloads = @"C:\Users\azurestef\Downloads\";
+            string downloads = $"C:\\Users\\{Environment.UserName}\\Downloads\\";
 
             //var orgStream = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_org.opus");
             //var oggHeader1 = new OggHeader();
