@@ -1,4 +1,5 @@
-﻿using System;
+﻿#pragma warning disable CS8602 // Dereference of a possibly null reference.
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,11 @@ namespace Matroska.Muxer.OggOpus
                 throw new ArgumentNullException(nameof(doc));
             }
 
+            if (doc.Segment.Clusters == null)
+            {
+                throw new ArgumentNullException(nameof(doc.Segment.Clusters));
+            }
+
             if (outputStream == null)
             {
                 throw new ArgumentNullException(nameof(outputStream));
@@ -32,10 +38,9 @@ namespace Matroska.Muxer.OggOpus
             var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.TrackNumber == settings.AudioTrackNumber);
             ushort preSkip = GetPreSkipFromCodecPrivate(opusAudio);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             var sampleRate = (int)opusAudio.Audio.SamplingFrequency;
             var channels = (int)opusAudio.Audio.Channels;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             var oggPageWriter = new OggPageWriter(outputStream, settings.AudioStreamSerial);
             var oggOpusHeaderWriter = new OggOpusHeaderWriter(oggPageWriter);
@@ -173,3 +178,4 @@ namespace Matroska.Muxer.OggOpus
         }
     }
 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.

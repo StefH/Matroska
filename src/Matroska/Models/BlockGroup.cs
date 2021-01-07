@@ -15,6 +15,6 @@ namespace Matroska.Models
         public ulong BlockDuration { get; private set; }
 
         [MatroskaElementDescriptor(MatroskaSpecification.Block, typeof(Block))]
-        public List<Block>? Blocks { get; private set; } = null!;
+        public List<Block>? Blocks { get; private set; }
     }
 }
