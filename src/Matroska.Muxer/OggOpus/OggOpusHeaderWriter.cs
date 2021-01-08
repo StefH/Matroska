@@ -28,14 +28,11 @@ namespace Matroska.Muxer.OggOpus
                 ChannelMappingFamily = 0
             };
             opusHeadWriter.Write(opusHead);
-            opusHeadWriter.Flush();
             WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
 
             using var opusTagsStream = new MemoryStream();
             using var opusTagsWriter = new BinaryWriter(opusTagsStream);
             opusTagsWriter.Write(new OpusTags());
-            opusTagsWriter.Flush();
-
             WriteOggPage(OggHeaderType.None, opusTagsStream.ToArray());
         }
 
