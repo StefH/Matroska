@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="NEbml" Version="0.10.0" />
+    <PackageReference Include="NEbml" Version="0.10.1" />
     <PackageReference Include="System.Memory" Version="4.5.0" />
   </ItemGroup>
 
