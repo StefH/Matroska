@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
 		<Description>Demux a Matroska file (.mkv or .webm) into multiple streams</Description>
 		<PackageTags>Matroska;WebM;mkv;demux;ogg;opus</PackageTags>
 		<ProjectGuid>{4C05193C-5952-4099-B7CE-F927AC956754}</ProjectGuid>

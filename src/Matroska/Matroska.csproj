@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
     <PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
     <ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
@@ -14,31 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\Audio.cs" />
-    <Compile Remove="Models\BlockGroup.cs" />
-    <Compile Remove="Models\ChapterTranslate.cs" />
-    <Compile Remove="Models\Cluster.cs" />
-    <Compile Remove="Models\Colour.cs" />
-    <Compile Remove="Models\ContentCompression.cs" />
-    <Compile Remove="Models\ContentEncoding.cs" />
-    <Compile Remove="Models\ContentEncodings.cs" />
-    <Compile Remove="Models\CuePoint.cs" />
-    <Compile Remove="Models\CueReference.cs" />
-    <Compile Remove="Models\Cues.cs" />
-    <Compile Remove="Models\CueTrackPosition.cs" />
-    <Compile Remove="Models\Info.cs" />
-    <Compile Remove="Models\Seek.cs" />
-    <Compile Remove="Models\SeekHead.cs" />
-    <Compile Remove="Models\Segment.cs" />
-    <Compile Remove="Models\TagEntry.cs" />
-    <Compile Remove="Models\Tags.cs" />
-    <Compile Remove="Models\Target.cs" />
-    <Compile Remove="Models\TrackEntry.cs" />
-    <Compile Remove="Models\Tracks.cs" />
-    <Compile Remove="Models\Video.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="../../resources/logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
@@ -48,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="NEbml" Version="0.9.0" />
+    <PackageReference Include="NEbml" Version="0.9.1" />
     <PackageReference Include="System.Memory" Version="4.5.0" />
   </ItemGroup>
 
