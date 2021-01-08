@@ -36,7 +36,11 @@ namespace Matroska.Models
         { "Cluster" },
         { "TrackEntry" },
         { "SimpleBlock" },
+        { "Block" },
+        { "BlockAdditional" },
         { "BlockGroup" },
+        { "BlockVirtual" },
+        { "EncryptedBlock" },
         { "Tag" },
         { "SimpleTag" },
         { "Target" },
@@ -84,7 +88,8 @@ namespace Matroska.Models
     public sealed class <#=className#> : BaseModel
     {
 <#
-        foreach (var sub in master.SubElements.OrderBy(e => e.Path))
+        var subs = master.SubElements.OrderBy(e => e.Path);
+        foreach (var sub in subs)
         {
             string field = sub.Name;
             if (sub.Name == "Tag")
@@ -107,7 +112,10 @@ namespace Matroska.Models
             }
             WriteLine(a);
             WriteLine(new string(' ', 8) + GetProperty(sub));
-            WriteLine("");
+            if (sub != subs.Last())
+            {
+                WriteLine("");
+            }
         }
 #>
     }
@@ -138,7 +146,7 @@ namespace Matroska.Models
                 break;
 
             case "binary":
-                propertyType = property.Name == "SimpleBlock" ? "SimpleBlock" : "byte[]";
+                propertyType = property.Name.Contains("Block") && property.Name != "BlockAddIDExtraData" ? property.Name : "byte[]";
                 break;
 
             case "date":
