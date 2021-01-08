@@ -2,6 +2,7 @@
 using System.IO;
 using Matroska.Enumerations;
 using NEbml.Core;
+using Tedd;
 
 namespace Matroska.Models
 {
@@ -48,12 +49,35 @@ namespace Matroska.Models
 
         public byte[]? Data { get; private set; }
 
+        private void Parse2(Span<byte> raw)
+        {
+            var stream = new SpanStream(raw);
 
+            TrackNumber = stream.ReadVLQUInt64(out _);
 
-        public virtual void Parse(byte[] raw)
+            TimeCode = stream.ReadInt16();
+            Flags = (byte)stream.ReadByte();
+
+            IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
+            Lacing = (Lacing)(Flags & LacingBits);
+
+            if (Lacing != Lacing.No)
+            {
+                NumFrames = stream.ReadByte();
+
+                if (Lacing != Lacing.FixedSize)
+                {
+                    LaceCodedSizeOfEachFrame = (byte)stream.ReadByte();
+                }
+            }
+
+            Data = raw.Slice((int)stream.Position).ToArray();
+        }
+
+        public virtual void Parse(Span<byte> raw)
         {
             int size = Math.Min(raw.Length, 16);
-            using var stream = new MemoryStream(raw.AsSpan().Slice(0, size).ToArray());
+            using var stream = new MemoryStream(raw.Slice(0, size).ToArray());
             using var binaryReader = new BinaryReader(stream);
 
             var trackNumberAsVInt = VInt.Read(stream, 4, null);
@@ -75,7 +99,7 @@ namespace Matroska.Models
                 }
             }
 
-            Data = raw.AsSpan().Slice((int)stream.Position).ToArray();
+            Data = raw.Slice((int)stream.Position).ToArray();
         }
     }
 }

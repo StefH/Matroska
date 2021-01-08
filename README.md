@@ -33,3 +33,4 @@ MatroskaDemuxer.ExtractOggOpusAudio(inputStream, outputStream);
 - [NEbml](https://github.com/OlegZee/NEbml)
 - [concentus](https://github.com/lostromb/concentus)
 - [atldotnet](https://github.com/Zeugma440/atldotnet)
+- [Tedd.SpanUtils](https://github.com/tedd/Tedd.SpanUtils)

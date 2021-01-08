@@ -1,4 +1,6 @@
-﻿namespace Matroska.Models
+﻿using System;
+
+namespace Matroska.Models
 {
     /// <summary>
     /// http://matroska.sourceforge.net/technical/specs/index.html#simpleblock_structure
@@ -17,7 +19,7 @@
         /// </summary>
         public bool IsDiscardable { get; private set; }
 
-        public override void Parse(byte[] raw)
+        public override void Parse(Span<byte> raw)
         {
             base.Parse(raw);
 
