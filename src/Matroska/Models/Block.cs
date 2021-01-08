@@ -56,7 +56,7 @@ namespace Matroska.Models
             using var stream = new MemoryStream(raw.AsSpan().Slice(0, size).ToArray());
             using var binaryReader = new BinaryReader(stream);
 
-            var trackNumberAsVInt = VInt.Read(stream, 8, null);
+            var trackNumberAsVInt = VInt.Read(stream, 4, null);
             TrackNumber = trackNumberAsVInt.Value;
 
             TimeCode = binaryReader.ReadInt16();
