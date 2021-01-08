@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Matroska.Enumerations;
+using Matroska.Extensions;
 using NEbml.Core;
 using Tedd;
 
@@ -49,11 +50,17 @@ namespace Matroska.Models
 
         public byte[]? Data { get; private set; }
 
-        private void Parse2(Span<byte> raw)
+        public virtual void Parse(Span<byte> raw)
+        {
+            P1(raw);
+        }
+
+        private void P1(Span<byte> raw)
         {
             var stream = new SpanStream(raw);
 
-            TrackNumber = stream.ReadVLQUInt64(out _);
+            var trackNumberAsVInt = stream.ReadVInt(4);
+            TrackNumber = trackNumberAsVInt.Value;
 
             TimeCode = stream.ReadInt16();
             Flags = (byte)stream.ReadByte();
@@ -74,7 +81,7 @@ namespace Matroska.Models
             Data = raw.Slice((int)stream.Position).ToArray();
         }
 
-        public virtual void Parse(Span<byte> raw)
+        private void P2(Span<byte> raw)
         {
             int size = Math.Min(raw.Length, 16);
             using var stream = new MemoryStream(raw.Slice(0, size).ToArray());
