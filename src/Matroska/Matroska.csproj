@@ -14,6 +14,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\Audio.cs" />
+    <Compile Remove="Models\BlockGroup.cs" />
+    <Compile Remove="Models\ChapterTranslate.cs" />
+    <Compile Remove="Models\Cluster.cs" />
+    <Compile Remove="Models\Colour.cs" />
+    <Compile Remove="Models\ContentCompression.cs" />
+    <Compile Remove="Models\ContentEncoding.cs" />
+    <Compile Remove="Models\ContentEncodings.cs" />
+    <Compile Remove="Models\CuePoint.cs" />
+    <Compile Remove="Models\CueReference.cs" />
+    <Compile Remove="Models\Cues.cs" />
+    <Compile Remove="Models\CueTrackPosition.cs" />
+    <Compile Remove="Models\Info.cs" />
+    <Compile Remove="Models\Seek.cs" />
+    <Compile Remove="Models\SeekHead.cs" />
+    <Compile Remove="Models\Segment.cs" />
+    <Compile Remove="Models\TagEntry.cs" />
+    <Compile Remove="Models\Tags.cs" />
+    <Compile Remove="Models\Target.cs" />
+    <Compile Remove="Models\TrackEntry.cs" />
+    <Compile Remove="Models\Tracks.cs" />
+    <Compile Remove="Models\Video.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="../../resources/logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
