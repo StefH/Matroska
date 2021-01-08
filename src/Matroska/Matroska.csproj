@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
     <PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
     <ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
@@ -23,19 +23,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="NEbml" Version="0.9.0" />
+    <PackageReference Include="NEbml" Version="0.10.0" />
     <PackageReference Include="System.Memory" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="MatroskaSpecification.tt">
-      <LastGenOutput>MatroskaSpecification.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Models\EmblModels.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>EmblModels.cs</LastGenOutput>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -43,15 +32,23 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="MatroskaSpecification.tt">
+      <LastGenOutput>MatroskaSpecification.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Models\MatroskaModels.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MatroskaModels.cs</LastGenOutput>
+    </None>
     <Compile Update="MatroskaSpecification.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MatroskaSpecification.tt</DependentUpon>
     </Compile>
-    <Compile Update="Models\EmblModels.cs">
+    <Compile Update="Models\MatroskaModels.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>EmblModels.tt</DependentUpon>
+      <DependentUpon>MatroskaModels.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

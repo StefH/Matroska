@@ -10,6 +10,9 @@ namespace Matroska.Models
     /// </summary>
     public class Block : IParseRawBinary
     {
+        private const byte LacingBits = 0b0000110;
+        private const byte InvisibleBit = 0b00010000;
+
         /// <summary>
         /// Track Number (Track Entry)
         /// </summary>
@@ -21,6 +24,12 @@ namespace Matroska.Models
         /// Number of frames in the lace-1 (uint8)
         /// </summary>
         public int NumFrames { get; private set; }
+
+        /// <summary>
+        /// Lace-coded size of each frame of the lace, except for the last one (multiple uint8). 
+        /// *This is not used with Fixed-size lacing as it is calculated automatically from (total size of lace) / (number of frames in lace).
+        /// </summary>
+        public byte LaceCodedSizeOfEachFrame { get; private set; }
 
         /// <summary>
         /// Timecode (relative to Cluster timecode, signed int16)
@@ -39,32 +48,30 @@ namespace Matroska.Models
 
         public byte[]? Data { get; private set; }
 
+
+
         public virtual void Parse(byte[] raw)
         {
             int size = Math.Min(raw.Length, 16);
-            byte[] small = new byte[size];
-            Buffer.BlockCopy(raw, 0, small, 0, size);
+            using var stream = new MemoryStream(raw.AsSpan().Slice(0, size).ToArray());
+            using var binaryReader = new BinaryReader(stream);
 
-            using var stream = new MemoryStream(small);
-            using var bn = new BinaryReader(stream);
-
-            var trackNumberAsVInt = VInt.Read(stream, 8, null);
+            var trackNumberAsVInt = VInt.Read(stream, 4, null);
             TrackNumber = trackNumberAsVInt.Value;
 
-            TimeCode = bn.ReadInt16();
-            Flags = bn.ReadByte();
+            TimeCode = binaryReader.ReadInt16();
+            Flags = binaryReader.ReadByte();
 
-            IsInvisible = (Flags & 0x08) > 0;
-            Lacing = (Lacing)(Flags & (byte)Lacing.Any);
+            IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
+            Lacing = (Lacing)(Flags & LacingBits);
 
-            int laceCodedSizeOfEachFrame = 0;
             if (Lacing != Lacing.No)
             {
-                NumFrames = bn.ReadByte();
+                NumFrames = binaryReader.ReadByte();
 
                 if (Lacing != Lacing.FixedSize)
                 {
-                    laceCodedSizeOfEachFrame = bn.ReadByte();
+                    LaceCodedSizeOfEachFrame = binaryReader.ReadByte();
                 }
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using ATL;
 using CSCore;
 using CSCore.Codecs.OPUS;
@@ -11,6 +12,8 @@ namespace Matroska
 {
     class Program
     {
+        private static JsonSerializerOptions jsonOptions = new JsonSerializerOptions { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
+
         static void Main(string[] args)
         {
             string downloads = $"C:\\Users\\{Environment.UserName}\\Downloads\\";
@@ -33,10 +36,8 @@ namespace Matroska
 
             var doc = MatroskaSerializer.Deserialize(dataStream);
 
-            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, new JsonSerializerOptions { WriteIndented = true }));
-            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Cues, new JsonSerializerOptions { WriteIndented = true }));
-            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, new JsonSerializerOptions { WriteIndented = true }));
-
+            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Info, jsonOptions));
+            Console.WriteLine(JsonSerializer.Serialize(doc.Segment.Tracks, jsonOptions));
 
             var fileStream = File.OpenWrite(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus");
             MatroskaDemuxer.ExtractOggOpusAudio(doc, fileStream);

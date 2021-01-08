@@ -5,6 +5,8 @@
     /// </summary>
     public sealed class SimpleBlock : Block
     {
+        private const byte KeyFrameBit = 0b10000000;
+        private const byte DiscardableBit = 0b00000001;
         /// <summary>
         /// Keyframe, set when the Block contains only keyframes
         /// </summary>
@@ -19,8 +21,8 @@
         {
             base.Parse(raw);
 
-            IsKeyFrame = (Flags & 0x80) > 0;
-            IsDiscardable = (Flags & 0x01) > 0;
+            IsKeyFrame = (Flags & KeyFrameBit) == KeyFrameBit;
+            IsDiscardable = (Flags & DiscardableBit) == DiscardableBit;
         }
     }
 }
