@@ -120,7 +120,7 @@ namespace Matroska.Muxer.OggOpus
             }
             else
             {
-                var audiosize = ((packet[packetOffset] >> 3) & 0x3);
+                var audiosize = (packet[packetOffset] >> 3) & 0x3;
                 if (audiosize == 3)
                 {
                     return Fs * 60 / 1000;
