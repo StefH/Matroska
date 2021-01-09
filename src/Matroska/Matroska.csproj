@@ -1,55 +1,63 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
-    <PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
-    <ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
-    <LangVersion>8.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <WarningsAsErrors>nullable</WarningsAsErrors>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>
-    <PackageIcon>logo.png</PackageIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+		<Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
+		<PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
+		<ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
+		<LangVersion>8.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>
+		<PackageIcon>logo.png</PackageIcon>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="../../resources/logo.png" Pack="true" PackagePath="" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="NEbml" Version="0.10.1" />
-    <PackageReference Include="Tedd.SpanUtils" Version="1.1.0-beta.7" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="NEbml" Version="0.10.1" />
+		<PackageReference Include="Tedd.SpanUtils" Version="1.1.0-beta.7" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="MatroskaSpecification.tt">
-      <LastGenOutput>MatroskaSpecification.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-    <None Update="Models\MatroskaModels.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>MatroskaModels.cs</LastGenOutput>
-    </None>
-    <Compile Update="MatroskaSpecification.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MatroskaSpecification.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Models\MatroskaModels.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>MatroskaModels.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\SpanReaderWriter\SpanReaderWriter.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="MatroskaSpecification.tt">
+			<LastGenOutput>MatroskaSpecification.cs</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+		</None>
+		<None Update="Models\MatroskaModels.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>MatroskaModels.cs</LastGenOutput>
+		</None>
+		<Compile Update="MatroskaSpecification.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MatroskaSpecification.tt</DependentUpon>
+		</Compile>
+		<Compile Update="Models\MatroskaModels.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>MatroskaModels.tt</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
 </Project>

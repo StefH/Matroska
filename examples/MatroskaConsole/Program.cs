@@ -7,6 +7,7 @@ using CSCore;
 using CSCore.Codecs.OPUS;
 using CSCore.SoundOut;
 using Matroska.Muxer;
+using Tedd;
 
 namespace Matroska
 {
@@ -16,6 +17,7 @@ namespace Matroska
 
         static void Main(string[] args)
         {
+            VIntTests.Test();
             string downloads = $"C:\\Users\\{Environment.UserName}\\Downloads\\";
 
             //var orgStream = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_org.opus");

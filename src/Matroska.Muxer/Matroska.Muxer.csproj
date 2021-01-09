@@ -14,12 +14,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Settings\**" />
-	  <EmbeddedResource Remove="Settings\**" />
-	  <None Remove="Settings\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 

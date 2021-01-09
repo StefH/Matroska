@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
+using Tedd;
 
 namespace Matroska.Muxer.OggOpus.Models
 {
@@ -35,6 +38,34 @@ namespace Matroska.Muxer.OggOpus.Models
             InputSampleRate = r.ReadUInt32();
             OutputGain = r.ReadInt16();
             ChannelMappingFamily = r.ReadByte();
+        }
+        public void Read(SpanReader r)
+        {
+            ID = Encoding.ASCII.GetString(r.ReadBytes(8));
+            Version = r.ReadByte();
+            OutputChannelCount = r.ReadByte();
+            PreSkip = r.ReadUShort();
+            InputSampleRate = r.ReadUInt32();
+            OutputGain = r.ReadShort();
+            ChannelMappingFamily = r.ReadByte();
+        }
+
+
+        public void Read(Span<byte> r)
+        {
+            ID = Encoding.ASCII.GetString(r.MoveReadBytes(8));
+            Version = r.MoveReadByte();
+            OutputChannelCount = r.MoveReadByte();
+
+            PreSkip = MemoryMarshal.Cast<byte, UInt16>(r)[0];
+            r = r.Slice(sizeof(UInt16));
+
+          //  PreSkip = r.MoveReadUInt16();
+            InputSampleRate = MemoryMarshal.Cast<byte, UInt32>(r)[0]; //r.MoveReadUInt32();
+            r = r.Slice(sizeof(UInt32));
+
+            OutputGain = r.MoveReadInt16();
+            ChannelMappingFamily = r.MoveReadByte();
         }
     }
 }

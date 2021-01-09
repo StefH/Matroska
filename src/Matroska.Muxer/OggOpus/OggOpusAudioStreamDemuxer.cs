@@ -8,6 +8,7 @@ using Matroska.Models;
 using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 using Matroska.Muxer.OggOpus.Settings;
+using Tedd;
 
 namespace Matroska.Muxer.OggOpus
 {
@@ -165,11 +166,22 @@ namespace Matroska.Muxer.OggOpus
         {
             try
             {
+               // var spanReader1 = new SpanReader(opusAudio.CodecPrivate);
+              //  var xxx = spanReader1.Read<OpusHead>();
+
+                var spanReader = new SpanReader(opusAudio.CodecPrivate);
+                var o0 = new OpusHead();
+                o0.Read(spanReader);
+
+                //var stream = new SpanStream(opusAudio.CodecPrivate);
+                var opusHead = opusAudio.CodecPrivate.AsSpan().ReadOpusHead();
+
+
                 using var br = new BinaryReader(new MemoryStream(opusAudio.CodecPrivate));
-                var opusHead = br.ReadOpusHead();
+                var opusHead2 = br.ReadOpusHead();
 
                 new OggOpusOpusHeadValidator().ValidateAndThrow(opusHead);
-                return br.ReadOpusHead().PreSkip;
+                return opusHead.PreSkip;
             }
             catch
             {

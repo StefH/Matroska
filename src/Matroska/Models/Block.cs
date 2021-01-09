@@ -57,28 +57,51 @@ namespace Matroska.Models
 
         private void P1(Span<byte> raw)
         {
-            var stream = new SpanStream(raw);
-
-            var trackNumberAsVInt = stream.ReadVInt(4);
+            var spanReader = new SpanReader(raw);
+            var trackNumberAsVInt = spanReader.ReadVInt(4);
             TrackNumber = trackNumberAsVInt.Value;
 
-            TimeCode = stream.ReadInt16();
-            Flags = (byte)stream.ReadByte();
+            TimeCode = spanReader.ReadInt16();
+            Flags = spanReader.ReadByte();
 
             IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
             Lacing = (Lacing)(Flags & LacingBits);
 
             if (Lacing != Lacing.No)
             {
-                NumFrames = stream.ReadByte();
+                NumFrames = spanReader.ReadByte();
 
                 if (Lacing != Lacing.FixedSize)
                 {
-                    LaceCodedSizeOfEachFrame = (byte)stream.ReadByte();
+                    LaceCodedSizeOfEachFrame = spanReader.ReadByte();
                 }
             }
 
-            Data = raw.Slice((int)stream.Position).ToArray();
+            Data = raw.Slice(spanReader.Position).ToArray();
+
+
+            //var stream = new SpanStream(raw);
+
+            //var trackNumberAsVInt = stream.ReadVInt(4);
+            //TrackNumber = trackNumberAsVInt.Value;
+
+            //TimeCode = stream.ReadInt16();
+            //Flags = (byte)stream.ReadByte();
+
+            //IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
+            //Lacing = (Lacing)(Flags & LacingBits);
+
+            //if (Lacing != Lacing.No)
+            //{
+            //    NumFrames = stream.ReadByte();
+
+            //    if (Lacing != Lacing.FixedSize)
+            //    {
+            //        LaceCodedSizeOfEachFrame = (byte)stream.ReadByte();
+            //    }
+            //}
+
+            //Data = raw.Slice((int)stream.Position).ToArray();
         }
 
         private void P2(Span<byte> raw)

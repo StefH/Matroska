@@ -1,24 +1,92 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NEbml.Core;
 using Tedd;
 
 namespace Matroska.Extensions
 {
-    internal static class VIntExtensions
+    public static class VIntExtensions
     {
-		public static VInt ReadVInt(this ref SpanStream stream, int maxLength)
+		public static (ulong Value, int Length, ulong EncodedValue) ReadVInt(this ref SpanStream stream, int maxLength)
+		{
+			if (stream.MaxLength == 0)
+			{
+				throw new InvalidDataException("Invalid variable int.");
+			}
+
+			uint b1 = (uint)stream.ReadByte();
+			ulong raw = b1;
+			uint mask = 0xFF00;
+
+			for (int i = 0; i < maxLength; ++i)
+			{
+				mask >>= 1;
+
+				if ((b1 & mask) != 0)
+				{
+					ulong value = raw & ~mask;
+
+					for (int j = 0; j < i; ++j)
+					{
+						byte b = (byte)stream.ReadByte();
+
+						raw = (raw << 8) | b;
+						value = (value << 8) | b;
+					}
+
+					return (value, i + 1, raw);
+				}
+			}
+
+			throw new InvalidDataException("Invalid variable int.");
+		}
+
+		public static string Info(this (ulong Value, int Length, ulong EncodedValue) variableInt)
+        {
+			return $"VInt, value = {variableInt.Value}, length = {variableInt.Length}, encoded = {variableInt.EncodedValue:X}";
+		}
+
+		public static VInt ReadVInt(this ref SpanReader reader, int maxLength)
+		{
+			if (reader.Length == 0)
+			{
+				return default;
+			}
+
+			uint b1 = reader.ReadByte();
+			ulong raw = b1;
+			uint mask = 0xFF00;
+
+			for (int i = 0; i < maxLength; ++i)
+			{
+				mask >>= 1;
+
+				if ((b1 & mask) != 0)
+				{
+					ulong value = raw & ~mask;
+
+					for (int j = 0; j < i; ++j)
+					{
+						byte b = reader.ReadByte();
+
+						raw = (raw << 8) | b;
+						value = (value << 8) | b;
+					}
+
+					return VInt.EncodeSize(value, i + 1);
+				}
+			}
+
+			throw new InvalidDataException("Invalid variable int.");
+		}
+
+		public static VInt ReadVInt3(this ref SpanStream stream, int maxLength)
 		{
 			if (stream.MaxLength == 0)
             {
 				return default;
 			}
 
-			//Span<byte> temp = stackalloc byte[1];
 			uint b1 = (uint) stream.ReadByte();
 			ulong raw = b1;
 			uint mask = 0xFF00;
@@ -33,7 +101,7 @@ namespace Matroska.Extensions
 
 					for (int j = 0; j < i; ++j)
 					{
-						byte b = (byte) stream.ReadByte();
+						byte b = (byte) stream.ReadByte(); // toto cast
 						
 						raw = (raw << 8) | b;
 						value = (value << 8) | b;
