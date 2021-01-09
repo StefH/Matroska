@@ -9,6 +9,8 @@ namespace Matroska
     {
         public static void Test()
         {
+			Span<byte> x;
+
 			var s = "stefகுstef";
 
 			var ms = new MemoryStream();
@@ -59,7 +61,7 @@ namespace Matroska
 			var v6 = ss6.ReadVInt(4);
 			var i6 = v6.Info();
 
-			int x = 0;
+			int x2 = 0;
         }
     }
 }

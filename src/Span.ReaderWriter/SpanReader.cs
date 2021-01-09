@@ -58,7 +58,7 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte[] ReadBytes(int length)
         {
-            var result = Span.Slice(Position, Position + length).ToArray();
+            var result = _current.Slice(Position, Position + length).ToArray();
             Position += length;
 
             return result;
@@ -112,7 +112,7 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Read<T>() where T : struct
         {
-            var newSpan = Span.Slice(Position);
+            var newSpan = _current.Slice(Position);
             var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];
             Position += Unsafe.SizeOf<T>();
 
@@ -121,7 +121,8 @@ namespace System
 
         private int Read7BitEncodedInt()
         {
-            // Read out an Int32 7 bits at a time.  The high bit of the byte when on means to continue reading more bytes.
+            // Read out an Int32 7 bits at a time.
+            // The high bit of the byte when on means to continue reading more bytes.
             int count = 0;
             int shift = 0;
             byte b;
