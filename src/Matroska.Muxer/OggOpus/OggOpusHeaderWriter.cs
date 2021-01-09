@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 
@@ -16,6 +18,11 @@ namespace Matroska.Muxer.OggOpus
 
         public void WriteHeaders(int channels, int sampleRate, ushort preSkip)
         {
+            //Span<byte> span = stackalloc byte[Unsafe.SizeOf<OpusHead>()];
+            //var opusHeadSpanWriter = new SpanWriter(span);
+            //opusHeadSpanWriter.Write(opusHead);
+            //WriteOggPage(OggHeaderType.BeginningOfStream, span.ToArray());
+
             using var opusHeadStream = new MemoryStream();
             using var opusHeadWriter = new BinaryWriter(opusHeadStream);
             var opusHead = new OpusHead

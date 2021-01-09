@@ -87,7 +87,7 @@ namespace Matroska
 			var i6 = v6.Info();
 
 			var vintWriter = new SpanWriter(new byte[100]);
-			vintWriter.WriteVInt(v6.EncodedValue, v6.Length);
+			vintWriter.WriteVInt(v6.Value);
 
 			int x2 = 0;
         }

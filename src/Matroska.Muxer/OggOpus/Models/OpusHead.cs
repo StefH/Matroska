@@ -28,6 +28,17 @@ namespace Matroska.Muxer.OggOpus.Models
             w.Write(ChannelMappingFamily);
         }
 
+        public void Write(SpanWriter w)
+        {
+            w.Write(Encoding.ASCII.GetBytes(OpusHeadID));
+            w.Write(Version);
+            w.Write(OutputChannelCount);
+            w.Write(PreSkip);
+            w.Write(InputSampleRate);
+            w.Write(OutputGain);
+            w.Write(ChannelMappingFamily);
+        }
+
         public void Read(BinaryReader r)
         {
             ID = Encoding.ASCII.GetString(r.ReadBytes(8));
