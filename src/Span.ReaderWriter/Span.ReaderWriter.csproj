@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>0.0.1-preview-01</Version>
+		<Version>0.0.1-preview-02</Version>
 		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
 		<Description>SpanReader and SpanWriter which wrap a Span&lt;byte&gt; and provide a convenient functionality for reading and writing.</Description>
 		<PackageTags>Span;bytes;Reader;Writer;BinaryReader;BinaryWriter</PackageTags>
@@ -12,7 +12,12 @@
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
 		<RootNamespace>System</RootNamespace>
+		<PackageIcon>span.png</PackageIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../resources/span.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

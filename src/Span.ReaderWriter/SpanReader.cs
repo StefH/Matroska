@@ -22,6 +22,9 @@ namespace System
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ReadBool() => ReadByte() != 0;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte ReadByte()
         {
             var result = _current.Slice(Position)[0];
@@ -47,6 +50,9 @@ namespace System
         public short ReadInt16() => ReadShort();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int ReadInt() => ReadInt32();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort ReadUShort() => Read<ushort>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -54,6 +60,9 @@ namespace System
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt32() => Read<uint>();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int ReadInt32() => Read<int>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte[] ReadBytes(int length)
@@ -76,11 +85,6 @@ namespace System
         #region VInt
         public (ulong Value, int Length, ulong EncodedValue) ReadVInt(int maxLength)
         {
-            if (Length == 0 || Position >= Length)
-            {
-                throw new EndOfStreamException("Invalid Variable Int.");
-            }
-
             uint b1 = ReadByte();
             ulong raw = b1;
             uint mask = 0xFF00;

@@ -1,15 +1,40 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Matroska.Extensions;
 
 namespace Matroska
 {
+	struct Tmp
+    {
+		public bool bo;
+		public byte b;
+		public int I1;
+		public int I2;
+	}
+
     public static class VIntTests
     {
         public static void Test()
         {
-			Span<byte> x;
+			//IMemoryOwner<byte> owner = MemoryPool<byte>.Shared.Rent();
+
+			var tmpSize = Unsafe.SizeOf<Tmp>();
+			Span<byte> write_bytesAsSpan = new byte[tmpSize];
+
+			var sw = new SpanWriter(write_bytesAsSpan);
+			sw.Write(true);
+			sw.Write((byte) 12);
+			sw.Write(1000);
+			sw.Write(9999);
+
+			var spr = new SpanReader(write_bytesAsSpan);
+			var booled = spr.ReadBool();
+			var bbb = spr.ReadByte();
+			var iii1 = spr.ReadInt();
+			var iii2 = spr.ReadInt();
 
 			var s = "stefகுstef";
 
@@ -60,6 +85,9 @@ namespace Matroska
 			var ss6 = new SpanReader(new byte[] { 0x10, 0xDE, 0xFF, 0xAD });
 			var v6 = ss6.ReadVInt(4);
 			var i6 = v6.Info();
+
+			var vintWriter = new SpanWriter(new byte[100]);
+			vintWriter.WriteVInt(v6.EncodedValue, v6.Length);
 
 			int x2 = 0;
         }
