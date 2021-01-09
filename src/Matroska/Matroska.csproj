@@ -32,6 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Span.ReaderWriter\Span.ReaderWriter.csproj" />
 	  <ProjectReference Include="..\SpanReaderWriter\SpanReaderWriter.csproj" />
 	</ItemGroup>
 

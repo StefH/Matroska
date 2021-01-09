@@ -1,5 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System
 {
@@ -50,7 +52,6 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt() => ReadUInt32();
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt32() => Read<uint>();
 
@@ -64,6 +65,51 @@ namespace System
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public string ReadString()
+        {
+            var stringLength = Read7BitEncodedInt();
+            var stringBytes = ReadBytes(stringLength);
+
+            return Encoding.UTF8.GetString(stringBytes);
+        }
+
+        #region VInt
+        public (ulong Value, int Length, ulong EncodedValue) ReadVInt(int maxLength)
+        {
+            if (Length == 0 || Position >= Length)
+            {
+                throw new EndOfStreamException("Invalid Variable Int.");
+            }
+
+            uint b1 = ReadByte();
+            ulong raw = b1;
+            uint mask = 0xFF00;
+
+            for (int i = 0; i < maxLength; ++i)
+            {
+                mask >>= 1;
+
+                if ((b1 & mask) != 0)
+                {
+                    ulong value = raw & ~mask;
+
+                    for (int j = 0; j < i; ++j)
+                    {
+                        byte b = ReadByte();
+
+                        raw = (raw << 8) | b;
+                        value = (value << 8) | b;
+                    }
+
+                    return (value, i + 1, raw);
+                }
+            }
+
+            throw new EndOfStreamException("Invalid Variable Int.");
+        }
+        #endregion
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Read<T>() where T : struct
         {
             var newSpan = Span.Slice(Position);
@@ -71,6 +117,29 @@ namespace System
             Position += Unsafe.SizeOf<T>();
 
             return result;
+        }
+
+        private int Read7BitEncodedInt()
+        {
+            // Read out an Int32 7 bits at a time.  The high bit of the byte when on means to continue reading more bytes.
+            int count = 0;
+            int shift = 0;
+            byte b;
+            do
+            {
+                // Check for a corrupted stream. Read a max of 5 bytes.
+                if (shift == 5 * 7)  // 5 bytes max per Int32, shift += 7
+                {
+                    throw new FormatException("Format_Bad7BitInt32");
+                }
+
+                // ReadByte handles end of stream cases for us.
+                b = ReadByte();
+                count |= (b & 0x7F) << shift;
+                shift += 7;
+            } while ((b & 0x80) != 0);
+
+            return count;
         }
     }
 }
