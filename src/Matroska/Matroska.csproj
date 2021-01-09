@@ -24,7 +24,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="NEbml" Version="0.10.1" />
-		<PackageReference Include="Tedd.SpanUtils" Version="1.1.0-beta.7" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

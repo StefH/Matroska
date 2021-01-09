@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using Matroska.Enumerations;
-using Matroska.Extensions;
 using NEbml.Core;
-using Tedd;
 
 namespace Matroska.Models
 {
@@ -55,9 +53,9 @@ namespace Matroska.Models
             P1(raw);
         }
 
-        private void P1(Span<byte> raw)
+        private void P1(Span<byte> span)
         {
-            var spanReader = new SpanReader(raw);
+            var spanReader = new SpanReader(span);
             var trackNumberAsVInt = spanReader.ReadVInt(4);
             TrackNumber = trackNumberAsVInt.Value;
 
@@ -77,7 +75,7 @@ namespace Matroska.Models
                 }
             }
 
-            Data = raw.Slice(spanReader.Position).ToArray();
+            Data = span.Slice(spanReader.Position).ToArray();
 
 
             //var stream = new SpanStream(raw);

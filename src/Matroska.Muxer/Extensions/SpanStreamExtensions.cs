@@ -1,15 +1,14 @@
 ﻿using System;
 using Matroska.Muxer.OggOpus.Models;
-using Tedd;
 
 namespace Matroska.Muxer.Extensions
 {
-    internal static class SpanStreamExtensions
+    internal static class SpanReaderExtensions
     {
-        public static OpusHead ReadOpusHead(this Span<byte> span)
+        public static OpusHead ReadOpusHead(this ref SpanReader reader)
         {
             var h = new OpusHead();
-            h.Read(span);
+            h.Read(reader);
             return h;
         }
     }
