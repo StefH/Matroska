@@ -25,13 +25,13 @@ namespace Matroska
 			Span<byte> write_bytesAsSpan = new byte[tmpSize];
 
 			var sw = new SpanWriter(write_bytesAsSpan);
-			sw.Write(true);
+			//sw.Write(true);
 			sw.Write((byte) 12);
 			sw.Write(1000);
 			sw.Write(9999);
 
 			var spr = new SpanReader(write_bytesAsSpan);
-			var booled = spr.ReadBool();
+			//var booled = spr.ReadBool();
 			var bbb = spr.ReadByte();
 			var iii1 = spr.ReadInt();
 			var iii2 = spr.ReadInt();
