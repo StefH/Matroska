@@ -30,14 +30,15 @@ namespace Matroska.Muxer.OggOpus
             //opusHeadSpanWriter.Write(opusHead);
             //WriteOggPage(OggHeaderType.BeginningOfStream, span.ToArray());
 
-            using var opusHeadStream = new MemoryStream();
+            using var opusHeadStream = new MemoryStream(opusHead.Size);
             using var opusHeadWriter = new BinaryWriter(opusHeadStream);
             opusHeadWriter.Write(opusHead);
             WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
 
-            using var opusTagsStream = new MemoryStream();
+            var opusTags = new OpusTags();
+            using var opusTagsStream = new MemoryStream(opusTags.Size);
             using var opusTagsWriter = new BinaryWriter(opusTagsStream);
-            opusTagsWriter.Write(new OpusTags());
+            opusTagsWriter.Write(opusTags);
             WriteOggPage(OggHeaderType.None, opusTagsStream.ToArray());
         }
 
