@@ -4,6 +4,6 @@ namespace Matroska.Models
 {
     public interface IParseRawBinary
     {
-        void Parse(Span<byte> raw);
+        void Parse(Span<byte> span);
     }
 }

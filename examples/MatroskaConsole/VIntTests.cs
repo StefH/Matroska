@@ -59,32 +59,32 @@ namespace Matroska
 			// [TestCase(0, 1, ExpectedResult = 0x80ul)]
 			var ss1 = new SpanReader(new byte[] { 0x80 });
 			var v1 = ss1.ReadVInt(4);
-			var i1 = v1.Info();
+			var i1 = v1.ToString();
 
 			// [TestCase(1, 1, ExpectedResult = 0x81ul)]
 			var ss2 = new SpanReader(new byte[] { 0x81 });
 			var v2 = ss2.ReadVInt(4);
-			var i2 = v2.Info();
+			var i2 = v2.ToString();
 
 			// [TestCase(126, 1, ExpectedResult = 0xfeul)]
 			var ss3 = new SpanReader(new byte[] { 0xfe });
 			var v3 = ss3.ReadVInt(4);
-			var i3 = v3.Info();
+			var i3 = v3.ToString();
 
 			// [TestCase(127, 2, ExpectedResult = 0x407ful)]
 			var ss4 = new SpanReader(new byte[] { 0x40, 0x7F });
 			var v4 = ss4.ReadVInt(4);
-			var i4 = v4.Info();
+			var i4 = v4.ToString();
 
 			// [TestCase(128, 2, ExpectedResult = 0x4080ul)]
 			var ss5 = new SpanReader(new byte[] { 0x40, 0x80 });
 			var v5 = ss5.ReadVInt(4);
-			var i5 = v5.Info();
+			var i5 = v5.ToString();
 
 			// [TestCase(0xdeffad, 4, ExpectedResult = 0x10deffadul)]
 			var ss6 = new SpanReader(new byte[] { 0x10, 0xDE, 0xFF, 0xAD });
 			var v6 = ss6.ReadVInt(4);
-			var i6 = v6.Info();
+			var i6 = v6.ToString();
 
 			var vintWriter = new SpanWriter(new byte[100]);
 			vintWriter.WriteVInt(v6.Value);

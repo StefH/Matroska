@@ -19,9 +19,9 @@ namespace Matroska.Models
         /// </summary>
         public bool IsDiscardable { get; private set; }
 
-        public override void Parse(Span<byte> raw)
+        public override void Parse(Span<byte> span)
         {
-            base.Parse(raw);
+            base.Parse(span);
 
             IsKeyFrame = (Flags & KeyFrameBit) == KeyFrameBit;
             IsDiscardable = (Flags & DiscardableBit) == DiscardableBit;

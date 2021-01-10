@@ -67,5 +67,30 @@ namespace System
             spanReader.ReadString().Should().Be(st);
             spanReader.ReadString().Should().Be(stUtf8);
         }
+
+        [Theory]
+        [InlineData(new byte[] { 0x80 }, 1, 0x80ul, 0)]
+        [InlineData(new byte[] { 0x81 }, 1, 0x81ul, 1)]
+        [InlineData(new byte[] { 0xfe }, 1, 0xfeul, 126)]
+        [InlineData(new byte[] { 0x40, 0x7f }, 2, 0x407ful, 127)]
+        [InlineData(new byte[] { 0x40, 0x80 }, 2, 0x4080ul, 128)]
+        [InlineData(new byte[] { 0x10, 0xDE, 0xFF, 0xAD }, 4, 0x10deffad, 0xdeffad)]
+
+        public void TestVInt(byte[] bytes, int expectedLength, ulong expectedEncodedValue, ulong expectedValue)
+        {
+            var spanReader = new SpanReader(bytes);
+            var vint = spanReader.ReadVInt(4);
+
+            Assert.Equal(expectedLength, vint.Length);
+            Assert.Equal(expectedEncodedValue, vint.EncodedValue);
+            Assert.Equal(expectedValue, vint.Value);
+
+            var writeSpan = new byte[VInt.GetSize(expectedValue)].AsSpan();
+            var spanWriter = new SpanWriter(writeSpan);
+            
+            var writeLength = spanWriter.Write(vint);
+            Assert.Equal(expectedLength, writeLength);
+            Assert.Equal(bytes, writeSpan.ToArray());
+        }
     }
 }

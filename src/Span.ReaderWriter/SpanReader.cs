@@ -64,7 +64,8 @@ namespace System
 
         public decimal ReadDecimal()
         {
-            var buffer = Span.Slice(Position, 16);
+            var length = sizeof(decimal);
+            var buffer = Span.Slice(Position, length);
 
             var decimalBits = new int[4];
             decimalBits[0] = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
@@ -72,7 +73,7 @@ namespace System
             decimalBits[2] = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
             decimalBits[3] = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
-            Position += 16;
+            Position += length;
 
             return new decimal(decimalBits);
         }
@@ -87,7 +88,6 @@ namespace System
         {
             var result = _current.Slice(Position, length).ToArray();
             Position += length;
-
             return result;
         }
 
@@ -100,7 +100,7 @@ namespace System
         }
 
         #region VInt
-        public (ulong Value, int Length, ulong EncodedValue) ReadVInt(int maxLength)
+        public VInt ReadVInt(int maxLength)
         {
             uint b1 = ReadByte();
             ulong raw = b1;
@@ -122,7 +122,7 @@ namespace System
                         value = (value << 8) | b;
                     }
 
-                    return (value, i + 1, raw);
+                    return new VInt(value, i + 1, raw);
                 }
             }
 

@@ -86,24 +86,24 @@ namespace System
         }
 
         #region VInt
-        public int WriteVInt(ulong encodedCalue, int length)
+        public int Write(VInt vint)
         {
-            int p = length;
-            for (var data = encodedCalue; --p >= 0; data >>= 8)
+            int p = vint.Length;
+            for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
             {
                 Span[Position + p] = (byte)(data & 0xff);
             }
 
-            Position += length;
+            Position += vint.Length;
 
-            return length;
+            return vint.Length;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int WriteVInt(ulong value)
         {
-            var (encodedValue, length) = VIntUtils.Encode(value);
-            return WriteVInt(encodedValue, length);
+            var vint = new VInt(value);
+            return Write(vint);
         }
         #endregion
     }
