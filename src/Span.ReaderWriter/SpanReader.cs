@@ -21,10 +21,8 @@ namespace System
             _current = span;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ReadBool() => ReadByte() != 0;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte ReadByte()
         {
             var result = _current.Slice(Position)[0];
@@ -32,39 +30,39 @@ namespace System
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public byte ReadSByte()
+        public sbyte ReadSByte()
         {
             var result = _current.Slice(Position)[0];
             Position += sizeof(sbyte);
-            return result;
+            return (sbyte) result;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public char ReadChar() => Read<char>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public short ReadShort() => Read<short>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public short ReadInt16() => ReadShort();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int ReadInt() => ReadInt32();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort ReadUShort() => Read<ushort>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt() => ReadUInt32();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public uint ReadUInt32() => Read<uint>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int ReadInt32() => Read<int>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public long ReadLong() => Read<long>();
+
+        public ulong ReadULong() => Read<ulong>();
+
+        public decimal ReadDecimal() => Read<decimal>();
+
+        public float ReadFloat() => Read<float>();
+
+        public double ReadDouble() => Read<double>();
+
         public byte[] ReadBytes(int length)
         {
             var result = _current.Slice(Position, Position + length).ToArray();
@@ -73,7 +71,6 @@ namespace System
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string ReadString()
         {
             var stringLength = Read7BitEncodedInt();

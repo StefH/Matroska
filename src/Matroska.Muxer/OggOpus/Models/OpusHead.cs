@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Matroska.Muxer.OggOpus.Models
@@ -16,6 +15,8 @@ namespace Matroska.Muxer.OggOpus.Models
         public uint InputSampleRate { get; set; }
         public short OutputGain { get; set; }
         public byte ChannelMappingFamily { get; set; }
+
+        public int Size => 8 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ushort) + +sizeof(uint) + sizeof(short) + sizeof(byte);
 
         public void Write(BinaryWriter w)
         {

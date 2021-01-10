@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>0.0.1-preview-02</Version>
+		<Version>0.0.1</Version>
 		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
 		<Description>SpanReader and SpanWriter which wrap a Span&lt;byte&gt; and provide a convenient functionality for reading and writing.</Description>
 		<PackageTags>Span;bytes;Reader;Writer;BinaryReader;BinaryWriter</PackageTags>
@@ -13,6 +13,9 @@
 		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
 		<RootNamespace>System</RootNamespace>
 		<PackageIcon>span.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>

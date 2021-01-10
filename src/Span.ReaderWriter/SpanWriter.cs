@@ -1,6 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 
 namespace System
 {
@@ -18,7 +17,6 @@ namespace System
             Position = 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Write(byte value)
         {
             Span[Position] = value;
@@ -28,35 +26,6 @@ namespace System
             return 1;
         }
 
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public int Write(short value)
-        //{
-        //    var length = sizeof(byte);
-
-        //    Span<short> typedSpan = stackalloc short[1] { value };
-        //    var byteSpan = MemoryMarshal.Cast<short, byte>(typedSpan);
-        //    byteSpan.CopyTo(Span.Slice(Position));
-
-        //    Position += length;
-
-        //    return length;
-        //}
-
-        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
-        //public int Write(uint value)
-        //{
-        //    var length = sizeof(uint);
-
-        //    Span<uint> typedSpan = stackalloc uint[1] { value };
-        //    var byteSpan = MemoryMarshal.Cast<uint, byte>(typedSpan);
-        //    byteSpan.CopyTo(Span.Slice(Position));
-
-        //    Position += length;
-
-        //    return length;
-        //}
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Write<T>(T value) where T : unmanaged
         {
             var length = Unsafe.SizeOf<T>();
@@ -70,7 +39,6 @@ namespace System
             return length;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int Write(byte[] value)
         {
             var length = value.Length;
@@ -84,7 +52,6 @@ namespace System
         }
 
         #region VInt
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int WriteVInt(ulong encodedCalue, int length)
         {
             int p = length;

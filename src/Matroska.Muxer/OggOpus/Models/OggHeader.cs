@@ -17,6 +17,8 @@ namespace Matroska.Muxer.OggOpus.Models
         public byte TotalSegments;
         public byte[] SegmentTable;
 
+        public int Size => 4 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
+
         public void ReadFromStream(BinaryReader r)
         {
             ID = Encoding.ASCII.GetString(r.ReadBytes(4));

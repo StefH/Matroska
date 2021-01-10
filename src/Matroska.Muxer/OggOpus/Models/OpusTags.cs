@@ -7,6 +7,8 @@ namespace Matroska.Muxer.OggOpus.Models
     {
         public const string ID = "OpusTags";
 
+        public int Size => 8 * sizeof(byte) + sizeof(long);
+
         public void Write(BinaryWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(ID));

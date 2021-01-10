@@ -29,8 +29,8 @@ MatroskaDemuxer.ExtractOggOpusAudio(inputStream, outputStream);
 ```
 
 # Credits
-- [Ellié Computing](http://www.elliecomputing.com) contributes to this project by giving free licences of ECMerge, comparison/merge tool.
 - [NEbml](https://github.com/OlegZee/NEbml)
 - [concentus](https://github.com/lostromb/concentus)
 - [atldotnet](https://github.com/Zeugma440/atldotnet)
 - [Tedd.SpanUtils](https://github.com/tedd/Tedd.SpanUtils)
+- [Ellié Computing](http://www.elliecomputing.com) contributes to this project by giving free licences of ECMerge, comparison/merge tool.
