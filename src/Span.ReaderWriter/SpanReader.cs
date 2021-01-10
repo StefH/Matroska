@@ -25,19 +25,24 @@ namespace System
 
         public byte ReadByte()
         {
-            var result = _current.Slice(Position)[0];
+            var result = _current[Position];
             Position += sizeof(byte);
             return result;
         }
 
         public sbyte ReadSByte()
         {
-            var result = _current.Slice(Position)[0];
+            var result = _current[Position];
             Position += sizeof(sbyte);
-            return (sbyte) result;
+            return (sbyte)result;
         }
 
-        public char ReadChar() => Read<char>();
+        //public char ReadChar()
+        //{
+        //    var result = ReadInt();
+        //    Position += sizeof(int);
+        //    return (char)result;
+        //}
 
         public short ReadShort() => Read<short>();
 
@@ -57,7 +62,22 @@ namespace System
 
         public ulong ReadULong() => Read<ulong>();
 
-        public decimal ReadDecimal() => Read<decimal>();
+        public decimal ReadDecimal()
+        {
+            var buffer = Span.Slice(Position, 16);
+
+            var decimalBits = new int[4];
+            decimalBits[0] = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
+            decimalBits[1] = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+            decimalBits[2] = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
+            decimalBits[3] = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+
+            Position += 16;
+
+            return new decimal(decimalBits);
+        }
+
+        public float ReadSingle() => ReadFloat();
 
         public float ReadFloat() => Read<float>();
 
@@ -65,7 +85,7 @@ namespace System
 
         public byte[] ReadBytes(int length)
         {
-            var result = _current.Slice(Position, Position + length).ToArray();
+            var result = _current.Slice(Position, length).ToArray();
             Position += length;
 
             return result;
@@ -111,7 +131,7 @@ namespace System
         #endregion
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Read<T>() where T : struct
+        public T Read<T>() where T : unmanaged
         {
             var newSpan = _current.Slice(Position);
             var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];

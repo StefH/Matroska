@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
 using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 
@@ -18,8 +16,6 @@ namespace Matroska.Muxer.OggOpus
 
         public void WriteHeaders(int channels, int sampleRate, ushort preSkip)
         {
-            Span<byte> span = stackalloc byte[Unsafe.SizeOf<OpusHead>()];
-            var opusHeadSpanWriter = new SpanWriter(span);
             var opusHead = new OpusHead
             {
                 Version = 1,
@@ -29,22 +25,15 @@ namespace Matroska.Muxer.OggOpus
                 OutputGain = 0,
                 ChannelMappingFamily = 0
             };
-            opusHeadSpanWriter.Write(opusHead);
-            WriteOggPage(OggHeaderType.BeginningOfStream, span.ToArray());
+            //Span<byte> span = stackalloc byte[opusHead.Size];
+            //var opusHeadSpanWriter = new SpanWriter(span);
+            //opusHeadSpanWriter.Write(opusHead);
+            //WriteOggPage(OggHeaderType.BeginningOfStream, span.ToArray());
 
-            //using var opusHeadStream = new MemoryStream();
-            //using var opusHeadWriter = new BinaryWriter(opusHeadStream);
-            //var opusHead = new OpusHead
-            //{
-            //    Version = 1,
-            //    OutputChannelCount = (byte) channels,
-            //    PreSkip = preSkip,
-            //    InputSampleRate = (uint) sampleRate,
-            //    OutputGain = 0,
-            //    ChannelMappingFamily = 0
-            //};
-            //opusHeadWriter.Write(opusHead);
-            //WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
+            using var opusHeadStream = new MemoryStream();
+            using var opusHeadWriter = new BinaryWriter(opusHeadStream);
+            opusHeadWriter.Write(opusHead);
+            WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
 
             using var opusTagsStream = new MemoryStream();
             using var opusTagsWriter = new BinaryWriter(opusTagsStream);

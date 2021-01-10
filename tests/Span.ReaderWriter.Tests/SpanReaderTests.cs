@@ -11,7 +11,8 @@ namespace System
         {
             // Arrange
             bool bo = true;
-            char c = 'c';
+            //char c = 'c';
+            //char cUtf8 = 'ᚠ';
             byte b = 45;
             sbyte sb = 67;
             short s = short.MinValue;
@@ -21,14 +22,15 @@ namespace System
             long l = long.MinValue;
             ulong ul = ulong.MaxValue;
             decimal d = decimal.MinValue;
-            float f = float.MaxValue;
+            float f = 533174.1f;
             double db = double.MaxValue;
-            string st = "ᚠHello Worldಸ";
+            string st = "Hello World";
+            string stUtf8 = "ᚠHello Worldಸ";
 
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new BinaryWriter(memoryStream);
             binaryWriter.Write(bo);
-            binaryWriter.Write(c);
+            // binaryWriter.Write(c);
             binaryWriter.Write(b);
             binaryWriter.Write(sb);
             binaryWriter.Write(s);
@@ -41,6 +43,7 @@ namespace System
             binaryWriter.Write(f);
             binaryWriter.Write(db);
             binaryWriter.Write(st);
+            binaryWriter.Write(stUtf8);
 
             var bytes = memoryStream.ToArray();
 
@@ -49,7 +52,7 @@ namespace System
 
             // Assert
             spanReader.ReadBool().Should().Be(bo);
-            spanReader.ReadChar().Should().Be(c);
+            //spanReader.ReadChar().Should().Be(c);
             spanReader.ReadByte().Should().Be(b);
             spanReader.ReadSByte().Should().Be(sb);
             spanReader.ReadShort().Should().Be(s);
@@ -59,9 +62,10 @@ namespace System
             spanReader.ReadLong().Should().Be(l);
             spanReader.ReadULong().Should().Be(ul);
             spanReader.ReadDecimal().Should().Be(d);
-            spanReader.ReadFloat().Should().Be(f);
+            spanReader.ReadSingle().Should().Be(f);
             spanReader.ReadDouble().Should().Be(db);
             spanReader.ReadString().Should().Be(st);
+            spanReader.ReadString().Should().Be(stUtf8);
         }
     }
 }

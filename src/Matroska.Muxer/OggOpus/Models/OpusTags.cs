@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Matroska.Muxer.OggOpus.Models
 {
+    [StructLayout(LayoutKind.Sequential)]
     internal struct OpusTags
     {
         public const string ID = "OpusTags";
