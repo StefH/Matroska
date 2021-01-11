@@ -10,6 +10,7 @@ namespace System
         public void Read()
         {
             // Arrange
+            var dateTime = DateTime.UtcNow;
             bool bo = true;
             char c = 'c';
             char cUtf8 = 'ಸ';
@@ -29,6 +30,7 @@ namespace System
 
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new BinaryWriter(memoryStream);
+            binaryWriter.Write(dateTime.ToBinary());
             binaryWriter.Write(bo);
             binaryWriter.Write(c);
             binaryWriter.Write(cUtf8);
@@ -52,6 +54,7 @@ namespace System
             var spanReader = new SpanReader(bytes);
 
             // Assert
+            spanReader.ReadDateTime().Should().Be(dateTime);
             spanReader.ReadBoolean().Should().Be(bo);
             spanReader.ReadChar().Should().Be(c);
             spanReader.ReadChar().Should().Be(cUtf8);

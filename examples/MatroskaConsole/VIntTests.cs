@@ -19,6 +19,7 @@ namespace Matroska
     {
         public static void Test()
         {
+			long utcNowAsLong = new DateTime().ToBinary();
 			//IMemoryOwner<byte> owner = MemoryPool<byte>.Shared.Rent();
 
 			var tmpSize = Unsafe.SizeOf<Tmp>();

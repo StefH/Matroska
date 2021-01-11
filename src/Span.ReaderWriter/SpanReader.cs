@@ -105,9 +105,11 @@ namespace System
             return result;
         }
 
-        public int ReadBytes(Span<byte> span, int length)
+        public int ReadBytes(Span<byte> span, int length) => ReadBytes(span, 0, length);
+
+        public int ReadBytes(Span<byte> span, int start, int length)
         {
-            _currentSpan.Slice(Position, length).CopyTo(span);
+            _currentSpan.Slice(Position + start, length).CopyTo(span);
             Position += length;
             return length;
         }
@@ -118,6 +120,12 @@ namespace System
             var stringBytes = ReadBytes(stringLength);
 
             return _encoding.GetString(stringBytes);
+        }
+
+        public DateTime ReadDateTime()
+        {
+            var utcNowAsLong = ReadLong();
+            return DateTime.FromBinary(utcNowAsLong);
         }
 
         #region VInt
