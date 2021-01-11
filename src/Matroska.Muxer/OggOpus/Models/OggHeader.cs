@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Matroska.Muxer.OggOpus.Models
 {
+    [StructLayout(LayoutKind.Sequential)]
     internal struct OggHeader
     {
         public const string OggS = "OggS";
@@ -16,6 +18,8 @@ namespace Matroska.Muxer.OggOpus.Models
         public uint Checksum;
         public byte TotalSegments;
         public byte[] SegmentTable;
+
+        public int Size => 4 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
 
         public void ReadFromStream(BinaryReader r)
         {

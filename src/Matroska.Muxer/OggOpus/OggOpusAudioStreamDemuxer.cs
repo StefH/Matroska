@@ -165,11 +165,11 @@ namespace Matroska.Muxer.OggOpus
         {
             try
             {
-                using var br = new BinaryReader(new MemoryStream(opusAudio.CodecPrivate));
-                var opusHead = br.ReadOpusHead();
+                var reader = new SpanReader(opusAudio.CodecPrivate);
+                var opusHead = reader.ReadOpusHead();
 
                 new OggOpusOpusHeadValidator().ValidateAndThrow(opusHead);
-                return br.ReadOpusHead().PreSkip;
+                return opusHead.PreSkip;
             }
             catch
             {

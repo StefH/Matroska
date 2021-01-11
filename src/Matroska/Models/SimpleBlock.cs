@@ -1,4 +1,6 @@
-﻿namespace Matroska.Models
+﻿using System;
+
+namespace Matroska.Models
 {
     /// <summary>
     /// http://matroska.sourceforge.net/technical/specs/index.html#simpleblock_structure
@@ -17,9 +19,9 @@
         /// </summary>
         public bool IsDiscardable { get; private set; }
 
-        public override void Parse(byte[] raw)
+        public override void Parse(Span<byte> span)
         {
-            base.Parse(raw);
+            base.Parse(span);
 
             IsKeyFrame = (Flags & KeyFrameBit) == KeyFrameBit;
             IsDiscardable = (Flags & DiscardableBit) == DiscardableBit;

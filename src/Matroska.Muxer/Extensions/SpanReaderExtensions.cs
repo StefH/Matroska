@@ -3,12 +3,12 @@ using Matroska.Muxer.OggOpus.Models;
 
 namespace Matroska.Muxer.Extensions
 {
-    internal static class BinaryReaderExtensions
+    internal static class SpanReaderExtensions
     {
-        public static OpusHead ReadOpusHead(this BinaryReader reader)
+        public static OpusHead ReadOpusHead(this ref SpanReader reader)
         {
             var h = new OpusHead();
-            h.Read(reader);
+            h.Read(ref reader);
             return h;
         }
     }

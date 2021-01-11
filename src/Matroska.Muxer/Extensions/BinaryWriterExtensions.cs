@@ -9,15 +9,5 @@ namespace Matroska.Muxer.Extensions
         {
             oggHeader.Write(writer);
         }
-
-        public static void Write(this BinaryWriter writer, OpusHead opusHead)
-        {
-            opusHead.Write(writer);
-        }
-
-        public static void Write(this BinaryWriter writer, OpusTags opusTags)
-        {
-            opusTags.Write(writer);
-        }
     }
 }

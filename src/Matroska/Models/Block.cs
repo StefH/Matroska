@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Matroska.Enumerations;
-using NEbml.Core;
 
 namespace Matroska.Models
 {
@@ -48,34 +47,29 @@ namespace Matroska.Models
 
         public byte[]? Data { get; private set; }
 
-
-
-        public virtual void Parse(byte[] raw)
+        public virtual void Parse(Span<byte> span)
         {
-            int size = Math.Min(raw.Length, 16);
-            using var stream = new MemoryStream(raw.AsSpan().Slice(0, size).ToArray());
-            using var binaryReader = new BinaryReader(stream);
-
-            var trackNumberAsVInt = VInt.Read(stream, 4, null);
+            var spanReader = new SpanReader(span);
+            var trackNumberAsVInt = spanReader.ReadVInt(4);
             TrackNumber = trackNumberAsVInt.Value;
 
-            TimeCode = binaryReader.ReadInt16();
-            Flags = binaryReader.ReadByte();
+            TimeCode = spanReader.ReadInt16();
+            Flags = spanReader.ReadByte();
 
             IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
             Lacing = (Lacing)(Flags & LacingBits);
 
             if (Lacing != Lacing.No)
             {
-                NumFrames = binaryReader.ReadByte();
+                NumFrames = spanReader.ReadByte();
 
                 if (Lacing != Lacing.FixedSize)
                 {
-                    LaceCodedSizeOfEachFrame = binaryReader.ReadByte();
+                    LaceCodedSizeOfEachFrame = spanReader.ReadByte();
                 }
             }
 
-            Data = raw.AsSpan().Slice((int)stream.Position).ToArray();
+            Data = span.Slice(spanReader.Position).ToArray();
         }
     }
 }

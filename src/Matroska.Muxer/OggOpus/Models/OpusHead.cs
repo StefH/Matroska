@@ -1,8 +1,10 @@
 ﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Matroska.Muxer.OggOpus.Models
 {
+    [StructLayout(LayoutKind.Sequential)]
     internal struct OpusHead
     {
         public const string OpusHeadID = "OpusHead";
@@ -15,7 +17,9 @@ namespace Matroska.Muxer.OggOpus.Models
         public short OutputGain { get; set; }
         public byte ChannelMappingFamily { get; set; }
 
-        public void Write(BinaryWriter w)
+        public int Size => 8 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ushort) + +sizeof(uint) + sizeof(short) + sizeof(byte);
+
+        public void Write(ref SpanWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(OpusHeadID));
             w.Write(Version);
@@ -26,14 +30,14 @@ namespace Matroska.Muxer.OggOpus.Models
             w.Write(ChannelMappingFamily);
         }
 
-        public void Read(BinaryReader r)
+        public void Read(ref SpanReader r)
         {
             ID = Encoding.ASCII.GetString(r.ReadBytes(8));
             Version = r.ReadByte();
             OutputChannelCount = r.ReadByte();
-            PreSkip = r.ReadUInt16();
+            PreSkip = r.ReadUShort();
             InputSampleRate = r.ReadUInt32();
-            OutputGain = r.ReadInt16();
+            OutputGain = r.ReadShort();
             ChannelMappingFamily = r.ReadByte();
         }
     }

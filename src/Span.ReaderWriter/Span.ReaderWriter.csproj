@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<Version>0.0.1</Version>
+		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+		<Description>SpanReader and SpanWriter which wrap a Span&lt;byte&gt; and provide a convenient functionality for reading and writing.</Description>
+		<PackageTags>Span;bytes;Reader;Writer;BinaryReader;BinaryWriter</PackageTags>
+		<ProjectGuid>{2FBBA506-46CC-4BB1-BE69-37D1090E6999}</ProjectGuid>
+		<LangVersion>8.0</LangVersion>
+		<Nullable>enable</Nullable>
+		<WarningsAsErrors>nullable</WarningsAsErrors>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
+		<RootNamespace>System.IO</RootNamespace>
+		<PackageIcon>span.png</PackageIcon>
+		<PackageProjectUrl>https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter</PackageProjectUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter</RepositoryUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="../../resources/span.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="System.Memory" Version="4.5.4" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
+	</ItemGroup>
+</Project>
