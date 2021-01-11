@@ -7,42 +7,55 @@ namespace System
 {
     public ref struct SpanReader
     {
+        private const int MaxCharBytesSize = 128;
+
         public readonly ReadOnlySpan<byte> Span;
-        private ReadOnlySpan<byte> _current;
+        private readonly Encoding _encoding;
+        private readonly Decoder _decoder;
+        private readonly bool _has2BytesPerChar;
+        private readonly byte[] _charBytes;
+        private readonly char[] _singleChar;
+        private ReadOnlySpan<byte> _currentSpan;
 
         public int Length;
         public int Position;
 
-        public SpanReader(ReadOnlySpan<byte> span)
+        public SpanReader(ReadOnlySpan<byte> span) : this(span, new UTF8Encoding())
+        {
+        }
+
+        public SpanReader(ReadOnlySpan<byte> span, Encoding encoding)
         {
             Span = span;
             Length = span.Length;
             Position = 0;
-            _current = span;
+            _currentSpan = span;
+
+            _encoding = encoding;
+            _decoder = encoding.GetDecoder();
+
+            _has2BytesPerChar = encoding is UnicodeEncoding;
+            _charBytes = new byte[MaxCharBytesSize];
+            _singleChar = new char[1];
         }
 
         public bool ReadBool() => ReadByte() != 0;
 
         public byte ReadByte()
         {
-            var result = _current[Position];
+            var result = _currentSpan[Position];
             Position += sizeof(byte);
             return result;
         }
 
         public sbyte ReadSByte()
         {
-            var result = _current[Position];
+            var result = _currentSpan[Position];
             Position += sizeof(sbyte);
             return (sbyte)result;
         }
 
-        //public char ReadChar()
-        //{
-        //    var result = ReadInt();
-        //    Position += sizeof(int);
-        //    return (char)result;
-        //}
+        public char ReadChar() => (char)InternalReadOneChar();
 
         public short ReadShort() => Read<short>();
 
@@ -86,9 +99,16 @@ namespace System
 
         public byte[] ReadBytes(int length)
         {
-            var result = _current.Slice(Position, length).ToArray();
+            var result = _currentSpan.Slice(Position, length).ToArray();
             Position += length;
             return result;
+        }
+
+        public int ReadBytes(Span<byte> span, int length)
+        {
+            _currentSpan.Slice(Position, length).CopyTo(span);
+            Position += length;
+            return length;
         }
 
         public string ReadString()
@@ -96,7 +116,7 @@ namespace System
             var stringLength = Read7BitEncodedInt();
             var stringBytes = ReadBytes(stringLength);
 
-            return Encoding.UTF8.GetString(stringBytes);
+            return _encoding.GetString(stringBytes);
         }
 
         #region VInt
@@ -133,7 +153,7 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Read<T>() where T : unmanaged
         {
-            var newSpan = _current.Slice(Position);
+            var newSpan = _currentSpan.Slice(Position);
             var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];
             Position += Unsafe.SizeOf<T>();
 
@@ -152,7 +172,7 @@ namespace System
                 // Check for a corrupted stream. Read a max of 5 bytes.
                 if (shift == 5 * 7)  // 5 bytes max per Int32, shift += 7
                 {
-                    throw new FormatException("Format_Bad7BitInt32");
+                    throw new FormatException("Too many bytes in what should have been a 7 bit encoded Int32.");
                 }
 
                 // ReadByte handles end of stream cases for us.
@@ -162,6 +182,56 @@ namespace System
             } while ((b & 0x80) != 0);
 
             return count;
+        }
+
+        private int InternalReadOneChar()
+        {
+            // I know having a separate InternalReadOneChar method seems a little 
+            // redundant, but this makes a scenario like the security parser code
+            // 20% faster, in addition to the optimizations for UnicodeEncoding I
+            // put in InternalReadChars.   
+            int charsRead = 0;
+
+            while (charsRead == 0)
+            {
+                // We really want to know what the minimum number of bytes per char
+                // is for our encoding. Otherwise for UnicodeEncoding we'd have to do ~1+log(n) reads to read n characters.
+                // Assume 1 byte can be 1 char unless _has2BytesPerChar is true.
+                int numBytes = _has2BytesPerChar ? 2 : 1;
+
+                int r = ReadByte();
+                _charBytes[0] = (byte)r;
+
+                if (r == -1)
+                {
+                    numBytes = 0;
+                }
+
+                if (numBytes == 2)
+                {
+                    r = ReadByte();
+                    _charBytes[1] = (byte)r;
+
+                    if (r == -1)
+                    {
+                        numBytes = 1;
+                    }
+                }
+
+                if (numBytes == 0)
+                {
+                    throw new Exception("Found no bytes.  We're outta here.");
+                }
+
+                charsRead = _decoder.GetChars(_charBytes, 0, numBytes, _singleChar, 0);
+            }
+
+            if (charsRead == 0)
+            {
+                return -1;
+            }
+
+            return _singleChar[0];
         }
     }
 }

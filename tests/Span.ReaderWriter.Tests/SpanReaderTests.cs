@@ -11,8 +11,8 @@ namespace System
         {
             // Arrange
             bool bo = true;
-            //char c = 'c';
-            //char cUtf8 = 'ᚠ';
+            char c = 'c';
+            char cUtf8 = 'ಸ';
             byte b = 45;
             sbyte sb = 67;
             short s = short.MinValue;
@@ -30,7 +30,8 @@ namespace System
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new BinaryWriter(memoryStream);
             binaryWriter.Write(bo);
-            // binaryWriter.Write(c);
+            binaryWriter.Write(c);
+            binaryWriter.Write(cUtf8);
             binaryWriter.Write(b);
             binaryWriter.Write(sb);
             binaryWriter.Write(s);
@@ -52,7 +53,8 @@ namespace System
 
             // Assert
             spanReader.ReadBool().Should().Be(bo);
-            //spanReader.ReadChar().Should().Be(c);
+            spanReader.ReadChar().Should().Be(c);
+            spanReader.ReadChar().Should().Be(cUtf8);
             spanReader.ReadByte().Should().Be(b);
             spanReader.ReadSByte().Should().Be(sb);
             spanReader.ReadShort().Should().Be(s);

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<Authors>Stef Heyenrath</Authors>
-		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>net5.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>

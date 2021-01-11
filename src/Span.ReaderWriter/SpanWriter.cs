@@ -1,20 +1,32 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace System
 {
     public ref struct SpanWriter
     {
         public readonly Span<byte> Span;
+        private readonly Encoding _encoding;
 
         public int Length;
         public int Position;
 
-        public SpanWriter(Span<byte> span)
+        public SpanWriter(Span<byte> span) : this(span, new UTF8Encoding())
+        {
+        }
+
+        public SpanWriter(Span<byte> span, Encoding encoding)
         {
             Span = span;
+            _encoding = encoding;
             Length = span.Length;
             Position = 0;
+        }
+
+        public byte[] ToArray()
+        {
+            return Span.Slice(Position).ToArray();
         }
 
         public int Write(byte value)
