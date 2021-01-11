@@ -6,6 +6,9 @@ namespace System
 {
     public ref struct SpanWriter
     {
+        private const int DecimalLength = 16;
+        private readonly byte[] _decimalBuffer;
+
         public readonly Span<byte> Span;
         private readonly Encoding _encoding;
 
@@ -22,6 +25,8 @@ namespace System
             _encoding = encoding;
             Length = span.Length;
             Position = 0;
+
+            _decimalBuffer = new byte[DecimalLength];
         }
 
         public byte[] ToArray()
@@ -63,10 +68,12 @@ namespace System
             return length;
         }
 
+        public int Write(decimal value) => Write(DecimalToBytes(value));
+
+        public int Write(DateTime value) => Write(value.ToBinary());
+
         private byte[] DecimalToBytes(decimal number)
         {
-            var decimalBuffer = new byte[16];
-
             var decimalBits = decimal.GetBits(number);
 
             var lo = decimalBits[0];
@@ -74,27 +81,27 @@ namespace System
             var hi = decimalBits[2];
             var flags = decimalBits[3];
 
-            decimalBuffer[0] = (byte)lo;
-            decimalBuffer[1] = (byte)(lo >> 8);
-            decimalBuffer[2] = (byte)(lo >> 16);
-            decimalBuffer[3] = (byte)(lo >> 24);
+            _decimalBuffer[0] = (byte)lo;
+            _decimalBuffer[1] = (byte)(lo >> 8);
+            _decimalBuffer[2] = (byte)(lo >> 16);
+            _decimalBuffer[3] = (byte)(lo >> 24);
 
-            decimalBuffer[4] = (byte)mid;
-            decimalBuffer[5] = (byte)(mid >> 8);
-            decimalBuffer[6] = (byte)(mid >> 16);
-            decimalBuffer[7] = (byte)(mid >> 24);
+            _decimalBuffer[4] = (byte)mid;
+            _decimalBuffer[5] = (byte)(mid >> 8);
+            _decimalBuffer[6] = (byte)(mid >> 16);
+            _decimalBuffer[7] = (byte)(mid >> 24);
 
-            decimalBuffer[8] = (byte)hi;
-            decimalBuffer[9] = (byte)(hi >> 8);
-            decimalBuffer[10] = (byte)(hi >> 16);
-            decimalBuffer[11] = (byte)(hi >> 24);
+            _decimalBuffer[8] = (byte)hi;
+            _decimalBuffer[9] = (byte)(hi >> 8);
+            _decimalBuffer[10] = (byte)(hi >> 16);
+            _decimalBuffer[11] = (byte)(hi >> 24);
 
-            decimalBuffer[12] = (byte)flags;
-            decimalBuffer[13] = (byte)(flags >> 8);
-            decimalBuffer[14] = (byte)(flags >> 16);
-            decimalBuffer[15] = (byte)(flags >> 24);
+            _decimalBuffer[12] = (byte)flags;
+            _decimalBuffer[13] = (byte)(flags >> 8);
+            _decimalBuffer[14] = (byte)(flags >> 16);
+            _decimalBuffer[15] = (byte)(flags >> 24);
 
-            return decimalBuffer;
+            return _decimalBuffer;
         }
 
         #region VInt
