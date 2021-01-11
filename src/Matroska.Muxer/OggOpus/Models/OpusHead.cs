@@ -19,17 +19,6 @@ namespace Matroska.Muxer.OggOpus.Models
 
         public int Size => 8 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ushort) + +sizeof(uint) + sizeof(short) + sizeof(byte);
 
-        //public void Write(BinaryWriter w)
-        //{
-        //    w.Write(Encoding.ASCII.GetBytes(OpusHeadID));
-        //    w.Write(Version);
-        //    w.Write(OutputChannelCount);
-        //    w.Write(PreSkip);
-        //    w.Write(InputSampleRate);
-        //    w.Write(OutputGain);
-        //    w.Write(ChannelMappingFamily);
-        //}
-
         public void Write(ref SpanWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(OpusHeadID));
@@ -41,16 +30,6 @@ namespace Matroska.Muxer.OggOpus.Models
             w.Write(ChannelMappingFamily);
         }
 
-        //public void Read(BinaryReader r)
-        //{
-        //    ID = Encoding.ASCII.GetString(r.ReadBytes(8));
-        //    Version = r.ReadByte();
-        //    OutputChannelCount = r.ReadByte();
-        //    PreSkip = r.ReadUInt16();
-        //    InputSampleRate = r.ReadUInt32();
-        //    OutputGain = r.ReadInt16();
-        //    ChannelMappingFamily = r.ReadByte();
-        //}
         public void Read(ref SpanReader r)
         {
             ID = Encoding.ASCII.GetString(r.ReadBytes(8));

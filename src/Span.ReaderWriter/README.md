@@ -12,3 +12,12 @@ var reader = new SpanReader(bytes);
 var @int = reader.ReadInt();
 var @long = reader.ReadLong();
 ```
+
+Write some values to a `Span<byte>` or `byte[]`:
+``` c#
+var bytes = new byte[16]; // allocate enough space 
+var writer = new SpanWriter(bytes);
+
+writer.Write(123);
+writer.Write("test");
+```
