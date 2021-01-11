@@ -9,7 +9,7 @@ namespace Matroska.Muxer.OggOpus.Models
     {
         public const string ID = "OpusTags";
 
-        public int Size => 8 * sizeof(byte) + sizeof(long);
+        public readonly int Size => 8 * sizeof(byte) + sizeof(long);
 
         public void Write(ref SpanWriter w)
         {

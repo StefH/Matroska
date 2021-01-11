@@ -17,7 +17,7 @@ namespace Matroska.Muxer.OggOpus.Models
         public short OutputGain { get; set; }
         public byte ChannelMappingFamily { get; set; }
 
-        public int Size => 8 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ushort) + +sizeof(uint) + sizeof(short) + sizeof(byte);
+        public readonly int Size => 8 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ushort) + +sizeof(uint) + sizeof(short) + sizeof(byte);
 
         public void Write(ref SpanWriter w)
         {

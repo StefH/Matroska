@@ -19,7 +19,7 @@ namespace Matroska.Muxer.OggOpus.Models
         public byte TotalSegments;
         public byte[] SegmentTable;
 
-        public int Size => 4 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
+        public readonly int Size => 4 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
 
         public void ReadFromStream(BinaryReader r)
         {
@@ -47,7 +47,7 @@ namespace Matroska.Muxer.OggOpus.Models
             w.Write(SegmentTable);
         }
 
-        public int GetPageLength()
+        public readonly int GetPageLength()
         {
             int length = 0;
             for (int i = 0; i < TotalSegments; i++)
@@ -57,7 +57,7 @@ namespace Matroska.Muxer.OggOpus.Models
             return length;
         }
 
-        public int GetHeaderSize()
+        public readonly int GetHeaderSize()
         {
             return 27 + SegmentTable.Length;
         }
