@@ -26,6 +26,7 @@ namespace System
             float f = 533174.1f;
             double db = double.MaxValue;
             string st = "Hello World";
+            string stLong = new string('x', 5000);
             string stUtf8 = "ᚠHello Worldಸ";
 
             using var memoryStream = new MemoryStream();
@@ -46,6 +47,7 @@ namespace System
             binaryWriter.Write(f);
             binaryWriter.Write(db);
             binaryWriter.Write(st);
+            binaryWriter.Write(stLong);
             binaryWriter.Write(stUtf8);
 
             var bytes = memoryStream.ToArray();
@@ -70,6 +72,7 @@ namespace System
             spanReader.ReadSingle().Should().Be(f);
             spanReader.ReadDouble().Should().Be(db);
             spanReader.ReadString().Should().Be(st);
+            spanReader.ReadString().Should().Be(stLong);
             spanReader.ReadString().Should().Be(stUtf8);
         }
 

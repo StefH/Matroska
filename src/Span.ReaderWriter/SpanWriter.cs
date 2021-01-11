@@ -56,6 +56,15 @@ namespace System
             return length;
         }
 
+        public int Write(string value)
+        {
+            int len = _encoding.GetByteCount(value);
+            Write7BitEncodedInt(len);
+
+            var bytes = _encoding.GetBytes(value);
+            return len + Write(bytes);
+        }
+
         public int Write(byte[] value)
         {
             var length = value.Length;
@@ -72,6 +81,7 @@ namespace System
 
         public int Write(DateTime value) => Write(value.ToBinary());
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte[] DecimalToBytes(decimal number)
         {
             var decimalBits = decimal.GetBits(number);
@@ -102,6 +112,23 @@ namespace System
             _decimalBuffer[15] = (byte)(flags >> 24);
 
             return _decimalBuffer;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,414
+        private int Write7BitEncodedInt(int value)
+        {
+            int bytesWritten = 0;
+
+            // Write out an int 7 bits at a time.  The high bit of the byte, when on, tells reader to continue reading more bytes.
+            uint v = (uint)value; // support negative numbers
+            while (v >= 0x80)
+            {
+                bytesWritten += Write((byte)(v | 0x80));
+                v >>= 7;
+            }
+
+            return bytesWritten + Write((byte)v);
         }
 
         #region VInt
