@@ -10,13 +10,13 @@ namespace System
         private const int MaxCharBytesSize = 128;
 
         public readonly ReadOnlySpan<byte> Span;
+        private readonly ReadOnlySpan<byte> _currentSpan;
         private readonly Encoding _encoding;
         private readonly Decoder _decoder;
         private readonly bool _has2BytesPerChar;
         private readonly byte[] _charBytes;
         private readonly char[] _singleChar;
         private readonly int[] _decimalBits;
-        private ReadOnlySpan<byte> _currentSpan;
 
         public int Length;
         public int Position;
@@ -123,6 +123,16 @@ namespace System
             return DateTime.FromBinary(utcNowAsLong);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Read<T>() where T : unmanaged
+        {
+            var newSpan = _currentSpan.Slice(Position);
+            var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];
+            Position += Unsafe.SizeOf<T>();
+
+            return result;
+        }
+
         #region VInt
         public VInt ReadVInt(int maxLength)
         {
@@ -154,17 +164,8 @@ namespace System
         }
         #endregion
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T Read<T>() where T : unmanaged
-        {
-            var newSpan = _currentSpan.Slice(Position);
-            var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];
-            Position += Unsafe.SizeOf<T>();
-
-            return result;
-        }
-
         // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binaryreader.cs,582
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int Read7BitEncodedInt()
         {
             // Read out an Int32 7 bits at a time.
@@ -190,6 +191,7 @@ namespace System
         }
 
         // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binaryreader.cs,409
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int InternalReadOneChar()
         {
             // I know having a separate InternalReadOneChar method seems a little redundant,
