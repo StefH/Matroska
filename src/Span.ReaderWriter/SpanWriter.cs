@@ -61,11 +61,10 @@ namespace System.IO
             return len + Write(bytes);
         }
 
-        public int Write(byte[] value) => Write(value, value.Length);
+        public int Write(ReadOnlySpan<byte> byteSpan) => Write(byteSpan, byteSpan.Length);
 
-        public int Write(byte[] value, int length)
+        public int Write(ReadOnlySpan<byte> byteSpan, int length)
         {
-            Span<byte> byteSpan = value;
             byteSpan.CopyTo(Span.Slice(Position));
 
             Position += length;
