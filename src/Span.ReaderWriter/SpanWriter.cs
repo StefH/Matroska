@@ -8,7 +8,7 @@ namespace System.IO
     public ref struct SpanWriter
     {
         private const int BufferLength = 16;
-        private const int LargeByteBufferSize = 256; // Size should be around the max number of chars/string * Encoding's max bytes/char
+        // private const int LargeByteBufferSize = 256; // Size should be around the max number of chars/string * Encoding's max bytes/char
 
         public readonly Span<byte> Span;
         private readonly Encoding _encoding;
@@ -16,7 +16,7 @@ namespace System.IO
 
         //private readonly int _maxChars;
         private readonly char[] _singleChar;
-        private readonly byte[] _largeByteBuffer; // temp space for writing chars.
+        // private readonly byte[] _largeByteBuffer; // temp space for writing chars.
         private readonly byte[] _buffer; // temp space for writing primitives to.
 
         public int Length;
@@ -34,7 +34,7 @@ namespace System.IO
             Length = span.Length;
             Position = 0;
 
-            _largeByteBuffer = new byte[LargeByteBufferSize];
+            //_largeByteBuffer = new byte[LargeByteBufferSize];
             //_maxChars = _largeByteBuffer.Length / _encoding.GetMaxByteCount(1);
             _singleChar = new char[1];
             _buffer = new byte[BufferLength];
