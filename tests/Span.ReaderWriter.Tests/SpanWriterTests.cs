@@ -33,8 +33,8 @@ namespace System
             using var binaryWriter = new BinaryWriter(memoryStream);
             binaryWriter.Write(dateTime.ToBinary());
             binaryWriter.Write(bo);
-            //binaryWriter.Write(c);
-           // binaryWriter.Write(cUtf8);
+            binaryWriter.Write(c);
+            binaryWriter.Write(cUtf8);
             binaryWriter.Write(b);
             binaryWriter.Write(sb);
             binaryWriter.Write(s);
@@ -49,6 +49,8 @@ namespace System
             binaryWriter.Write(st);
             binaryWriter.Write(stLong);
             binaryWriter.Write(stUtf8);
+            binaryWriter.Write(new[] { c, cUtf8 });
+            binaryWriter.Write(!bo);
 
             var bytes = memoryStream.ToArray();
 
@@ -58,8 +60,8 @@ namespace System
 
             spanWriter.Write(dateTime);
             spanWriter.Write(bo);
-            //spanWriter.Write(c);
-            // spanWriter.Write(cUtf8);
+            spanWriter.Write(c);
+            spanWriter.Write(cUtf8);
             spanWriter.Write(b);
             spanWriter.Write(sb);
             spanWriter.Write(s);
@@ -74,6 +76,8 @@ namespace System
             spanWriter.Write(st);
             spanWriter.Write(stLong);
             spanWriter.Write(stUtf8);
+            spanWriter.Write(new[] { c, cUtf8 });
+            spanWriter.Write(!bo);
 
             // Assert
             newBytes.Should().BeEquivalentTo(bytes);
