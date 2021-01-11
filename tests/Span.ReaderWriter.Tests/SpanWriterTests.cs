@@ -10,6 +10,7 @@ namespace System
         public void Write()
         {
             // Arrange
+            var guid = Guid.NewGuid();
             var dateTime = DateTime.UtcNow;
             bool bo = true;
             char c = 'c';
@@ -32,6 +33,7 @@ namespace System
 
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new BinaryWriter(memoryStream);
+            binaryWriter.Write(guid.ToByteArray());
             binaryWriter.Write(dateTime.ToBinary());
             binaryWriter.Write(bo);
             binaryWriter.Write(c);
@@ -60,6 +62,7 @@ namespace System
             var spanWriterBytes = new byte[bytes.Length];
             var spanWriter = new SpanWriter(spanWriterBytes);
 
+            spanWriter.Write(guid);
             spanWriter.Write(dateTime);
             spanWriter.Write(bo);
             spanWriter.Write(c);
@@ -86,6 +89,7 @@ namespace System
             spanWriterBytes.Should().BeEquivalentTo(bytes);
 
             var spanReader = new SpanReader(spanWriterBytes);
+            spanReader.ReadGuid().Should().Be(guid);
             spanReader.ReadDateTime().Should().Be(dateTime);
             spanReader.ReadBoolean().Should().Be(bo);
             spanReader.ReadChar().Should().Be(c);

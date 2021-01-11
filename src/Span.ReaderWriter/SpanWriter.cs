@@ -89,6 +89,8 @@ namespace System.IO
 
         public int Write(DateTime value) => Write(value.ToBinary());
 
+        public int Write(Guid value) => Write(value.ToByteArray());
+
         public int Write<T>(T value) where T : unmanaged
         {
             MemoryMarshal.Write(Span.Slice(Position), ref value);

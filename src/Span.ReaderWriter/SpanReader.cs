@@ -7,6 +7,7 @@ namespace System.IO
 {
     public ref struct SpanReader
     {
+        private const int SizeOfGuid = 16;
         private const int MaxCharBytesSize = 128;
 
         public readonly ReadOnlySpan<byte> Span;
@@ -121,6 +122,11 @@ namespace System.IO
         {
             var utcNowAsLong = ReadLong();
             return DateTime.FromBinary(utcNowAsLong);
+        }
+
+        public Guid ReadGuid()
+        {
+            return new Guid(ReadBytes(SizeOfGuid));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
