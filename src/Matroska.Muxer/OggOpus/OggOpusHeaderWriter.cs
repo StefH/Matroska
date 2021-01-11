@@ -31,6 +31,8 @@ namespace Matroska.Muxer.OggOpus
             opusHeadSpanWriter.WriteOpusHead(opusHead);
             WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadSpanWriter.ToArray());
 
+            span.Clear();
+
             var opusTags = new OpusTags();
             var opusTagsSpanWriter = new SpanWriter(span);
             opusTagsSpanWriter.WriteOpusTags(opusTags);

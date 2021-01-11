@@ -127,7 +127,7 @@ namespace System.IO
         public T Read<T>() where T : unmanaged
         {
             var newSpan = _currentSpan.Slice(Position);
-            var result = MemoryMarshal.Cast<byte, T>(newSpan)[0];
+            var result = MemoryMarshal.Read<T>(newSpan);
             Position += Unsafe.SizeOf<T>();
 
             return result;
