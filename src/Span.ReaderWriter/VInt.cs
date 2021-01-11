@@ -1,4 +1,4 @@
-﻿namespace System
+﻿namespace Span.ReaderWriter.Ebml
 {
     /// <summary>
     /// EBML Variable Length Integer

@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using FluentAssertions;
+using Span.ReaderWriter.Ebml;
 using Xunit;
 
 namespace System

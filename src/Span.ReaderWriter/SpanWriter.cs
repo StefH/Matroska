@@ -1,8 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Span.ReaderWriter.Ebml;
 
-namespace System
+namespace System.IO
 {
     public ref struct SpanWriter
     {
@@ -41,7 +42,7 @@ namespace System
 
         public byte[] ToArray()
         {
-            return Span.Slice(Position).ToArray();
+            return Span.Slice(0, Position).ToArray();
         }
 
         public int Write(byte value)
@@ -101,6 +102,28 @@ namespace System
             return length;
         }
 
+        #region VInt
+        public int Write(VInt vint)
+        {
+            int p = vint.Length;
+            for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
+            {
+                Span[Position + p] = (byte)(data & 0xff);
+            }
+
+            Position += vint.Length;
+
+            return vint.Length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int WriteVInt(ulong value)
+        {
+            var vint = new VInt(value);
+            return Write(vint);
+        }
+        #endregion
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte[] DecimalToBytes(decimal number)
         {
@@ -150,27 +173,5 @@ namespace System
 
             return bytesWritten + Write((byte)v);
         }
-
-        #region VInt
-        public int Write(VInt vint)
-        {
-            int p = vint.Length;
-            for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
-            {
-                Span[Position + p] = (byte)(data & 0xff);
-            }
-
-            Position += vint.Length;
-
-            return vint.Length;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int WriteVInt(ulong value)
-        {
-            var vint = new VInt(value);
-            return Write(vint);
-        }
-        #endregion
     }
 }

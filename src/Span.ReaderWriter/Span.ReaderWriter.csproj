@@ -11,7 +11,7 @@
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
-		<RootNamespace>System</RootNamespace>
+		<RootNamespace>System.IO</RootNamespace>
 		<PackageIcon>span.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>

@@ -5,11 +5,11 @@ namespace Matroska.Muxer.Extensions
 {
     internal static class BinaryReaderExtensions
     {
-        public static OpusHead ReadOpusHead(this BinaryReader reader)
-        {
-            var h = new OpusHead();
-            h.Read(reader);
-            return h;
-        }
+        //public static OpusHead ReadOpusHead(this BinaryReader reader)
+        //{
+        //    var h = new OpusHead();
+        //    h.Read(reader);
+        //    return h;
+        //}
     }
 }

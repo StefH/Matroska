@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
@@ -25,21 +26,16 @@ namespace Matroska.Muxer.OggOpus
                 OutputGain = 0,
                 ChannelMappingFamily = 0
             };
-            //Span<byte> span = stackalloc byte[opusHead.Size];
-            //var opusHeadSpanWriter = new SpanWriter(span);
-            //opusHeadSpanWriter.Write(opusHead);
-            //WriteOggPage(OggHeaderType.BeginningOfStream, span.ToArray());
+            Span<byte> span = stackalloc byte[opusHead.Size];
+            var opusHeadSpanWriter = new SpanWriter(span);
+            opusHeadSpanWriter.WriteOpusHead(opusHead);
+            WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadSpanWriter.ToArray());
 
-            using var opusHeadStream = new MemoryStream(opusHead.Size);
-            using var opusHeadWriter = new BinaryWriter(opusHeadStream);
-            opusHeadWriter.Write(opusHead);
-            WriteOggPage(OggHeaderType.BeginningOfStream, opusHeadStream.ToArray());
 
             var opusTags = new OpusTags();
-            using var opusTagsStream = new MemoryStream(opusTags.Size);
-            using var opusTagsWriter = new BinaryWriter(opusTagsStream);
-            opusTagsWriter.Write(opusTags);
-            WriteOggPage(OggHeaderType.None, opusTagsStream.ToArray());
+            var opusTagsSpanWriter = new SpanWriter(span);
+            opusTagsSpanWriter.WriteOpusTags(opusTags);
+            WriteOggPage(OggHeaderType.None, opusTagsSpanWriter.ToArray());
         }
 
         private void WriteOggPage(OggHeaderType oggHeaderType, byte[] data)

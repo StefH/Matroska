@@ -11,7 +11,13 @@ namespace Matroska.Muxer.OggOpus.Models
 
         public int Size => 8 * sizeof(byte) + sizeof(long);
 
-        public void Write(BinaryWriter w)
+        //public void Write(BinaryWriter w)
+        //{
+        //    w.Write(Encoding.ASCII.GetBytes(ID));
+        //    w.Write(0L);
+        //}
+
+        public void Write(ref SpanWriter w)
         {
             w.Write(Encoding.ASCII.GetBytes(ID));
             w.Write(0L);

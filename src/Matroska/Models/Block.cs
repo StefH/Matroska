@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Matroska.Enumerations;
 
 namespace Matroska.Models

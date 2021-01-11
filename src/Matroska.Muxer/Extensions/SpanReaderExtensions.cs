@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.IO;
 using Matroska.Muxer.OggOpus.Models;
 
 namespace Matroska.Muxer.Extensions
@@ -8,7 +8,7 @@ namespace Matroska.Muxer.Extensions
         public static OpusHead ReadOpusHead(this ref SpanReader reader)
         {
             var h = new OpusHead();
-            h.Read(reader);
+            h.Read(ref reader);
             return h;
         }
     }
