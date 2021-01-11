@@ -91,12 +91,9 @@ namespace System.IO
 
         public int Write<T>(T value) where T : unmanaged
         {
+            MemoryMarshal.Write(Span.Slice(Position), ref value);
+
             var length = Unsafe.SizeOf<T>();
-
-            Span<T> typedSpan = stackalloc T[1] { value };
-            var byteSpan = MemoryMarshal.Cast<T, byte>(typedSpan);
-            byteSpan.CopyTo(Span.Slice(Position));
-
             Position += length;
             return length;
         }
