@@ -50,12 +50,7 @@ namespace System
             return result;
         }
 
-        public sbyte ReadSByte()
-        {
-            var result = _currentSpan[Position];
-            Position += sizeof(sbyte);
-            return (sbyte)result;
-        }
+        public sbyte ReadSByte() => (sbyte)ReadByte();
 
         public char ReadChar() => (char)InternalReadOneChar();
 
