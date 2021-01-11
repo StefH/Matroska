@@ -15,6 +15,7 @@ namespace System
         private readonly bool _has2BytesPerChar;
         private readonly byte[] _charBytes;
         private readonly char[] _singleChar;
+        private readonly int[] _decimalBits;
         private ReadOnlySpan<byte> _currentSpan;
 
         public int Length;
@@ -37,9 +38,10 @@ namespace System
             _has2BytesPerChar = encoding is UnicodeEncoding;
             _charBytes = new byte[MaxCharBytesSize];
             _singleChar = new char[1];
+            _decimalBits = new int[4];
         }
 
-        public bool ReadBool() => ReadByte() != 0;
+        public bool ReadBoolean() => ReadByte() != 0;
 
         public byte ReadByte()
         {
@@ -80,15 +82,14 @@ namespace System
             var length = sizeof(decimal);
             var buffer = Span.Slice(Position, length);
 
-            var decimalBits = new int[4];
-            decimalBits[0] = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
-            decimalBits[1] = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
-            decimalBits[2] = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
-            decimalBits[3] = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+            _decimalBits[0] = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
+            _decimalBits[1] = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+            _decimalBits[2] = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
+            _decimalBits[3] = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
             Position += length;
 
-            return new decimal(decimalBits);
+            return new decimal(_decimalBits);
         }
 
         public float ReadSingle() => ReadFloat();
@@ -160,17 +161,18 @@ namespace System
             return result;
         }
 
+        // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binaryreader.cs,582
         private int Read7BitEncodedInt()
         {
             // Read out an Int32 7 bits at a time.
-            // The high bit of the byte when on means to continue reading more bytes.
+            // The high bit of the byte when 'on' means to continue reading more bytes.
             int count = 0;
             int shift = 0;
             byte b;
             do
             {
                 // Check for a corrupted stream. Read a max of 5 bytes.
-                if (shift == 5 * 7)  // 5 bytes max per Int32, shift += 7
+                if (shift == 5 * 7) // 5 bytes max per Int32, shift += 7
                 {
                     throw new FormatException("Too many bytes in what should have been a 7 bit encoded Int32.");
                 }
@@ -184,12 +186,11 @@ namespace System
             return count;
         }
 
+        // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binaryreader.cs,409
         private int InternalReadOneChar()
         {
-            // I know having a separate InternalReadOneChar method seems a little 
-            // redundant, but this makes a scenario like the security parser code
-            // 20% faster, in addition to the optimizations for UnicodeEncoding I
-            // put in InternalReadChars.   
+            // I know having a separate InternalReadOneChar method seems a little redundant,
+            // but this makes a scenario like the security parser code 20% faster, in addition to the optimizations for UnicodeEncoding I put in InternalReadChars.   
             int charsRead = 0;
 
             while (charsRead == 0)
@@ -220,7 +221,7 @@ namespace System
 
                 if (numBytes == 0)
                 {
-                    throw new Exception("Found no bytes.  We're outta here.");
+                    throw new Exception("Found no bytes. We're outta here.");
                 }
 
                 charsRead = _decoder.GetChars(_charBytes, 0, numBytes, _singleChar, 0);

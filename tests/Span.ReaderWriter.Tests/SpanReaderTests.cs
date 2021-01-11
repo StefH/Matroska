@@ -52,7 +52,7 @@ namespace System
             var spanReader = new SpanReader(bytes);
 
             // Assert
-            spanReader.ReadBool().Should().Be(bo);
+            spanReader.ReadBoolean().Should().Be(bo);
             spanReader.ReadChar().Should().Be(c);
             spanReader.ReadChar().Should().Be(cUtf8);
             spanReader.ReadByte().Should().Be(b);
