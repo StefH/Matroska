@@ -50,6 +50,7 @@ namespace System
             binaryWriter.Write(st);
             binaryWriter.Write(stLong);
             binaryWriter.Write(stUtf8);
+            binaryWriter.Write(!bo);
             binaryWriter.Write(chars);
             binaryWriter.Write(!bo);
 
@@ -77,6 +78,7 @@ namespace System
             spanWriter.Write(st);
             spanWriter.Write(stLong);
             spanWriter.Write(stUtf8);
+            spanWriter.Write(!bo);
             spanWriter.Write(chars);
             spanWriter.Write(!bo);
 
@@ -102,6 +104,7 @@ namespace System
             spanReader.ReadString().Should().Be(st);
             spanReader.ReadString().Should().Be(stLong);
             spanReader.ReadString().Should().Be(stUtf8);
+            spanReader.ReadBoolean().Should().Be(!bo);
         }
     }
 }
