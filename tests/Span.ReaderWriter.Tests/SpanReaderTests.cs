@@ -89,7 +89,7 @@ namespace System
 
             var writeSpan = new byte[VInt.GetSize(expectedValue)].AsSpan();
             var spanWriter = new SpanWriter(writeSpan);
-            
+
             var writeLength = spanWriter.Write(vint);
             Assert.Equal(expectedLength, writeLength);
             Assert.Equal(bytes, writeSpan.ToArray());
