@@ -79,9 +79,9 @@
             return octets;
         }
 
-        public override string ToString()
+        public readonly override string ToString()
         {
-            return $"VInt, value = {Value}, length = {Length}, encoded = {EncodedValue:X}";
+            return $"VInt, value = {Value}, length = {Length}, encoded = 0x{EncodedValue:X}";
         }
     }
 }

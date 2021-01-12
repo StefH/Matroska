@@ -78,28 +78,29 @@ namespace System
         }
 
         [Theory]
-        [InlineData(new byte[] { 0x80 }, 1, 0x80ul, 0)]
-        [InlineData(new byte[] { 0x81 }, 1, 0x81ul, 1)]
-        [InlineData(new byte[] { 0xfe }, 1, 0xfeul, 126)]
-        [InlineData(new byte[] { 0x40, 0x7f }, 2, 0x407ful, 127)]
-        [InlineData(new byte[] { 0x40, 0x80 }, 2, 0x4080ul, 128)]
-        [InlineData(new byte[] { 0x10, 0xDE, 0xFF, 0xAD }, 4, 0x10deffad, 0xdeffad)]
+        [InlineData(new byte[] { 0x80 }, 1, 0x80ul, 0, "VInt, value = 0, length = 1, encoded = 0x80")]
+        [InlineData(new byte[] { 0x81 }, 1, 0x81ul, 1, "VInt, value = 1, length = 1, encoded = 0x81")]
+        [InlineData(new byte[] { 0xfe }, 1, 0xfeul, 126, "VInt, value = 126, length = 1, encoded = 0xFE")]
+        [InlineData(new byte[] { 0x40, 0x7f }, 2, 0x407ful, 127, "VInt, value = 127, length = 2, encoded = 0x407F")]
+        [InlineData(new byte[] { 0x40, 0x80 }, 2, 0x4080ul, 128, "VInt, value = 128, length = 2, encoded = 0x4080")]
+        [InlineData(new byte[] { 0x10, 0xDE, 0xFF, 0xAD }, 4, 0x10deffad, 0xdeffad, "VInt, value = 14614445, length = 4, encoded = 0x10DEFFAD")]
 
-        public void TestVInt(byte[] bytes, int expectedLength, ulong expectedEncodedValue, ulong expectedValue)
+        public void TestVInt(byte[] bytes, int expectedLength, ulong expectedEncodedValue, ulong expectedValue, string toString)
         {
             var spanReader = new SpanReader(bytes);
             var vint = spanReader.ReadVInt(4);
 
-            Assert.Equal(expectedLength, vint.Length);
-            Assert.Equal(expectedEncodedValue, vint.EncodedValue);
-            Assert.Equal(expectedValue, vint.Value);
+            vint.Length.Should().Be(expectedLength);
+            vint.EncodedValue.Should().Be(expectedEncodedValue);
+            vint.Value.Should().Be(expectedValue);
+            vint.ToString().Should().Be(toString);
 
             var writeSpan = new byte[VInt.GetSize(expectedValue)].AsSpan();
             var spanWriter = new SpanWriter(writeSpan);
 
             var writeLength = spanWriter.Write(vint);
-            Assert.Equal(expectedLength, writeLength);
-            Assert.Equal(bytes, writeSpan.ToArray());
+            writeLength.Should().Be(expectedLength);
+            spanWriter.ToArray().Should().BeEquivalentTo(bytes);
         }
     }
 }
