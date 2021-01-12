@@ -1,3 +1,7 @@
+# 0.0.5 (12 January 2021)
+- [#5](https://github.com/StefH/Matroska/pull/5) - Generate models based on Matroska specification contributed by [StefH](https://github.com/StefH)
+- [#6](https://github.com/StefH/Matroska/pull/6) - Use SpanReader + SpanWriter contributed by [StefH](https://github.com/StefH)
+
 # 0.0.4 (07 January 2021)
 - [#4](https://github.com/StefH/Matroska/pull/4) - Add Tags element + improve OggCRC32 contributed by [StefH](https://github.com/StefH)
 
@@ -8,5 +12,5 @@
 - [#2](https://github.com/StefH/Matroska/pull/2) - Add more properties [enhancement] contributed by [StefH](https://github.com/StefH)
 
 # 0.0.1 (05 January 2021)
-- [#1](https://github.com/StefH/Matroska/pull/1) - Add OggOpus Demuxer contributed by [StefH](https://github.com/StefH)
+- [#1](https://github.com/StefH/Matroska/pull/1) - Add OggOpus Demuxer [enhancement] contributed by [StefH](https://github.com/StefH)
 
