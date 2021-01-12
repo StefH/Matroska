@@ -140,7 +140,7 @@ namespace System.IO
         }
 
         #region VInt
-        public VInt ReadVInt(int maxLength)
+        public VInt ReadVInt(int maxLength = 4)
         {
             uint b1 = ReadByte();
             ulong raw = b1;

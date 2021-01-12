@@ -50,10 +50,9 @@ namespace Matroska.Models
         public virtual void Parse(Span<byte> span)
         {
             var spanReader = new SpanReader(span);
-            var trackNumberAsVInt = spanReader.ReadVInt(4);
-            TrackNumber = trackNumberAsVInt.Value;
 
-            TimeCode = spanReader.ReadInt16();
+            TrackNumber = spanReader.ReadVInt().Value;
+            TimeCode = spanReader.ReadShort();
             Flags = spanReader.ReadByte();
 
             IsInvisible = (Flags & InvisibleBit) == InvisibleBit;
