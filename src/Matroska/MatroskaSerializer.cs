@@ -20,7 +20,7 @@ namespace Matroska
             var reader = new EbmlReader(stream);
 
             reader.ReadNext();
-            var ebml = Deserialize<Ebml>(reader);
+            var ebml = Deserialize<EBML>(reader);
 
             reader.ReadNext();
             var segment = Deserialize<Segment>(reader);
