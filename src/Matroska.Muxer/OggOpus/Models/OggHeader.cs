@@ -7,7 +7,9 @@ namespace Matroska.Muxer.OggOpus.Models
     [StructLayout(LayoutKind.Sequential)]
     internal struct OggHeader
     {
-        public const string OggS = "OggS";
+        private const uint Oggs = 1399285583;
+
+        public const int CheckSumLocation = 22;
 
         public string ID;
         public byte StreamVersion;
@@ -19,7 +21,7 @@ namespace Matroska.Muxer.OggOpus.Models
         public byte TotalSegments;
         public byte[] SegmentTable;
 
-        public readonly int Size => 4 * sizeof(byte) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
+        public readonly int Size => sizeof(uint) + sizeof(byte) + sizeof(byte) + sizeof(ulong) + sizeof(int) + sizeof(int) + sizeof(uint) + sizeof(byte) + SegmentTable.Length * sizeof(byte);
 
         public void ReadFromStream(BinaryReader r)
         {
@@ -36,9 +38,22 @@ namespace Matroska.Muxer.OggOpus.Models
 
         public void Write(BinaryWriter w)
         {
-            w.Write(Encoding.ASCII.GetBytes(OggS));
+            w.Write(Oggs);
             w.Write(StreamVersion);
             w.Write((byte) TypeFlag);
+            w.Write(GranulePosition);
+            w.Write(Serial);
+            w.Write(PageNumber);
+            w.Write(Checksum);
+            w.Write(TotalSegments);
+            w.Write(SegmentTable);
+        }
+
+        public void Write(ref SpanWriter w)
+        {
+            w.Write(Oggs);
+            w.Write(StreamVersion);
+            w.Write((byte)TypeFlag);
             w.Write(GranulePosition);
             w.Write(Serial);
             w.Write(PageNumber);

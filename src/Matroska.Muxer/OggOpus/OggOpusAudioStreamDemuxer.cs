@@ -38,7 +38,6 @@ namespace Matroska.Muxer.OggOpus
             var opusAudio = doc.Segment.Tracks.TrackEntries.First(t => t.TrackNumber == settings.AudioTrackNumber);
             ushort preSkip = GetPreSkipFromCodecPrivate(opusAudio);
 
-
             var sampleRate = (int)opusAudio.Audio.SamplingFrequency;
             var channels = (int)opusAudio.Audio.Channels;
 

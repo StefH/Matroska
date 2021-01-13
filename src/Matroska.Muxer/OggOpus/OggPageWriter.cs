@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Matroska.Muxer.Extensions;
@@ -41,9 +42,10 @@ namespace Matroska.Muxer.OggOpus
                 SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
             };
 
-            oggHeader.Checksum = CalculateCheckSum(oggHeader, data);
+            // oggHeader.Checksum = CalculateCheckSum(oggHeader, data);
+            //_writer.Write(oggHeader);
 
-            _writer.Write(oggHeader);
+            _writer.Write(CalculateCheckSumFromOggHeaderAndGetOggHeaderBytes(oggHeader, data));
             _writer.Write(data);
             _writer.Flush();
 
@@ -57,6 +59,21 @@ namespace Matroska.Muxer.OggOpus
             oggHeaderWriter.Write(oggHeader);
 
             return OggCRC32.CalculateCRC(0, oggHeaderStream.ToArray(), data);
+        }
+
+        private static byte[] CalculateCheckSumFromOggHeaderAndGetOggHeaderBytes(OggHeader oggHeader, byte[] data)
+        {
+            Span<byte> span = stackalloc byte[oggHeader.Size];
+
+            var spanWriter = new SpanWriter(span);
+            spanWriter.WriteOggHeader(oggHeader);
+
+            var checkSum = OggCRC32.CalculateCRC(0, spanWriter.Span, data);
+
+            spanWriter.Position = OggHeader.CheckSumLocation;
+            spanWriter.Write(checkSum);
+
+            return spanWriter.Span.ToArray();
         }
     }
 }
