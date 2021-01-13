@@ -14,6 +14,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Models\Ebml.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
 	</ItemGroup>
 

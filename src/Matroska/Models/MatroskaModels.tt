@@ -50,13 +50,16 @@ namespace Matroska.Models
         { "CuetrackPosition" },
         { "CuePoint" },
         { "CueReference" },
+        { "SignatureSlot" },
+        { "SignatureElementList" },
+        { "SignedElement" },
     };
 
     string filename = Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile);
     var elements = XElement.Load(filename).Elements()
         .Select(e => new Element
         { 
-            Name = e.Attribute("name").Value,
+            Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
             IsList = isList.Contains(e.Attribute("name").Value),
             Path = e.Attribute("path").Value,
             Level = e.Attribute("path").Value.Count(c => c == '\\'),
@@ -65,12 +68,12 @@ namespace Matroska.Models
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
         })
-        .Where(e => !e.Name.StartsWith("EBML"))
+        //.Where(e => !e.Name.StartsWith("EBML"))
         .OrderBy(e => e.Path)
         .ToList();
 
-        var segment = elements.First();
-        Loop(elements, segment, "");
+    var segment = elements.FirstOrDefault(e => e.Name == "Segment");
+    Loop(elements, segment, "");
 
     var skip = new List<string> { "Block", "SimpleBlock", "SimpleTag" };
 
