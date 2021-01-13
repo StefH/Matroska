@@ -16,7 +16,6 @@ namespace Matroska
 
         static void Main(string[] args)
         {
-            VIntTests.Test();
             string downloads = $"C:\\Users\\{Environment.UserName}\\Downloads\\";
 
             //var orgStream = File.OpenRead(downloads + "Estas Tonne - Internal Flight Experience (Live in Cluj Napoca)_org.opus");

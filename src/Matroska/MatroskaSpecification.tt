@@ -52,7 +52,7 @@ namespace Matroska
         //.Where(e => !e.Name.StartsWith("EBML"))
         .OrderBy(e => e.Path);
 #>
-        #region Helper
+        #region Helpers
         private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
         private static readonly Dictionary<ulong, ElementDescriptor> _elementDescriptorsByIdentifier = new Dictionary<ulong, ElementDescriptor>();
 

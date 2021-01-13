@@ -42,26 +42,14 @@ namespace Matroska.Muxer.OggOpus
                 SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
             };
 
-            // oggHeader.Checksum = CalculateCheckSum(oggHeader, data);
-            //_writer.Write(oggHeader);
-
-            _writer.Write(CalculateCheckSumFromOggHeaderAndGetOggHeaderBytes(oggHeader, data));
+            _writer.Write(CalculateChecksumAndGetOggHeaderBytes(oggHeader, data));
             _writer.Write(data);
             _writer.Flush();
 
             _page++;
         }
 
-        private static uint CalculateCheckSum(OggHeader oggHeader, byte[] data)
-        {
-            using var oggHeaderStream = new MemoryStream();
-            using var oggHeaderWriter = new BinaryWriter(oggHeaderStream);
-            oggHeaderWriter.Write(oggHeader);
-
-            return OggCRC32.CalculateCRC(0, oggHeaderStream.ToArray(), data);
-        }
-
-        private static byte[] CalculateCheckSumFromOggHeaderAndGetOggHeaderBytes(OggHeader oggHeader, byte[] data)
+        private static byte[] CalculateChecksumAndGetOggHeaderBytes(OggHeader oggHeader, byte[] data)
         {
             Span<byte> span = stackalloc byte[oggHeader.Size];
 
