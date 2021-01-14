@@ -51,16 +51,16 @@ namespace System.IO
             return UpdatePosition(1, position);
         }
 
-        public int Write(string value)
+        public int Write(string value, int? position = null)
         {
-            int len = _encoding.GetByteCount(value);
-            Write7BitEncodedInt(len);
+            int numberOfBytes = _encoding.GetByteCount(value);
+            int bytesWritten = Write7BitEncodedInt(numberOfBytes, position);
 
             var bytes = _encoding.GetBytes(value);
-            return len + Write(bytes);
+            return bytesWritten + Write(bytes, position);
         }
 
-        public int Write(ReadOnlySpan<byte> byteSpan) => Write(byteSpan, byteSpan.Length);
+        public int Write(ReadOnlySpan<byte> byteSpan, int? position = null) => Write(byteSpan, byteSpan.Length, position);
 
         public int Write(ReadOnlySpan<byte> byteSpan, int length, int? position = null)
         {
@@ -77,17 +77,17 @@ namespace System.IO
             return Write(_buffer, numBytes, position);
         }
 
-        public int Write(char[] chars)
+        public int Write(char[] chars, int? position = null)
         {
             byte[] bytes = _encoding.GetBytes(chars, 0, chars.Length);
-            return Write(bytes);
+            return Write(bytes, position);
         }
 
-        public int Write(decimal value) => Write(DecimalToBytes(value));
+        public int Write(decimal value, int? position = null) => Write(DecimalToBytes(value), position);
 
-        public int Write(DateTime value) => Write(value.ToBinary());
+        public int Write(DateTime value, int? position = null) => Write(value.ToBinary(), position);
 
-        public int Write(Guid value) => Write(value.ToByteArray());
+        public int Write(Guid value, int? position = null) => Write(value.ToByteArray(), position);
 
         public int Write<T>(T value, int? position = null) where T : unmanaged
         {
@@ -98,24 +98,21 @@ namespace System.IO
         }
 
         #region VInt
-        public int Write(VInt vint)
+        public int Write(VInt vint, int? position = null)
         {
             int p = vint.Length;
             for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
             {
-                Span[Position + p] = (byte)(data & 0xff);
+                Span[(position ?? Position) + p] = (byte)(data & 0xff);
             }
-
-            Position += vint.Length;
-
-            return vint.Length;
+            return UpdatePosition(vint.Length, position);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int WriteVInt(ulong value)
+        public int WriteVInt(ulong value, int? position = null)
         {
             var vint = new VInt(value);
-            return Write(vint);
+            return Write(vint, position);
         }
         #endregion
 
@@ -154,7 +151,7 @@ namespace System.IO
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,414
-        private int Write7BitEncodedInt(int value)
+        private int Write7BitEncodedInt(int value, int? position = null)
         {
             int bytesWritten = 0;
 
@@ -162,11 +159,11 @@ namespace System.IO
             uint v = (uint)value; // support negative numbers
             while (v >= 0x80)
             {
-                bytesWritten += Write((byte)(v | 0x80));
+                bytesWritten += Write((byte)(v | 0x80), position);
                 v >>= 7;
             }
 
-            return bytesWritten + Write((byte)v);
+            return bytesWritten + Write((byte)v, position);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
