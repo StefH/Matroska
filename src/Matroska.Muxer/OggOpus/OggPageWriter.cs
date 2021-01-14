@@ -57,11 +57,9 @@ namespace Matroska.Muxer.OggOpus
             spanWriter.WriteOggHeader(oggHeader);
 
             var checkSum = OggCRC32.CalculateCRC(0, spanWriter.Span, data);
+            spanWriter.Write(checkSum, OggHeader.CheckSumLocation);
 
-            spanWriter.Position = OggHeader.CheckSumLocation;
-            spanWriter.Write(checkSum);
-
-            return spanWriter.Span.ToArray();
+            return spanWriter.ToArray();
         }
     }
 }

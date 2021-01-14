@@ -45,11 +45,10 @@ namespace System.IO
             return Span.Slice(0, Position).ToArray();
         }
 
-        public int Write(byte value)
+        public int Write(byte value, int? position = null)
         {
-            Span[Position] = value;
-            Position += 1;
-            return 1;
+            Span[position ?? Position] = value;
+            return UpdatePosition(1, position);
         }
 
         public int Write(string value)
@@ -63,20 +62,19 @@ namespace System.IO
 
         public int Write(ReadOnlySpan<byte> byteSpan) => Write(byteSpan, byteSpan.Length);
 
-        public int Write(ReadOnlySpan<byte> byteSpan, int length)
+        public int Write(ReadOnlySpan<byte> byteSpan, int length, int? position = null)
         {
-            byteSpan.CopyTo(Span.Slice(Position));
+            byteSpan.CopyTo(Span.Slice(position ?? Position));
 
-            Position += length;
-            return length;
+            return UpdatePosition(length, position);
         }
 
-        public int Write(char value)
+        public int Write(char value, int? position = null)
         {
             _singleChar[0] = value;
 
             var numBytes = _encoder.GetBytes(_singleChar, 0, 1, _buffer, 0, true);
-            return Write(_buffer, numBytes);
+            return Write(_buffer, numBytes, position);
         }
 
         public int Write(char[] chars)
@@ -91,13 +89,12 @@ namespace System.IO
 
         public int Write(Guid value) => Write(value.ToByteArray());
 
-        public int Write<T>(T value) where T : unmanaged
+        public int Write<T>(T value, int? position = null) where T : unmanaged
         {
-            MemoryMarshal.Write(Span.Slice(Position), ref value);
+            MemoryMarshal.Write(Span.Slice(position ?? Position), ref value);
 
             var length = Unsafe.SizeOf<T>();
-            Position += length;
-            return length;
+            return UpdatePosition(length, position);
         }
 
         #region VInt
@@ -170,6 +167,18 @@ namespace System.IO
             }
 
             return bytesWritten + Write((byte)v);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int UpdatePosition(int length, int? position)
+        {
+            // Only update the Position during a "normal" Write, else keep it the same.
+            if (position is null)
+            {
+                Position += length;
+            }
+
+            return length;
         }
     }
 }
