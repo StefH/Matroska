@@ -81,10 +81,12 @@ namespace Matroska.Muxer.OggOpus
 
         private static List<SegmentEntry> ConvertClustersToSegmentTable(List<Cluster> clusters, int sampleRate, ulong trackNumber)
         {
-            var simpleBlocks = clusters.SelectMany(c => c.SimpleBlocks.Where(sb => sb?.TrackNumber == trackNumber)).Where(sb => sb != null);
+            var simpleBlocks = clusters
+                .Where(c => c.SimpleBlocks != null)
+                .SelectMany(c => c.SimpleBlocks.Where(sb => sb?.TrackNumber == trackNumber))
+                .Where(sb => sb != null);
 
             var segmentEntries = ConvertSimpleBlocksToSegmentEntries(simpleBlocks, sampleRate);
-
             if (segmentEntries.Count > 0)
             {
                 var last = segmentEntries.Last();
