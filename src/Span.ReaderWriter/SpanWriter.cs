@@ -97,25 +97,6 @@ namespace System.IO
             return UpdatePosition(length, position);
         }
 
-        #region VInt
-        public int Write(VInt vint, int? position = null)
-        {
-            int p = vint.Length;
-            for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
-            {
-                Span[(position ?? Position) + p] = (byte)(data & 0xff);
-            }
-            return UpdatePosition(vint.Length, position);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int WriteVInt(ulong value, int? position = null)
-        {
-            var vint = new VInt(value);
-            return Write(vint, position);
-        }
-        #endregion
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private byte[] DecimalToBytes(decimal number)
         {
@@ -149,21 +130,66 @@ namespace System.IO
             return _buffer;
         }
 
-        // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,414
+        // Based on https://github.com/dotnet/runtime/blob/1d9e50cb4735df46d3de0cee5791e97295eaf588/src/libraries/System.Private.CoreLib/src/System/IO/BinaryWriter.cs#L466
         public int Write7BitEncodedInt(int value, int? position = null)
         {
             int bytesWritten = 0;
+            uint uValue = (uint)value;
 
-            // Write out an int 7 bits at a time.  The high bit of the byte, when on, tells reader to continue reading more bytes.
-            uint v = (uint)value; // support negative numbers
-            while (v >= 0x80)
+            // Write out an int 7 bits at a time. The high bit of the byte,
+            // when on, tells reader to continue reading more bytes.
+            //
+            // Using the constants 0x7F and ~0x7F below offers smaller
+            // codegen than using the constant 0x80.
+
+            while (uValue > 0x7Fu)
             {
-                bytesWritten += Write((byte)(v | 0x80), position);
-                v >>= 7;
+                bytesWritten += Write((byte)(uValue | ~0x7Fu), position);
+                uValue >>= 7;
             }
 
-            return bytesWritten + Write((byte)v, position);
+            return bytesWritten + Write((byte)uValue, position);
         }
+
+        // Based on https://github.com/dotnet/runtime/blob/1d9e50cb4735df46d3de0cee5791e97295eaf588/src/libraries/System.Private.CoreLib/src/System/IO/BinaryWriter.cs#L485
+        public int Write7BitEncodedInt64(long value, int? position = null)
+        {
+            int bytesWritten = 0;
+            ulong uValue = (ulong)value;
+
+            // Write out an int 7 bits at a time. The high bit of the byte,
+            // when on, tells reader to continue reading more bytes.
+            //
+            // Using the constants 0x7F and ~0x7F below offers smaller
+            // codegen than using the constant 0x80.
+
+            while (uValue > 0x7Fu)
+            {
+                bytesWritten += Write((byte)((uint)uValue | ~0x7Fu), position);
+                uValue >>= 7;
+            }
+
+            return bytesWritten + Write((byte)uValue, position);
+        }
+
+        #region VInt
+        public int Write(VInt vint, int? position = null)
+        {
+            int p = vint.Length;
+            for (var data = vint.EncodedValue; --p >= 0; data >>= 8)
+            {
+                Span[(position ?? Position) + p] = (byte)(data & 0xff);
+            }
+            return UpdatePosition(vint.Length, position);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int WriteVInt(ulong value, int? position = null)
+        {
+            var vint = new VInt(value);
+            return Write(vint, position);
+        }
+        #endregion
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private int UpdatePosition(int length, int? position)
