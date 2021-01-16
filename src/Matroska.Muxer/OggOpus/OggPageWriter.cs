@@ -49,6 +49,11 @@ namespace Matroska.Muxer.OggOpus
             _page++;
         }
 
+        public void Flush()
+        {
+            _writer.Flush();
+        }
+
         private static void CalculateChecksumAndWriteOggHeaderToBinaryWriter(BinaryWriter writer, OggHeader oggHeader, byte[] data)
         {
             var oggHeaderBytes = ArrayPool<byte>.Shared.Rent(oggHeader.Size);

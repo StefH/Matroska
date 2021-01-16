@@ -77,6 +77,8 @@ namespace Matroska.Muxer.OggOpus
             {
                 WriteOggPageAndResetParts(OggHeaderType.EndOfStream);
             }
+
+            oggPageWriter.Flush();
         }
 
         private static List<SegmentEntry> ConvertClustersToSegmentTable(List<Cluster> clusters, int sampleRate, ulong trackNumber)
