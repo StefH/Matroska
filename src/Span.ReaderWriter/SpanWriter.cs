@@ -149,9 +149,8 @@ namespace System.IO
             return _buffer;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,414
-        private int Write7BitEncodedInt(int value, int? position = null)
+        public int Write7BitEncodedInt(int value, int? position = null)
         {
             int bytesWritten = 0;
 

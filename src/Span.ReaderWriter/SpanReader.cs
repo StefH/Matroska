@@ -171,8 +171,7 @@ namespace System.IO
         #endregion
 
         // Copied from https://referencesource.microsoft.com/#mscorlib/system/io/binaryreader.cs,582
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private int Read7BitEncodedInt()
+        public int Read7BitEncodedInt()
         {
             // Read out an Int32 7 bits at a time.
             // The high bit of the byte when 'on' means to continue reading more bytes.
