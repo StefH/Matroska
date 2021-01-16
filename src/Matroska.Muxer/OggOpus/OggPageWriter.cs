@@ -3,7 +3,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using Matroska.Muxer.Extensions;
 using Matroska.Muxer.OggOpus.Models;
 
@@ -44,7 +43,7 @@ namespace Matroska.Muxer.OggOpus
                 SegmentTable = oggPages.SelectMany(o => o.SegmentBytes).ToArray()
             };
 
-            CalculateChecksumAndWriteOggHeaderToBinaryWriter(_writer, oggHeader, data);
+            CalculateChecksumAndWriteOggHeaderToBinaryWriter(oggHeader, data);
 
             _page++;
         }
@@ -54,7 +53,7 @@ namespace Matroska.Muxer.OggOpus
             _writer.Flush();
         }
 
-        private static void CalculateChecksumAndWriteOggHeaderToBinaryWriter(BinaryWriter writer, OggHeader oggHeader, byte[] data)
+        private void CalculateChecksumAndWriteOggHeaderToBinaryWriter(OggHeader oggHeader, byte[] data)
         {
             var oggHeaderBytes = ArrayPool<byte>.Shared.Rent(oggHeader.Size);
             try
@@ -65,14 +64,14 @@ namespace Matroska.Muxer.OggOpus
                 var checkSum = OggCRC32.CalculateCRC(0, oggHeaderBytes.AsSpan().Slice(0, oggHeader.Size), data);
                 spanWriter.Write(checkSum, OggHeader.CheckSumLocation);
 
-                writer.Write(oggHeaderBytes, 0, oggHeader.Size);
+                _writer.Write(oggHeaderBytes, 0, oggHeader.Size);
             }
             finally
             {
                 ArrayPool<byte>.Shared.Return(oggHeaderBytes);
             }
 
-            writer.Write(data);
+            _writer.Write(data);
         }
     }
 }
