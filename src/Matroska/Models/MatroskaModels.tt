@@ -13,7 +13,8 @@
 <#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Text" #>
 <#
-    string XmlFile = "../ebml_matroska.xml";
+    string XmlFile = "../ebml.xml";
+    string MatroskaXmlFile = "../ebml_matroska.xml";
     XNamespace ns = "urn:ietf:rfc:8794";
 #>
 using System;
@@ -55,8 +56,7 @@ namespace Matroska.Models
         { "SignedElement" }
     };
 
-    string filename = Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile);
-    var elements = XElement.Load(filename).Elements()
+    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
         .Select(e => new Element
         { 
             Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
@@ -68,10 +68,23 @@ namespace Matroska.Models
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        })
-        //.Where(e => !e.Name.StartsWith("EBML"))
-        .OrderBy(e => e.Path)
-        .ToList();
+        });
+
+    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
+        .Select(e => new Element
+        { 
+            Name = e.Attribute("name").Value,
+            UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
+            IsList = isList.Contains(e.Attribute("name").Value),
+            Path = e.Attribute("path").Value,
+            Level = e.Attribute("path").Value.Count(c => c == '\\'),
+            Id = e.Attribute("id").Value,
+            ElementType = e.Attribute("type").Value,
+            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+        });
+
+    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
 
     var ebml = elements.FirstOrDefault(e => e.Name == "EBML");
     Loop(elements, ebml, "");

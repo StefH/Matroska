@@ -12,7 +12,8 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Xml.Linq" #>
 <#
-    string XmlFile = "ebml_matroska.xml";
+    string XmlFile = "ebml.xml";
+    string MatroskaXmlFile = "ebml_matroska.xml";
     XNamespace ns = "urn:ietf:rfc:8794";
 #>
 using System.Collections.Generic;
@@ -38,8 +39,7 @@ namespace Matroska
     internal static class MatroskaSpecification
     {
 <#
-    string filename = Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile);
-    var elements = XElement.Load(filename).Elements()
+    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
         .Select(e => new
         { 
             Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
@@ -48,9 +48,20 @@ namespace Matroska
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        })
-        //.Where(e => !e.Name.StartsWith("EBML"))
-        .OrderBy(e => e.Path);
+        });
+
+    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
+        .Select(e => new
+        { 
+            Name = e.Attribute("name").Value,
+            Path = e.Attribute("path").Value,
+            Id = e.Attribute("id").Value,
+            ElementType = e.Attribute("type").Value,
+            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+        });
+
+    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
 #>
         #region Helpers
         private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
