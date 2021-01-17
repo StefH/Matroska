@@ -45,6 +45,8 @@ namespace Matroska.Muxer.OggOpus
 
             CalculateChecksumAndWriteOggHeaderToBinaryWriter(oggHeader, data);
 
+            _writer.Flush();
+
             _page++;
         }
 
