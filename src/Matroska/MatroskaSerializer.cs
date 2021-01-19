@@ -83,9 +83,9 @@ namespace Matroska
                     return reader.ReadAscii();
 
                 case ElementType.Binary:
-                    int len = (int)reader.ElementSize;
-                    var buffer = new byte[len];
-                    reader.ReadBinary(buffer, 0, len);
+                    int bufferLength = (int)reader.ElementSize;
+                    var buffer = new byte[bufferLength];
+                    reader.ReadBinary(buffer, 0, bufferLength); // TODO : EbmlReaderdoes not yet support reading a Span<byte>
 
                     if (typeof(IParseRawBinary).IsAssignableFrom(info.ElementType))
                     {
