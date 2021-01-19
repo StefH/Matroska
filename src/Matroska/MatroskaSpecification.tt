@@ -12,7 +12,8 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.Xml.Linq" #>
 <#
-    string XmlFile = "ebml_matroska.xml";
+    string XmlFile = "ebml.xml";
+    string MatroskaXmlFile = "ebml_matroska.xml";
     XNamespace ns = "urn:ietf:rfc:8794";
 #>
 using System.Collections.Generic;
@@ -38,8 +39,18 @@ namespace Matroska
     internal static class MatroskaSpecification
     {
 <#
-    string filename = Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile);
-    var elements = XElement.Load(filename).Elements()
+    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
+        .Select(e => new
+        { 
+            Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
+            Path = e.Attribute("path").Value,
+            Id = e.Attribute("id").Value,
+            ElementType = e.Attribute("type").Value,
+            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+        });
+
+    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
         .Select(e => new
         { 
             Name = e.Attribute("name").Value,
@@ -48,11 +59,11 @@ namespace Matroska
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        })
-        .Where(e => !e.Name.StartsWith("EBML"))
-        .OrderBy(e => e.Path);
+        });
+
+    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
 #>
-        #region Helper
+        #region Helpers
         private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
         private static readonly Dictionary<ulong, ElementDescriptor> _elementDescriptorsByIdentifier = new Dictionary<ulong, ElementDescriptor>();
 
@@ -85,78 +96,6 @@ namespace Matroska
         #endregion
 
         #region Definitions
-        /// <summary>Set the EBML characteristics of the data to follow. Each EBML document has to start with this.</summary>
-        public const ulong EBML = 0x1A45DFA3;
-        public static readonly ElementDescriptor EBMLDescriptor = new ElementDescriptor(EBML, nameof(EBML), ElementType.MasterElement);
-
-        /// <summary>The version of EBML parser used to create the file.</summary>
-        public const ulong EBMLVersion = 0x00004286;
-        public static readonly ElementDescriptor EBMLVersionDescriptor = new ElementDescriptor(EBMLVersion, nameof(EBMLVersion), ElementType.UnsignedInteger);
-
-        /// <summary>The minimum EBML version a parser has to support to read this file.</summary>
-        public const ulong EBMLReadVersion = 0x000042F7;
-        public static readonly ElementDescriptor EBMLReadVersionDescriptor = new ElementDescriptor(EBMLReadVersion, nameof(EBMLReadVersion), ElementType.UnsignedInteger);
-
-        /// <summary>The maximum length of the IDs you'll find in this file (4 or less in Matroska).</summary>
-        public const ulong EBMLMaxIDLength = 0x000042F2;
-        public static readonly ElementDescriptor EBMLMaxIDLengthDescriptor = new ElementDescriptor(EBMLMaxIDLength, nameof(EBMLMaxIDLength), ElementType.UnsignedInteger);
-
-        /// <summary>The maximum length of the sizes you'll find in this file (8 or less in Matroska). This does not override the Element size indicated at the beginning of an Element. Elements that have an indicated size which is larger than what is allowed by EBMLMaxSizeLength shall be considered invalid.</summary>
-        public const ulong EBMLMaxSizeLength = 0x000042F3;
-        public static readonly ElementDescriptor EBMLMaxSizeLengthDescriptor = new ElementDescriptor(EBMLMaxSizeLength, nameof(EBMLMaxSizeLength), ElementType.UnsignedInteger);
-
-        /// <summary>A string that describes the type of document that follows this EBML header. 'matroska' in our case or 'webm' for webm files.</summary>
-        public const ulong DocType = 0x00004282;
-        public static readonly ElementDescriptor DocTypeDescriptor = new ElementDescriptor(DocType, nameof(DocType), ElementType.AsciiString);
-
-        /// <summary>The version of DocType interpreter used to create the file.</summary>
-        public const ulong DocTypeVersion = 0x00004287;
-        public static readonly ElementDescriptor DocTypeVersionDescriptor = new ElementDescriptor(DocTypeVersion, nameof(DocTypeVersion), ElementType.UnsignedInteger);
-
-        /// <summary>The minimum DocType version an interpreter has to support to read this file.</summary>
-        public const ulong DocTypeReadVersion = 0x00004285;
-        public static readonly ElementDescriptor DocTypeReadVersionDescriptor = new ElementDescriptor(DocTypeReadVersion, nameof(DocTypeReadVersion), ElementType.UnsignedInteger);
-
-        /// <summary>Used to void damaged data, to avoid unexpected behaviors when using damaged data. The content is discarded. Also used to reserve space in a sub-element for later use.</summary>
-        public const ulong Void = 0x000000EC;
-        public static readonly ElementDescriptor VoidDescriptor = new ElementDescriptor(Void, nameof(Void), ElementType.Binary);
-
-        /// <summary>The CRC is computed on all the data of the Master-element it's in. The CRC Element should be the first in it's parent master for easier reading. All level 1 Elements should include a CRC-32. The CRC in use is the IEEE CRC32 Little Endian</summary>
-        public const ulong CRC32 = 0x000000BF;
-        public static readonly ElementDescriptor CRC32Descriptor = new ElementDescriptor(CRC32, nameof(CRC32), ElementType.Binary);
-
-        /// <summary>Contain signature of some (coming) Elements in the stream.</summary>
-        public const ulong SignatureSlot = 0x1B538667;
-        public static readonly ElementDescriptor SignatureSlotDescriptor = new ElementDescriptor(SignatureSlot, nameof(SignatureSlot), ElementType.MasterElement);
-
-        /// <summary>Signature algorithm used (1=RSA, 2=elliptic).</summary>
-        public const ulong SignatureAlgo = 0x00007E8A;
-        public static readonly ElementDescriptor SignatureAlgoDescriptor = new ElementDescriptor(SignatureAlgo, nameof(SignatureAlgo), ElementType.UnsignedInteger);
-
-        /// <summary>Hash algorithm used (1=SHA1-160, 2=MD5).</summary>
-        public const ulong SignatureHash = 0x00007E9A;
-        public static readonly ElementDescriptor SignatureHashDescriptor = new ElementDescriptor(SignatureHash, nameof(SignatureHash), ElementType.UnsignedInteger);
-
-        /// <summary>The public key to use with the algorithm (in the case of a PKI-based signature).</summary>
-        public const ulong SignaturePublicKey = 0x00007EA5;
-        public static readonly ElementDescriptor SignaturePublicKeyDescriptor = new ElementDescriptor(SignaturePublicKey, nameof(SignaturePublicKey), ElementType.Binary);
-
-        /// <summary>The signature of the data (until a new.</summary>
-        public const ulong Signature = 0x00007EB5;
-        public static readonly ElementDescriptor SignatureDescriptor = new ElementDescriptor(Signature, nameof(Signature), ElementType.Binary);
-
-        /// <summary>Contains Elements that will be used to compute the signature.</summary>
-        public const ulong SignatureElements = 0x00007E5B;
-        public static readonly ElementDescriptor SignatureElementsDescriptor = new ElementDescriptor(SignatureElements, nameof(SignatureElements), ElementType.MasterElement);
-
-        /// <summary>A list consists of a number of consecutive Elements that represent one case where data is used in signature. Ex: Cluster|Block|BlockAdditional means that the BlockAdditional of all Blocks in all Clusters is used for encryption.</summary>
-        public const ulong SignatureElementList = 0x00007E7B;
-        public static readonly ElementDescriptor SignatureElementListDescriptor = new ElementDescriptor(SignatureElementList, nameof(SignatureElementList), ElementType.MasterElement);
-
-        /// <summary>An Element ID whose data will be used to compute the signature.</summary>
-        public const ulong SignedElement = 0x00006532;
-        public static readonly ElementDescriptor SignedElementDescriptor = new ElementDescriptor(SignedElement, nameof(SignedElement), ElementType.Binary);
-
 <#
     foreach (var element in elements)
     {

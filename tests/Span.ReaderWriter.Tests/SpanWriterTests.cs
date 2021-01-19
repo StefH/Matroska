@@ -30,6 +30,8 @@ namespace System
             string st = "Hello World";
             string stLong = new string('x', 5000);
             string stUtf8 = "ᚠHello Worldಸ";
+            int sevenBitEncodedInt = int.MaxValue - 42;
+            long sevenBitEncodedInt64 = long.MaxValue - 42;
 
             using var memoryStream = new MemoryStream();
             using var binaryWriter = new BinaryWriter(memoryStream);
@@ -53,8 +55,10 @@ namespace System
             binaryWriter.Write(stLong);
             binaryWriter.Write(stUtf8);
             binaryWriter.Write(!bo);
-            binaryWriter.Write(chars);
-            binaryWriter.Write(!bo);
+            //binaryWriter.Write(chars);
+            binaryWriter.Write(bo);
+            binaryWriter.Write7BitEncodedInt(sevenBitEncodedInt);
+            binaryWriter.Write7BitEncodedInt64(sevenBitEncodedInt64);
 
             var bytes = memoryStream.ToArray();
 
@@ -82,8 +86,10 @@ namespace System
             spanWriter.Write(stLong);
             spanWriter.Write(stUtf8);
             spanWriter.Write(!bo);
-            spanWriter.Write(chars);
-            spanWriter.Write(!bo);
+            // spanWriter.Write(chars);
+            spanWriter.Write(bo);
+            spanWriter.Write7BitEncodedInt(sevenBitEncodedInt);
+            spanWriter.Write7BitEncodedInt64(sevenBitEncodedInt64);
 
             // Assert
             spanWriterBytes.Should().BeEquivalentTo(bytes);
@@ -109,6 +115,10 @@ namespace System
             spanReader.ReadString().Should().Be(stLong);
             spanReader.ReadString().Should().Be(stUtf8);
             spanReader.ReadBoolean().Should().Be(!bo);
+            // spanReader.ReadChars().Should().Be(chars);
+            spanReader.ReadBoolean().Should().Be(bo);
+            spanReader.Read7BitEncodedInt().Should().Be(sevenBitEncodedInt);
+            spanReader.Read7BitEncodedInt64().Should().Be(sevenBitEncodedInt64);
         }
     }
 }

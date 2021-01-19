@@ -13,7 +13,8 @@
 <#@ import namespace="System.Xml.Linq" #>
 <#@ import namespace="System.Text" #>
 <#
-    string XmlFile = "../ebml_matroska.xml";
+    string XmlFile = "../ebml.xml";
+    string MatroskaXmlFile = "../ebml_matroska.xml";
     XNamespace ns = "urn:ietf:rfc:8794";
 #>
 using System;
@@ -50,13 +51,16 @@ namespace Matroska.Models
         { "CuetrackPosition" },
         { "CuePoint" },
         { "CueReference" },
+        { "SignatureSlot" },
+        { "SignatureElementList" },
+        { "SignedElement" }
     };
 
-    string filename = Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile);
-    var elements = XElement.Load(filename).Elements()
+    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
         .Select(e => new Element
         { 
-            Name = e.Attribute("name").Value,
+            Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
+            UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
             IsList = isList.Contains(e.Attribute("name").Value),
             Path = e.Attribute("path").Value,
             Level = e.Attribute("path").Value.Count(c => c == '\\'),
@@ -64,13 +68,29 @@ namespace Matroska.Models
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        })
-        .Where(e => !e.Name.StartsWith("EBML"))
-        .OrderBy(e => e.Path)
-        .ToList();
+        });
 
-        var segment = elements.First();
-        Loop(elements, segment, "");
+    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
+        .Select(e => new Element
+        { 
+            Name = e.Attribute("name").Value,
+            UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
+            IsList = isList.Contains(e.Attribute("name").Value),
+            Path = e.Attribute("path").Value,
+            Level = e.Attribute("path").Value.Count(c => c == '\\'),
+            Id = e.Attribute("id").Value,
+            ElementType = e.Attribute("type").Value,
+            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+        });
+
+    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
+
+    var ebml = elements.FirstOrDefault(e => e.Name == "EBML");
+    Loop(elements, ebml, "");
+
+    var segment = elements.FirstOrDefault(e => e.Name == "Segment");
+    Loop(elements, segment, "");
 
     var skip = new List<string> { "Block", "SimpleBlock", "SimpleTag" };
 
@@ -104,7 +124,7 @@ namespace Matroska.Models
             }
 
             string a;
-            if (sub.IsList)
+            if (sub.IsList && field != "SignedElement")
             {
                 a = string.Format(new string(' ', 8) + "[MatroskaElementDescriptor(MatroskaSpecification.{0}, typeof({1}))]", field, sub.Name);
             }
@@ -125,6 +145,11 @@ namespace Matroska.Models
 <#  } #>
 }
 <#+
+    public bool UseNameInsteadOfBinary(string elementName)
+    {
+        return elementName.Contains("Block") && elementName != "BlockAddIDExtraData";
+    }
+
     public void Loop(List<Element> all, Element current, string parentPath)
     {
         current.SubElements = all.Where(e => e.Path.StartsWith(parentPath + "\\" + current.Name) && e.Level == current.Level + 1).ToList();
@@ -148,7 +173,7 @@ namespace Matroska.Models
                 break;
 
             case "binary":
-                propertyType = property.Name.Contains("Block") && property.Name != "BlockAddIDExtraData" ? property.Name : "byte[]";
+                propertyType = property.UseNameInsteadOfBinary ? property.Name : "byte[]";
                 break;
 
             case "date":
@@ -212,13 +237,14 @@ namespace Matroska.Models
     public class Element
     {
         public string Name;
+        public bool UseNameInsteadOfBinary;
         public bool IsList;
         public string Path;
         public string Id;
         public string ElementType;
         public bool Required;
         public string Documentation;
-        public int Level;
+        public int Level;       
 
         public List<Element> SubElements = new List<Element>();
     }
