@@ -1,5 +1,6 @@
 # 0.0.7 (11 March 2021)
 - [#9](https://github.com/StefH/Matroska/pull/9) - Remove signing from Matroska and Matroska.Muxer projects [enhancement] contributed by [StefH](https://github.com/StefH)
+- [#8](https://github.com/StefH/Matroska/issues/8) - A strongly-named assembly is required. (Exception from HRESULT: 0x80131044) [bug]
 
 # 0.0.6 (19 January 2021)
 - [#7](https://github.com/StefH/Matroska/pull/7) - Use Ebml.xml to generate classes + use Span.ReaderWriter version 0.0.3 contributed by [StefH](https://github.com/StefH)
