@@ -1,7 +1,12 @@
+# 0.0.7 (11 March 2021)
+- [#9](https://github.com/StefH/Matroska/pull/9) - Remove signing from Matroska and Matroska.Muxer projects [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.6 (19 January 2021)
+- [#7](https://github.com/StefH/Matroska/pull/7) - Use Ebml.xml to generate classes + use Span.ReaderWriter version 0.0.3 contributed by [StefH](https://github.com/StefH)
+
+# 0.0.5 (12 January 2021)
 - [#5](https://github.com/StefH/Matroska/pull/5) - Generate models based on Matroska specification contributed by [StefH](https://github.com/StefH)
 - [#6](https://github.com/StefH/Matroska/pull/6) - Use SpanReader + SpanWriter contributed by [StefH](https://github.com/StefH)
-- [#7](https://github.com/StefH/Matroska/pull/7) - Use Ebml.xml to generate classes + use Span.ReaderWriter version 0.0.3 contributed by [StefH](https://github.com/StefH)
 
 # 0.0.4 (07 January 2021)
 - [#4](https://github.com/StefH/Matroska/pull/4) - Add Tags element + improve OggCRC32 contributed by [StefH](https://github.com/StefH)
