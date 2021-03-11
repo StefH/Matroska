@@ -16,7 +16,7 @@
     <PackageReference Include="OggVorbisEncoder" Version="1.2.0" />
     <PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
-    <PackageReference Include="z440.atl.core" Version="3.15.0" />
+    <PackageReference Include="z440.atl.core" Version="3.18.0" />
   </ItemGroup>
 
   <ItemGroup>

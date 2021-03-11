@@ -8,8 +8,8 @@
 		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
-		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>
+		<!--<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>../Matroska/Matroska.snk</AssemblyOriginatorKeyFile>-->
 		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
 

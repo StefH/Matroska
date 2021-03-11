@@ -8,14 +8,10 @@
 		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
-		<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>
+		<!--<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>-->
 		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Compile Remove="Models\Ebml.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="../../resources/logo.png" Pack="true" PackagePath="" />
