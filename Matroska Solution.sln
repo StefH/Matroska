@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1078C845-29AD-475F-9DB7-9DACB4422ABC}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4B37A324-D592-4529-B155-3F2122723FFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Span.ReaderWriter.Tests", "tests\Span.ReaderWriter.Tests\Span.ReaderWriter.Tests.csproj", "{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatroskaDemuxer", "examples\MatroskaDemuxer\MatroskaDemuxer.csproj", "{924EF542-984A-4DB2-9597-1FAC00A6A618}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +55,10 @@ Global
 		{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{924EF542-984A-4DB2-9597-1FAC00A6A618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{924EF542-984A-4DB2-9597-1FAC00A6A618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{924EF542-984A-4DB2-9597-1FAC00A6A618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{924EF542-984A-4DB2-9597-1FAC00A6A618}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{4C05193C-5952-4099-B7CE-F927AC956754} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
 		{2FBBA506-46CC-4BB1-BE69-37D1090E6999} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
 		{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7} = {4B37A324-D592-4529-B155-3F2122723FFA}
+		{924EF542-984A-4DB2-9597-1FAC00A6A618} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE2715BA-336F-4774-B880-BE171CE1018B}
