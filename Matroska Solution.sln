@@ -10,7 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B2BED7F-A089-4A26-999B-F0F96CCAD905}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
-		GitHubReleaseNotes.txt = GitHubReleaseNotes.txt
+		Generate-ReleaseNotes.bat = Generate-ReleaseNotes.bat
+		PackageReleaseNotes.template = PackageReleaseNotes.template
+		PackageReleaseNotes.txt = PackageReleaseNotes.txt
 		README.md = README.md
 		ReleaseNotes.md = ReleaseNotes.md
 	EndProjectSection
@@ -27,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4B37A324
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Span.ReaderWriter.Tests", "tests\Span.ReaderWriter.Tests\Span.ReaderWriter.Tests.csproj", "{A41BA9F1-5F5E-42C5-90BA-D7C9091177A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatroskaDemuxer", "examples\MatroskaDemuxer\MatroskaDemuxer.csproj", "{924EF542-984A-4DB2-9597-1FAC00A6A618}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatroskaDemuxer", "examples\MatroskaDemuxer\MatroskaDemuxer.csproj", "{924EF542-984A-4DB2-9597-1FAC00A6A618}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
