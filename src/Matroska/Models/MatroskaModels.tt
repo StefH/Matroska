@@ -35,25 +35,26 @@ namespace Matroska.Models
 <#
     var isList = new List<string>
     {
-        { "Cluster" },
-        { "TrackEntry" },
-        { "SimpleBlock" },
+        { "AttachedFile" },
         { "Block" },
         { "BlockAdditional" },
         { "BlockGroup" },
         { "BlockVirtual" },
-        { "EncryptedBlock" },
-        { "Tag" },
-        { "SimpleTag" },
-        { "Target" },
+        { "Cluster" },
         { "ContentCompression" },
         { "ContentEncoding" },
-        { "CuetrackPosition" },
         { "CuePoint" },
         { "CueReference" },
-        { "SignatureSlot" },
+        { "CuetrackPosition" },
+        { "EncryptedBlock" },
         { "SignatureElementList" },
-        { "SignedElement" }
+        { "SignatureSlot" },
+        { "SignedElement" },
+        { "SimpleBlock" },
+        { "SimpleTag" },
+        { "Tag" },
+        { "Target" },
+        { "TrackEntry" }
     };
 
     var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
