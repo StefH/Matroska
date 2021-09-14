@@ -1,3 +1,7 @@
+# 0.0.8 (14 September 2021)
+- [#11](https://github.com/StefH/Matroska/pull/11) - Fix for multiple attachments [bug] contributed by [StefH](https://github.com/StefH)
+- [#10](https://github.com/StefH/Matroska/issues/10) - Unable to correctly deserialize a Matroska file with multiple attachments [bug]
+
 # 0.0.7 (11 March 2021)
 - [#9](https://github.com/StefH/Matroska/pull/9) - Remove signing from Matroska and Matroska.Muxer projects [enhancement] contributed by [StefH](https://github.com/StefH)
 - [#8](https://github.com/StefH/Matroska/issues/8) - A strongly-named assembly is required. (Exception from HRESULT: 0x80131044) [bug]
