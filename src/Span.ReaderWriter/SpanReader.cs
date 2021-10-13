@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using Span.ReaderWriter.Ebml;
@@ -55,23 +56,55 @@ namespace System.IO
 
         public char ReadChar() => (char)InternalReadOneChar();
 
-        public short ReadShort() => Read<short>();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public short ReadShort(bool isBigEndian = false)
+        {
+            var result = Read<short>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
 
-        public short ReadInt16() => ReadShort();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ushort ReadUShort(bool isBigEndian = false)
+        {
+            var result = Read<ushort>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
 
-        public int ReadInt() => ReadInt32();
+        public short ReadInt16(bool isBigEndian = false) => ReadShort(isBigEndian);
 
-        public ushort ReadUShort() => Read<ushort>();
+        public ushort ReadUInt16(bool isBigEndian = false) => ReadUShort(isBigEndian);
 
-        public uint ReadUInt() => ReadUInt32();
+        public int ReadInt(bool isBigEndian = false) => ReadInt32(isBigEndian);
 
-        public uint ReadUInt32() => Read<uint>();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int ReadInt32(bool isBigEndian = false)
+        {
+            var result = Read<int>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
 
-        public int ReadInt32() => Read<int>();
+        public uint ReadUInt(bool isBigEndian = false) => ReadUInt32(isBigEndian);
 
-        public long ReadLong() => Read<long>();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public uint ReadUInt32(bool isBigEndian = false)
+        {
+            var result = Read<uint>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
 
-        public ulong ReadULong() => Read<ulong>();
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public long ReadLong(bool isBigEndian = false)
+        {
+            var result = Read<long>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ulong ReadULong(bool isBigEndian = false)
+        {
+            var result = Read<ulong>();
+            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+        }
 
         public decimal ReadDecimal()
         {
@@ -133,6 +166,7 @@ namespace System.IO
         public T Read<T>() where T : unmanaged
         {
             var newSpan = _currentSpan.Slice(Position);
+
             var result = MemoryMarshal.Read<T>(newSpan);
             Position += Unsafe.SizeOf<T>();
 
