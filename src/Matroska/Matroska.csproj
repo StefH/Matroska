@@ -8,8 +8,6 @@
 		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
-		<!--<SignAssembly>true</SignAssembly>
-		<AssemblyOriginatorKeyFile>Matroska.snk</AssemblyOriginatorKeyFile>-->
 		<PackageIcon>logo.png</PackageIcon>
 	</PropertyGroup>
 
@@ -31,7 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Span.ReaderWriter\Span.ReaderWriter.csproj" />
+	  <ProjectReference Include="..\..\..\Span.ReaderWriter\src\Span.ReaderWriter\Span.ReaderWriter.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
