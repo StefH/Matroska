@@ -1,3 +1,7 @@
+# 0.0.9 (14 October 2021)
+- [#13](https://github.com/StefH/Matroska/pull/13) - Use BigEndian for TimeCode [bug] contributed by [StefH](https://github.com/StefH)
+- [#12](https://github.com/StefH/Matroska/issues/12) - Incorrect endianness of TimeCode property in (Simple)Block object [bug]
+
 # 0.0.8 (14 September 2021)
 - [#11](https://github.com/StefH/Matroska/pull/11) - Fix for multiple attachments [bug] contributed by [StefH](https://github.com/StefH)
 - [#10](https://github.com/StefH/Matroska/issues/10) - Unable to correctly deserialize a Matroska file with multiple attachments [bug]

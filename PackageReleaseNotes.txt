@@ -1,5 +1,5 @@
-# 0.0.8 (14 September 2021)
-- #11 Fix for multiple attachments [bug]
-- #10 Unable to correctly deserialize a Matroska file with multiple attachments [bug]
+# 0.0.9 (14 October 2021)
+- #13 Use BigEndian for TimeCode [bug]
+- #12 Incorrect endianness of TimeCode property in (Simple)Block object [bug]
 
 The full release notes can be found here: https://github.com/StefH/Matroska/blob/main/ReleaseNotes.md
