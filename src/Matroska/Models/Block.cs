@@ -52,7 +52,7 @@ namespace Matroska.Models
             var spanReader = new SpanReader(span);
 
             TrackNumber = spanReader.ReadVInt().Value;
-            TimeCode = spanReader.ReadShort();
+            TimeCode = spanReader.ReadShort(true); // EBML integer datatypes are big-endian
             Flags = spanReader.ReadByte();
 
             IsInvisible = (Flags & InvisibleBit) == InvisibleBit;

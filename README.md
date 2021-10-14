@@ -1,8 +1,5 @@
 # Projects
 
-## Span&lt;byte&gt; Reader/Writer
-See this [link](https://github.com/StefH/Matroska/tree/main/src/Span.ReaderWriter).
-
 ## Matroska
 An Ebml based serializer to deserialize a Matroska file (.mkv or .webm).
 
@@ -31,11 +28,9 @@ var outputStream = File.OpenWrite("test.opus");
 MatroskaDemuxer.ExtractOggOpusAudio(inputStream, outputStream);
 ```
 
-# Credits
+# Credits / References
 - [NEbml](https://github.com/OlegZee/NEbml)
 - [concentus](https://github.com/lostromb/concentus)
 - [atldotnet](https://github.com/Zeugma440/atldotnet)
-- [Tedd.SpanUtils](https://github.com/tedd/Tedd.SpanUtils)
-- [Microsoft Refence Source](https://referencesource.microsoft.com)
 - [ebml-specification](https://github.com/ietf-wg-cellar/ebml-specification) / [matroska-specification](https://github.com/ietf-wg-cellar/matroska-specification)
 - [Ellié Computing](http://www.elliecomputing.com) contributes to this project by giving free licences of ECMerge, comparison/merge tool.
