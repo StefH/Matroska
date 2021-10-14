@@ -60,14 +60,14 @@ namespace System.IO
         public short ReadShort(bool isBigEndian = false)
         {
             var result = Read<short>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ushort ReadUShort(bool isBigEndian = false)
         {
             var result = Read<ushort>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         public short ReadInt16(bool isBigEndian = false) => ReadShort(isBigEndian);
@@ -80,7 +80,7 @@ namespace System.IO
         public int ReadInt32(bool isBigEndian = false)
         {
             var result = Read<int>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         public uint ReadUInt(bool isBigEndian = false) => ReadUInt32(isBigEndian);
@@ -89,21 +89,21 @@ namespace System.IO
         public uint ReadUInt32(bool isBigEndian = false)
         {
             var result = Read<uint>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public long ReadLong(bool isBigEndian = false)
         {
             var result = Read<long>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ulong ReadULong(bool isBigEndian = false)
         {
             var result = Read<ulong>();
-            return BitConverter.IsLittleEndian && !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
+            return BitConverter.IsLittleEndian == !isBigEndian ? result : BinaryPrimitives.ReverseEndianness(result);
         }
 
         public decimal ReadDecimal()
