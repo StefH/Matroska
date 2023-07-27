@@ -1,24 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Matroska.Muxer;
 
-namespace MatroskaDemuxerConsoleApp
+namespace MatroskaDemuxer;
+
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            string folder = $"C:\\Users\\{Environment.UserName}\\Downloads\\Nuclear";
+        var outputStream = File.OpenWrite("issue16.opus");
+        Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("issue16.webm"), outputStream);
 
-            foreach (var file in Directory.GetFiles(folder).Where(f => f.EndsWith(".webm")))
-            {
-                Console.WriteLine(file);
-                var outputStream = File.OpenWrite(file.Replace(".webm", ".opus"));
-                MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead(file), outputStream);
+        outputStream.Close();
 
-                outputStream.Close();
-            }
-        }
+        //string folder = $"C:\\Users\\{Environment.UserName}\\Downloads\\Nuclear";
+
+        //foreach (var file in Directory.GetFiles(folder).Where(f => f.EndsWith(".webm")))
+        //{
+        //    Console.WriteLine(file);
+        //    var outputStream = File.OpenWrite(file.Replace(".webm", ".opus"));
+        //    Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead(file), outputStream);
+
+        //    outputStream.Close();
+        //}
     }
 }

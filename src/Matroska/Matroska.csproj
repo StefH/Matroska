@@ -5,7 +5,6 @@
 		<Description>An Ebml based serializer to deserialize a Matroska file (.mkv or .webm)</Description>
 		<PackageTags>Matroska;WebM;mkv;deserialize</PackageTags>
 		<ProjectGuid>{B6269AAC-170A-4346-1234-579DED3D1234}</ProjectGuid>
-		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<PackageIcon>logo.png</PackageIcon>
@@ -20,8 +19,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="NEbml" Version="0.10.1" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<PackageReference Include="NEbml" Version="0.11.0" />
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

@@ -39,6 +39,11 @@ namespace Matroska
     internal static class MatroskaSpecification
     {
 <#
+    string FixDocumentation(string d)
+    {
+        return d.Replace("			", " ").Trim();
+    }
+
     var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
         .Select(e => new
         { 
@@ -47,9 +52,10 @@ namespace Matroska
             Id = e.Attribute("id").Value,
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+            Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
         });
 
+    var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
     var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
         .Select(e => new
         { 
@@ -58,8 +64,9 @@ namespace Matroska
             Id = e.Attribute("id").Value,
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        });
+            Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
+        })
+        .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
 
     var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
 #>

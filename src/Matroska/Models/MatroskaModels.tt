@@ -71,6 +71,7 @@ namespace Matroska.Models
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
         });
 
+    var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
     var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
         .Select(e => new Element
         { 
@@ -83,7 +84,8 @@ namespace Matroska.Models
             ElementType = e.Attribute("type").Value,
             Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
             Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        });
+        })
+        .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
 
     var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
 
