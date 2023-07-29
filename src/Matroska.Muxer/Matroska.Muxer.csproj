@@ -5,7 +5,6 @@
 		<Description>Demux a Matroska file (.mkv or .webm) into multiple streams</Description>
 		<PackageTags>Matroska;WebM;mkv;demux;ogg;opus</PackageTags>
 		<ProjectGuid>{4C05193C-5952-4099-B7CE-F927AC956754}</ProjectGuid>
-		<LangVersion>8.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<WarningsAsErrors>nullable</WarningsAsErrors>
 		<!--<SignAssembly>true</SignAssembly>
@@ -22,7 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 		<PackageReference Include="FluentValidation" Version="9.3.0" />
 	</ItemGroup>
 

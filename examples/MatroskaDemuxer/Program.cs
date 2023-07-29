@@ -1,24 +1,32 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Matroska.Muxer;
+﻿using System.IO;
+using System.Threading.Tasks;
+using MediaContainers.Matroska;
 
-namespace MatroskaDemuxerConsoleApp
+namespace MatroskaDemuxer;
+
+class Program
 {
-    class Program
+    private static async Task Main(string[] args)
     {
-        static void Main(string[] args)
+        var doc = await MatroskaReader.Read(new BufferedStream(File.OpenRead("issue16.webm")));
+
+        await doc.ReadTrackInfo();
+
+        while (true)
         {
-            string folder = $"C:\\Users\\{Environment.UserName}\\Downloads\\Nuclear";
-
-            foreach (var file in Directory.GetFiles(folder).Where(f => f.EndsWith(".webm")))
+            var frame = await doc.ReadFrame();
+            if (frame.Buffer == null)
             {
-                Console.WriteLine(file);
-                var outputStream = File.OpenWrite(file.Replace(".webm", ".opus"));
-                MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead(file), outputStream);
-
-                outputStream.Close();
+                break;
             }
         }
+
+        var outputStream1 = File.OpenWrite("issue16.opus");
+        Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("issue16.webm"), outputStream1);
+        outputStream1.Close();
+
+        var outputStream2 = File.OpenWrite("Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus");
+        Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm"), outputStream2);
+        outputStream2.Close();
     }
 }

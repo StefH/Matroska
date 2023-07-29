@@ -1,9 +1,8 @@
-﻿namespace Matroska.Models
-{
-    public sealed class MatroskaDocument
-    {
-        public EBML Ebml { get; set; } = null!;
+﻿namespace Matroska.Models;
 
-        public Segment Segment { get; set; } = null!;
-    }
+public sealed class MatroskaDocument
+{
+    public EBML Ebml { get; set; } = null!;
+
+    public Segment Segment { get; set; } = null!;
 }

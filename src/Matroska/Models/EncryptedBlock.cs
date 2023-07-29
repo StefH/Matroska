@@ -1,6 +1,5 @@
-﻿namespace Matroska.Models
+﻿namespace Matroska.Models;
+
+public sealed class EncryptedBlock : Block
 {
-    public sealed class EncryptedBlock : Block
-    {
-    }
 }
