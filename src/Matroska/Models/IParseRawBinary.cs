@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Matroska.Models
+namespace Matroska.Models;
+
+public interface IParseRawBinary
 {
-    public interface IParseRawBinary
-    {
-        void Parse(Span<byte> span);
-    }
+    void Parse(Span<byte> span);
 }

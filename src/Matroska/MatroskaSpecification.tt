@@ -30,130 +30,128 @@ using NEbml.Core;
 //     Based on "https://github.com/ietf-wg-cellar/matroska-specification/blob/master/ebml_matroska.xml".
 // </auto-generated>
 //--------------------------------------------------------------------------------------------------------
-namespace Matroska
+namespace Matroska;
+
+/// <summary>
+/// Contains the EBML elements specified by the Matroska project (https://matroska.org/technical/specs/index.html)
+/// </summary>
+[GeneratedCode("MatroskaSpecification.tt", "1.0.0.0")]
+internal static class MatroskaSpecification
 {
+<#
+string FixDocumentation(string d)
+{
+    return d.Replace("			", " ").Trim();
+}
+
+var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
+    .Select(e => new
+    { 
+        Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
+        Path = e.Attribute("path").Value,
+        Id = e.Attribute("id").Value,
+        ElementType = e.Attribute("type").Value,
+        Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+        Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
+    });
+
+var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
+var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
+    .Select(e => new
+    { 
+        Name = e.Attribute("name").Value,
+        Path = e.Attribute("path").Value,
+        Id = e.Attribute("id").Value,
+        ElementType = e.Attribute("type").Value,
+        Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+        Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
+    })
+    .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
+
+var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
+#>
+    #region Helpers
+    private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
+    private static readonly Dictionary<ulong, ElementDescriptor> _elementDescriptorsByIdentifier = new Dictionary<ulong, ElementDescriptor>();
+
     /// <summary>
-    /// Contains the EBML elements specified by the Matroska project (https://matroska.org/technical/specs/index.html)
+    /// Gets a dictionary of all Matroska elements.
     /// </summary>
-    [GeneratedCode("MatroskaSpecification.tt", "1.0.0.0")]
-    internal static class MatroskaSpecification
+    public static IReadOnlyDictionary<VInt, ElementDescriptor> ElementDescriptors => _elementDescriptorsByVInt;
+
+    /// <summary>
+    /// Gets a dictionary of all Matroska elements.
+    /// </summary>
+    public static IReadOnlyDictionary<ulong, ElementDescriptor> ElementDescriptorsByIdentifier => _elementDescriptorsByIdentifier;
+
+    static MatroskaSpecification()
     {
-<#
-    string FixDocumentation(string d)
-    {
-        return d.Replace("			", " ").Trim();
-    }
+        var fields = typeof(MatroskaSpecification).GetFields(BindingFlags.Public | BindingFlags.Static);
 
-    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
-        .Select(e => new
-        { 
-            Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
-            Path = e.Attribute("path").Value,
-            Id = e.Attribute("id").Value,
-            ElementType = e.Attribute("type").Value,
-            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
-        });
-
-    var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
-    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
-        .Select(e => new
-        { 
-            Name = e.Attribute("name").Value,
-            Path = e.Attribute("path").Value,
-            Id = e.Attribute("id").Value,
-            ElementType = e.Attribute("type").Value,
-            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? FixDocumentation(e.Element(ns + "documentation").Value) : ""
-        })
-        .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
-
-    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
-#>
-        #region Helpers
-        private static readonly Dictionary<VInt, ElementDescriptor> _elementDescriptorsByVInt = new Dictionary<VInt, ElementDescriptor>();
-        private static readonly Dictionary<ulong, ElementDescriptor> _elementDescriptorsByIdentifier = new Dictionary<ulong, ElementDescriptor>();
-
-        /// <summary>
-        /// Gets a dictionary of all Matroska elements.
-        /// </summary>
-        public static IReadOnlyDictionary<VInt, ElementDescriptor> ElementDescriptors => _elementDescriptorsByVInt;
-
-        /// <summary>
-        /// Gets a dictionary of all Matroska elements.
-        /// </summary>
-        public static IReadOnlyDictionary<ulong, ElementDescriptor> ElementDescriptorsByIdentifier => _elementDescriptorsByIdentifier;
-
-        static MatroskaSpecification()
+        foreach (FieldInfo field in fields.Where(ft => ft.FieldType == typeof(ElementDescriptor)))
         {
-            var fields = typeof(MatroskaSpecification).GetFields(BindingFlags.Public | BindingFlags.Static);
-
-            foreach (FieldInfo field in fields.Where(ft => ft.FieldType == typeof(ElementDescriptor)))
-            {
-                var value = (ElementDescriptor)field.GetValue(null);
-                _elementDescriptorsByVInt.Add(value.Identifier, value);
-            }
-
-            foreach (FieldInfo field in fields.Where(ft => ft.FieldType == typeof(ulong)))
-            {
-                var identifier = (ulong)field.GetValue(null);
-                _elementDescriptorsByIdentifier.Add(identifier, _elementDescriptorsByVInt[VInt.FromEncoded(identifier)]);
-            }
-        }
-        #endregion
-
-        #region Definitions
-<#
-    foreach (var element in elements)
-    {
-        string elementType;
-        switch (element.ElementType)
-        {
-            case "master":
-                elementType = "MasterElement";
-                break;
-
-            case "utf-8":
-                elementType = "Utf8String";
-                break;
-
-            case "string":
-                elementType = "AsciiString";
-                break;
-
-            case "binary":
-                elementType = "Binary";
-                break;
-
-            case "date":
-                elementType = "Date";
-                break;
-
-            case "float":
-                elementType = "Float";
-                break;
-
-            case "uinteger":
-                elementType = "UnsignedInteger";
-                break;
-
-            case "integer":
-                elementType = "SignedInteger";
-                break;
-
-            default:
-                elementType = element.ElementType;
-                break;
+            var value = (ElementDescriptor)field.GetValue(null);
+            _elementDescriptorsByVInt.Add(value.Identifier, value);
         }
 
+        foreach (FieldInfo field in fields.Where(ft => ft.FieldType == typeof(ulong)))
+        {
+            var identifier = (ulong)field.GetValue(null);
+            _elementDescriptorsByIdentifier.Add(identifier, _elementDescriptorsByVInt[VInt.FromEncoded(identifier)]);
+        }
+    }
+    #endregion
+
+    #region Definitions
+<#
+foreach (var element in elements)
+{
+    string elementType;
+    switch (element.ElementType)
+    {
+        case "master":
+            elementType = "MasterElement";
+            break;
+
+        case "utf-8":
+            elementType = "Utf8String";
+            break;
+
+        case "string":
+            elementType = "AsciiString";
+            break;
+
+        case "binary":
+            elementType = "Binary";
+            break;
+
+        case "date":
+            elementType = "Date";
+            break;
+
+        case "float":
+            elementType = "Float";
+            break;
+
+        case "uinteger":
+            elementType = "UnsignedInteger";
+            break;
+
+        case "integer":
+            elementType = "SignedInteger";
+            break;
+
+        default:
+            elementType = element.ElementType;
+            break;
+    }
 #>
-        /// <summary><#=(element.Required ? "[Required] " : "")#><#=element.Documentation.Replace("\n", "").Replace("      ", "")#></summary>
-        public const ulong <#=element.Name#> = <#=element.Id#>;
-        public static readonly ElementDescriptor <#=element.Name#>Descriptor = new ElementDescriptor(<#=element.Name#>, nameof(<#=element.Name#>), ElementType.<#=elementType#>);
+    /// <summary><#=(element.Required ? "[Required] " : "")#><#=element.Documentation.Replace("\n", "").Replace("      ", "")#></summary>
+    public const ulong <#=element.Name#> = <#=element.Id#>;
+    public static readonly ElementDescriptor <#=element.Name#>Descriptor = new ElementDescriptor(<#=element.Name#>, nameof(<#=element.Name#>), ElementType.<#=elementType#>);
 
 <#
     }
 #>
-        #endregion
-    }
+    #endregion
 }

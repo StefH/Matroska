@@ -30,225 +30,224 @@ using Matroska.Attributes;
 //     Based on "https://github.com/ietf-wg-cellar/matroska-specification/blob/master/ebml_matroska.xml".
 // </auto-generated>
 //--------------------------------------------------------------------------------------------------------
-namespace Matroska.Models
+namespace Matroska.Models;
+<#
+var isList = new List<string>
+{
+    { "AttachedFile" },
+    { "Block" },
+    { "BlockAdditional" },
+    { "BlockGroup" },
+    { "BlockVirtual" },
+    { "Cluster" },
+    { "ContentCompression" },
+    { "ContentEncoding" },
+    { "CuePoint" },
+    { "CueReference" },
+    { "CuetrackPosition" },
+    { "EncryptedBlock" },
+    { "SignatureElementList" },
+    { "SignatureSlot" },
+    { "SignedElement" },
+    { "SimpleBlock" },
+    { "SimpleTag" },
+    { "Tag" },
+    { "Target" },
+    { "TrackEntry" }
+};
+
+var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
+    .Select(e => new Element
+    { 
+        Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
+        UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
+        IsList = isList.Contains(e.Attribute("name").Value),
+        Path = e.Attribute("path").Value,
+        Level = e.Attribute("path").Value.Count(c => c == '\\'),
+        Id = e.Attribute("id").Value,
+        ElementType = e.Attribute("type").Value,
+        Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+        Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+    });
+
+var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
+var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
+    .Select(e => new Element
+    { 
+        Name = e.Attribute("name").Value,
+        UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
+        IsList = isList.Contains(e.Attribute("name").Value),
+        Path = e.Attribute("path").Value,
+        Level = e.Attribute("path").Value.Count(c => c == '\\'),
+        Id = e.Attribute("id").Value,
+        ElementType = e.Attribute("type").Value,
+        Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
+        Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
+    })
+    .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
+
+var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
+
+var ebml = elements.FirstOrDefault(e => e.Name == "EBML");
+Loop(elements, ebml, "");
+
+var segment = elements.FirstOrDefault(e => e.Name == "Segment");
+Loop(elements, segment, "");
+
+var skip = new List<string> { "Block", "SimpleBlock", "SimpleTag" };
+
+foreach (var master in elements.Where(e => e.ElementType == "master" && !skip.Contains(e.Name)).OrderBy(e => e.Path))
+{
+    string className = master.Name;
+    if (className == "Tag")
+    {
+        className = "TagItem";
+    }
+    if (className == "ContentEncoding")
+    {
+        className = "ContentEncodingItem";
+    }
+#>
+[GeneratedCode("MatroskaModels.tt", "1.0.0.0")]
+public sealed class <#=className#> : BaseModel
 {
 <#
-    var isList = new List<string>
+var subs = master.SubElements.OrderBy(e => e.Path);
+foreach (var sub in subs)
+{
+    string field = sub.Name;
+    if (sub.Name == "Tag")
     {
-        { "AttachedFile" },
-        { "Block" },
-        { "BlockAdditional" },
-        { "BlockGroup" },
-        { "BlockVirtual" },
-        { "Cluster" },
-        { "ContentCompression" },
-        { "ContentEncoding" },
-        { "CuePoint" },
-        { "CueReference" },
-        { "CuetrackPosition" },
-        { "EncryptedBlock" },
-        { "SignatureElementList" },
-        { "SignatureSlot" },
-        { "SignedElement" },
-        { "SimpleBlock" },
-        { "SimpleTag" },
-        { "Tag" },
-        { "Target" },
-        { "TrackEntry" }
-    };
-
-    var elementsEbml = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), XmlFile)).Elements()
-        .Select(e => new Element
-        { 
-            Name = e.Attribute("name").Value.Replace("CRC-32", "CRC32"),
-            UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
-            IsList = isList.Contains(e.Attribute("name").Value),
-            Path = e.Attribute("path").Value,
-            Level = e.Attribute("path").Value.Count(c => c == '\\'),
-            Id = e.Attribute("id").Value,
-            ElementType = e.Attribute("type").Value,
-            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        });
-
-    var matroskaElementsToSkip = new [] { "EBMLMaxIDLength", "EBMLMaxSizeLength" };
-    var elementsMatroska = XElement.Load(Path.Combine(Path.GetDirectoryName(this.Host.TemplateFile), MatroskaXmlFile)).Elements()
-        .Select(e => new Element
-        { 
-            Name = e.Attribute("name").Value,
-            UseNameInsteadOfBinary = UseNameInsteadOfBinary(e.Attribute("name").Value),
-            IsList = isList.Contains(e.Attribute("name").Value),
-            Path = e.Attribute("path").Value,
-            Level = e.Attribute("path").Value.Count(c => c == '\\'),
-            Id = e.Attribute("id").Value,
-            ElementType = e.Attribute("type").Value,
-            Required = (e.Attribute("minOccurs") != null ? int.Parse(e.Attribute("minOccurs").Value) : 0) > 0,
-            Documentation = e.Element(ns + "documentation") != null ? e.Element(ns + "documentation").Value : ""
-        })
-        .Where(e => !matroskaElementsToSkip.Contains(e.Name)).ToArray();
-
-    var elements = elementsEbml.Union(elementsMatroska).OrderBy(e => e.Path).ToList();
-
-    var ebml = elements.FirstOrDefault(e => e.Name == "EBML");
-    Loop(elements, ebml, "");
-
-    var segment = elements.FirstOrDefault(e => e.Name == "Segment");
-    Loop(elements, segment, "");
-
-    var skip = new List<string> { "Block", "SimpleBlock", "SimpleTag" };
-
-    foreach (var master in elements.Where(e => e.ElementType == "master" && !skip.Contains(e.Name)).OrderBy(e => e.Path))
-    {
-        string className = master.Name;
-        if (className == "Tag")
-        {
-            className = "TagItem";
-        }
-        if (className == "ContentEncoding")
-        {
-            className = "ContentEncodingItem";
-        }
-#>
-    [GeneratedCode("MatroskaModels.tt", "1.0.0.0")]
-    public sealed class <#=className#> : BaseModel
-    {
-<#
-        var subs = master.SubElements.OrderBy(e => e.Path);
-        foreach (var sub in subs)
-        {
-            string field = sub.Name;
-            if (sub.Name == "Tag")
-            {
-                sub.Name = "TagItem";
-            }
-            if (sub.Name == "ContentEncoding")
-            {
-                sub.Name = "ContentEncodingItem";
-            }
-
-            string a;
-            if (sub.IsList && field != "SignedElement")
-            {
-                a = string.Format(new string(' ', 8) + "[MatroskaElementDescriptor(MatroskaSpecification.{0}, typeof({1}))]", field, sub.Name);
-            }
-            else
-            {
-                a = string.Format(new string(' ', 8) + "[MatroskaElementDescriptor(MatroskaSpecification.{0})]", field);
-            }
-            WriteLine(a);
-            WriteLine(new string(' ', 8) + GetProperty(sub));
-            if (sub != subs.Last())
-            {
-                WriteLine("");
-            }
-        }
-#>
+        sub.Name = "TagItem";
     }
+    if (sub.Name == "ContentEncoding")
+    {
+        sub.Name = "ContentEncodingItem";
+    }
+
+    string a;
+    if (sub.IsList && field != "SignedElement")
+    {
+        a = string.Format(new string(' ', 4) + "[MatroskaElementDescriptor(MatroskaSpecification.{0}, typeof({1}))]", field, sub.Name);
+    }
+    else
+    {
+        a = string.Format(new string(' ', 4) + "[MatroskaElementDescriptor(MatroskaSpecification.{0})]", field);
+    }
+    WriteLine(a);
+    WriteLine(new string(' ', 4) + GetProperty(sub));
+    if (sub != subs.Last())
+    {
+        WriteLine("");
+    }
+}
+#>
+}
 
 <#  } #>
-}
+
 <#+
-    public bool UseNameInsteadOfBinary(string elementName)
+public bool UseNameInsteadOfBinary(string elementName)
+{
+    return elementName.Contains("Block") && elementName != "BlockAddIDExtraData";
+}
+
+public void Loop(List<Element> all, Element current, string parentPath)
+{
+    current.SubElements = all.Where(e => e.Path.StartsWith(parentPath + "\\" + current.Name) && e.Level == current.Level + 1).ToList();
+    foreach (var sub in current.SubElements)
     {
-        return elementName.Contains("Block") && elementName != "BlockAddIDExtraData";
+        Loop(all, sub, current.Path);
+    }
+}
+
+public string GetProperty(Element property)
+{
+    string propertyType;
+    switch (property.ElementType)
+    {
+        case "utf-8":
+            propertyType = "string";
+            break;
+
+        case "string":
+            propertyType = "string";
+            break;
+
+        case "binary":
+            propertyType = property.UseNameInsteadOfBinary ? property.Name : "byte[]";
+            break;
+
+        case "date":
+            propertyType = "DateTime";
+            break;
+
+        case "float":
+            propertyType = "double";
+            break;
+
+        case "uinteger":
+            propertyType = "ulong";
+            break;
+
+        case "integer":
+            propertyType = "long";
+            break;
+
+        case "master":
+            propertyType = property.Name;
+            break;
+
+        default:
+            propertyType = "???";
+            break;
     }
 
-    public void Loop(List<Element> all, Element current, string parentPath)
+    string x;
+    if (property.IsList)
     {
-        current.SubElements = all.Where(e => e.Path.StartsWith(parentPath + "\\" + current.Name) && e.Level == current.Level + 1).ToList();
-        foreach (var sub in current.SubElements)
-        {
-            Loop(all, sub, current.Path);
-        }
+        x = string.Format("List<{0}>", propertyType) + (!property.Required ? "?" : "");
+    }
+    else
+    {
+        x = propertyType + (!property.Required || property.ElementType == "binary" ? "?" : "");
     }
 
-    public string GetProperty(Element property)
+    string name = property.Name;
+    if (property.IsList)
     {
-        string propertyType;
-        switch (property.ElementType)
+        if (property.Name.EndsWith("y"))
         {
-            case "utf-8":
-                propertyType = "string";
-                break;
-
-            case "string":
-                propertyType = "string";
-                break;
-
-            case "binary":
-                propertyType = property.UseNameInsteadOfBinary ? property.Name : "byte[]";
-                break;
-
-            case "date":
-                propertyType = "DateTime";
-                break;
-
-            case "float":
-                propertyType = "double";
-                break;
-
-            case "uinteger":
-                propertyType = "ulong";
-                break;
-
-            case "integer":
-                propertyType = "long";
-                break;
-
-            case "master":
-                propertyType = property.Name;
-                break;
-
-            default:
-                propertyType = "???";
-                break;
-        }
-
-        string x;
-        if (property.IsList)
-        {
-            x = string.Format("List<{0}>", propertyType) + (!property.Required ? "?" : "");
+            name = property.Name.Replace("y", "ies");
         }
         else
         {
-            x = propertyType + (!property.Required || property.ElementType == "binary" ? "?" : "");
+            name = name + "s";
         }
-
-        string name = property.Name;
-        if (property.IsList)
-        {
-            if (property.Name.EndsWith("y"))
-            {
-                name = property.Name.Replace("y", "ies");
-            }
-            else
-            {
-                name = name + "s";
-            }
-        }
-
-        string fixRequired = "";
-        if (property.Required && !propertyType.Contains("long") && !propertyType.Contains("double"))
-        {
-            fixRequired = " = null!;";
-        }
-
-        return "public " + x + " " + name + " { get; set; }" + fixRequired;
     }
 
-
-    public class Element
+    string fixRequired = "";
+    if (property.Required && !propertyType.Contains("long") && !propertyType.Contains("double"))
     {
-        public string Name;
-        public bool UseNameInsteadOfBinary;
-        public bool IsList;
-        public string Path;
-        public string Id;
-        public string ElementType;
-        public bool Required;
-        public string Documentation;
-        public int Level;       
-
-        public List<Element> SubElements = new List<Element>();
+        fixRequired = " = null!;";
     }
+
+    return "public " + x + " " + name + " { get; set; }" + fixRequired;
+}
+
+
+public class Element
+{
+    public string Name;
+    public bool UseNameInsteadOfBinary;
+    public bool IsList;
+    public string Path;
+    public string Id;
+    public string ElementType;
+    public bool Required;
+    public string Documentation;
+    public int Level;       
+
+    public List<Element> SubElements = new List<Element>();
+}
 #>

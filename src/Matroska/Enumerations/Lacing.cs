@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace Matroska.Enumerations
+namespace Matroska.Enumerations;
+
+[Flags]
+public enum Lacing : byte
 {
-    [Flags]
-    public enum Lacing : byte
-    {
-        No =        0b0000000,
-        Xiph =      0b0000010,
-        EBML =      0b0000110,
-        FixedSize = 0b0000100
-    }
+    No =        0b0000000,
+    Xiph =      0b0000010,
+    EBML =      0b0000110,
+    FixedSize = 0b0000100
 }
