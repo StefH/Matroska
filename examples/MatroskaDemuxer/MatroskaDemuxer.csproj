@@ -7,9 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\..\Users\StefHeyenrath\Downloads\MediaContainers.Matroska-main\MediaContainers.Matroska-main\MediaContainers.Matroska\MediaContainers.Matroska.csproj" />
 		<ProjectReference Include="..\..\src\Matroska.Muxer\Matroska.Muxer.csproj" />
 		<ProjectReference Include="..\..\src\Matroska\Matroska.csproj" />
+		<ProjectReference Include="..\MediaContainers.Matroska\MediaContainers.Matroska.csproj" />
+		<ProjectReference Include="..\Xtremegaida.DataStructures\Xtremegaida.DataStructures.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

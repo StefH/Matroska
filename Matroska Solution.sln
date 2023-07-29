@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatroskaDemuxer", "examples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Span.ReaderWriter", "..\Span.ReaderWriter\src\Span.ReaderWriter\Span.ReaderWriter.csproj", "{2FBBA506-46CC-4BB1-BE69-37D1090E6999}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaContainers.Matroska", "..\..\..\Users\StefHeyenrath\Downloads\MediaContainers.Matroska-main\MediaContainers.Matroska-main\MediaContainers.Matroska\MediaContainers.Matroska.csproj", "{B655C71E-78E2-4068-9109-7C6218DDAAF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xtremegaida.DataStructures", "examples\Xtremegaida.DataStructures\Xtremegaida.DataStructures.csproj", "{57939DE5-D42C-4159-BCC4-D3749B01F7EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xtremegaida.DataStructures", "..\..\..\Users\StefHeyenrath\Downloads\MediaContainers.Matroska-main\MediaContainers.Matroska-main\Xtremegaida.DataStructures\Xtremegaida.DataStructures.csproj", "{B3578AE0-06BD-4E7C-9B87-12287433E3ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediaContainers.Matroska", "examples\MediaContainers.Matroska\MediaContainers.Matroska.csproj", "{85DAF737-65D4-4E6C-A105-90392AFCE666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,14 +59,14 @@ Global
 		{2FBBA506-46CC-4BB1-BE69-37D1090E6999}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FBBA506-46CC-4BB1-BE69-37D1090E6999}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FBBA506-46CC-4BB1-BE69-37D1090E6999}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B655C71E-78E2-4068-9109-7C6218DDAAF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B655C71E-78E2-4068-9109-7C6218DDAAF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B655C71E-78E2-4068-9109-7C6218DDAAF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B655C71E-78E2-4068-9109-7C6218DDAAF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3578AE0-06BD-4E7C-9B87-12287433E3ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3578AE0-06BD-4E7C-9B87-12287433E3ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3578AE0-06BD-4E7C-9B87-12287433E3ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3578AE0-06BD-4E7C-9B87-12287433E3ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57939DE5-D42C-4159-BCC4-D3749B01F7EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57939DE5-D42C-4159-BCC4-D3749B01F7EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57939DE5-D42C-4159-BCC4-D3749B01F7EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57939DE5-D42C-4159-BCC4-D3749B01F7EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85DAF737-65D4-4E6C-A105-90392AFCE666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85DAF737-65D4-4E6C-A105-90392AFCE666}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85DAF737-65D4-4E6C-A105-90392AFCE666}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85DAF737-65D4-4E6C-A105-90392AFCE666}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,8 +77,8 @@ Global
 		{4C05193C-5952-4099-B7CE-F927AC956754} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
 		{924EF542-984A-4DB2-9597-1FAC00A6A618} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
 		{2FBBA506-46CC-4BB1-BE69-37D1090E6999} = {1078C845-29AD-475F-9DB7-9DACB4422ABC}
-		{B655C71E-78E2-4068-9109-7C6218DDAAF6} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
-		{B3578AE0-06BD-4E7C-9B87-12287433E3ED} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
+		{57939DE5-D42C-4159-BCC4-D3749B01F7EF} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
+		{85DAF737-65D4-4E6C-A105-90392AFCE666} = {0A5440F7-A395-41CA-ACE5-817920F2172C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DE2715BA-336F-4774-B880-BE171CE1018B}
