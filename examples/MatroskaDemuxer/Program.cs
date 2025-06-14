@@ -21,12 +21,12 @@ class Program
             }
         }
 
-        var outputStream1 = File.OpenWrite("issue16.opus");
-        Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("issue16.webm"), outputStream1);
-        outputStream1.Close();
-
         var outputStream2 = File.OpenWrite("Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).opus");
         Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("Estas Tonne - Internal Flight Experience (Live in Cluj Napoca).webm"), outputStream2);
         outputStream2.Close();
+
+        var outputStream1 = File.OpenWrite("issue16.opus");
+        Matroska.Muxer.MatroskaDemuxer.ExtractOggOpusAudio(File.OpenRead("issue16.webm"), outputStream1);
+        outputStream1.Close();
     }
 }
