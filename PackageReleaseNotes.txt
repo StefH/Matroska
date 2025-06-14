@@ -1,5 +1,8 @@
-# 0.0.9 (14 October 2021)
-- #13 Use BigEndian for TimeCode [bug]
-- #12 Incorrect endianness of TimeCode property in (Simple)Block object [bug]
+# 0.0.12 (14 June 2025)
+- #17 Use new ebml.xml + ebml_matroska.xml file (July 2023) [enhancement]
+- #18 Add GitHub Action to build solution [test]
+- #19 Update some NuGet packges [enhancement]
+- #20 Use latest source code from NEbml [enhancement]
+- #21 Use embl_matroska.xml version from Jan 18, 2025 [enhancement]
 
 The full release notes can be found here: https://github.com/StefH/Matroska/blob/main/ReleaseNotes.md

@@ -1,3 +1,10 @@
+# 0.0.12 (14 June 2025)
+- [#17](https://github.com/StefH/Matroska/pull/17) - Use new ebml.xml + ebml_matroska.xml file (July 2023) [enhancement] contributed by [StefH](https://github.com/StefH)
+- [#18](https://github.com/StefH/Matroska/pull/18) - Add GitHub Action to build solution [test] contributed by [StefH](https://github.com/StefH)
+- [#19](https://github.com/StefH/Matroska/pull/19) - Update some NuGet packges [enhancement] contributed by [StefH](https://github.com/StefH)
+- [#20](https://github.com/StefH/Matroska/pull/20) - Use latest source code from NEbml [enhancement] contributed by [StefH](https://github.com/StefH)
+- [#21](https://github.com/StefH/Matroska/pull/21) - Use embl_matroska.xml version from Jan 18, 2025 [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.9 (14 October 2021)
 - [#13](https://github.com/StefH/Matroska/pull/13) - Use BigEndian for TimeCode [bug] contributed by [StefH](https://github.com/StefH)
 - [#12](https://github.com/StefH/Matroska/issues/12) - Incorrect endianness of TimeCode property in (Simple)Block object [bug]

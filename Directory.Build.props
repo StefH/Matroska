@@ -1,14 +1,14 @@
 <Project>
-	<PropertyGroup>
-		<Version>0.0.11-preview-01</Version>
-		<Nullable>enable</Nullable>
-		<LangVersion>11.0</LangVersion>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageProjectUrl>https://github.com/StefH/Matroska</PackageProjectUrl>
-		<RepositoryType>git</RepositoryType>
-		<RepositoryUrl>https://github.com/StefH/Matroska</RepositoryUrl>
-		<Authors>Stef Heyenrath</Authors>
-		<Copyright>Stef Heyenrath</Copyright>
+  <PropertyGroup>
+    <Version>0.0.12</Version>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/StefH/Matroska</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/StefH/Matroska</RepositoryUrl>
+    <Authors>Stef Heyenrath</Authors>
+    <Copyright>Stef Heyenrath</Copyright>
     <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../PackageReleaseNotes.txt"))</PackageReleaseNotes>
-	</PropertyGroup>
+  </PropertyGroup>
 </Project>
