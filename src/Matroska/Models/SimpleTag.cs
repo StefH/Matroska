@@ -1,22 +1,21 @@
 ﻿using Matroska.Attributes;
 
-namespace Matroska.Models
+namespace Matroska.Models;
+
+public sealed class SimpleTag
 {
-    public sealed class SimpleTag
-    {
-        [MatroskaElementDescriptor(MatroskaSpecification.TagName)]
-        public string? TagName { get; set; }
+    [MatroskaElementDescriptor(MatroskaSpecification.TagName)]
+    public string? TagName { get; set; }
 
-        [MatroskaElementDescriptor(MatroskaSpecification.TagLanguage)]
-        public string? TagLanguage { get; set; }
+    [MatroskaElementDescriptor(MatroskaSpecification.TagLanguage)]
+    public string? TagLanguage { get; set; }
 
-        [MatroskaElementDescriptor(MatroskaSpecification.TagDefault)]
-        public ulong? TagDefault { get; set; }
+    [MatroskaElementDescriptor(MatroskaSpecification.TagDefault)]
+    public ulong? TagDefault { get; set; }
 
-        [MatroskaElementDescriptor(MatroskaSpecification.TagString)]
-        public string? TagString { get; set; }
+    [MatroskaElementDescriptor(MatroskaSpecification.TagString)]
+    public string? TagString { get; set; }
 
-        [MatroskaElementDescriptor(MatroskaSpecification.TagBinary)]
-        public byte[]? TagBinary { get; set; }
-    }
+    [MatroskaElementDescriptor(MatroskaSpecification.TagBinary)]
+    public byte[]? TagBinary { get; set; }
 }

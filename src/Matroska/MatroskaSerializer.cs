@@ -9,186 +9,185 @@ using Matroska.Extensions;
 using Matroska.Models;
 using NEbml.Core;
 
-namespace Matroska
+namespace Matroska;
+
+public static class MatroskaSerializer
 {
-    public static class MatroskaSerializer
+    private static readonly IDictionary<string, Dictionary<ulong, MatroskaElementInfo>> cache = new Dictionary<string, Dictionary<ulong, MatroskaElementInfo>>();
+
+    public static MatroskaDocument Deserialize(Stream stream)
     {
-        private static readonly IDictionary<string, Dictionary<ulong, MatroskaElementInfo>> cache = new Dictionary<string, Dictionary<ulong, MatroskaElementInfo>>();
+        var reader = new EbmlReader(stream);
 
-        public static MatroskaDocument Deserialize(Stream stream)
+        reader.ReadNext();
+        var ebml = Deserialize<EBML>(reader);
+
+        reader.ReadNext();
+        var segment = Deserialize<Segment>(reader);
+
+        return new MatroskaDocument
         {
-            var reader = new EbmlReader(stream);
+            Ebml = ebml,
+            Segment = segment
+        };
+    }
 
-            reader.ReadNext();
-            var ebml = Deserialize<EBML>(reader);
+    public static T Deserialize<T>(EbmlReader reader) where T : class
+    {
+        return (T)Deserialize(typeof(T), reader);
+    }
 
-            reader.ReadNext();
-            var segment = Deserialize<Segment>(reader);
+    public static object Deserialize(Type type, EbmlReader reader)
+    {
+        bool isMasterElement = reader.IsKnownMasterElement();
 
-            return new MatroskaDocument
-            {
-                Ebml = ebml,
-                Segment = segment
-            };
+        if (isMasterElement)
+        {
+            reader.EnterContainer();
         }
 
-        public static T Deserialize<T>(EbmlReader reader) where T : class
+        var instance = Activator.CreateInstance(type);
+
+        try
         {
-            return (T)Deserialize(typeof(T), reader);
-        }
-
-        public static object Deserialize(Type type, EbmlReader reader)
-        {
-            bool isMasterElement = reader.IsKnownMasterElement();
-
-            if (isMasterElement)
+            while (reader.ReadNext())
             {
-                reader.EnterContainer();
-            }
-
-            var instance = Activator.CreateInstance(type);
-
-            try
-            {
-                while (reader.ReadNext())
+                if (TryGetInfoByIdentifier(type, reader.ElementId.EncodedValue, out var info))
                 {
-                    if (TryGetInfoByIdentifier(type, reader.ElementId.EncodedValue, out var info))
-                    {
-                        SetPropertyValue(instance, info, reader);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"WARNING: {instance.GetType().Name}: property {reader.GetName(true)} not mapped.");
-                    }
+                    SetPropertyValue(instance, info, reader);
+                }
+                else
+                {
+                    Console.WriteLine($"WARNING: {instance.GetType().Name}: property {reader.GetName(true)} not mapped.");
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"ERROR: {instance.GetType().Name} at position {reader.ElementPosition} not mapped. Exception: {ex}");
-            }
-
-            if (isMasterElement)
-            {
-                reader.LeaveContainer();
-            }
-
-            return instance;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"ERROR: {instance.GetType().Name} at position {reader.ElementPosition} not mapped. Exception: {ex}");
         }
 
-        private static object GetValue(MatroskaElementInfo info, EbmlReader reader)
+        if (isMasterElement)
         {
-            switch (info.ElementDescriptor.Type)
-            {
-                case ElementType.AsciiString:
-                    return reader.ReadAscii();
-
-                case ElementType.Binary:
-                    int bufferLength = (int)reader.ElementSize;
-                    var buffer = new byte[bufferLength];
-                    reader.ReadBinary(buffer, 0, bufferLength); // TODO : EbmlReader does not yet support reading a Span<byte>
-
-                    if (typeof(IParseRawBinary).IsAssignableFrom(info.ElementType))
-                    {
-                        var parsedRawBinary = (IParseRawBinary)Activator.CreateInstance(info.ElementType);
-                        parsedRawBinary.Parse(buffer);
-
-                        return parsedRawBinary;
-                    }
-
-                    return buffer;
-
-                case ElementType.Date:
-                    return reader.ReadDate();
-
-                case ElementType.Float:
-                    return reader.ReadFloat();
-
-                case ElementType.MasterElement:
-                    return Deserialize(info.ElementType, reader);
-
-                case ElementType.SignedInteger:
-                    return reader.ReadInt();
-
-                case ElementType.UnsignedInteger:
-                    return reader.ReadUInt();
-
-                case ElementType.Utf8String:
-                    return reader.ReadUtf();
-            }
-
-            throw new NotSupportedException();
+            reader.LeaveContainer();
         }
 
-        private static void SetPropertyValue(object instance, MatroskaElementInfo info, EbmlReader reader)
-        {
-            var value = GetValue(info, reader);
+        return instance;
+    }
 
-            if (value != null)
-            {
-                if (typeof(IList).IsAssignableFrom(info.PropertyInfo.PropertyType))
+    private static object GetValue(MatroskaElementInfo info, EbmlReader reader)
+    {
+        switch (info.ElementDescriptor.Type)
+        {
+            case ElementType.AsciiString:
+                return reader.ReadAscii();
+
+            case ElementType.Binary:
+                int bufferLength = (int)reader.ElementSize;
+                var buffer = new byte[bufferLength];
+                reader.ReadBinary(buffer, 0, bufferLength); // TODO : EbmlReader does not yet support reading a Span<byte>
+
+                if (typeof(IParseRawBinary).IsAssignableFrom(info.ElementType))
                 {
-                    var genericTypeElement = info.PropertyInfo.PropertyType.GenericTypeArguments.FirstOrDefault();
-                    if (genericTypeElement?.GetTypeInfo().IsClass == true)
-                    {
-                        var list = (info.PropertyInfo.GetValue(instance) as IList) ?? CreateList(genericTypeElement);
-                        list.Add(value);
+                    var parsedRawBinary = (IParseRawBinary)Activator.CreateInstance(info.ElementType);
+                    parsedRawBinary.Parse(buffer);
 
-                        value = list;
-                    }
+                    return parsedRawBinary;
                 }
 
-                info.PropertyInfo.SetValue(instance, value);
-            }
+                return buffer;
+
+            case ElementType.Date:
+                return reader.ReadDate();
+
+            case ElementType.Float:
+                return reader.ReadFloat();
+
+            case ElementType.MasterElement:
+                return Deserialize(info.ElementType, reader);
+
+            case ElementType.SignedInteger:
+                return reader.ReadInt();
+
+            case ElementType.UnsignedInteger:
+                return reader.ReadUInt();
+
+            case ElementType.Utf8String:
+                return reader.ReadUtf();
         }
 
-        public static IList CreateList(Type genericType)
-        {
-            return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericType));
-        }
+        throw new NotSupportedException();
+    }
 
-        private static bool TryGetInfoByIdentifier(Type type, ulong identifier, out MatroskaElementInfo info)
-        {
-            return GetInfoFromCache(type).TryGetValue(identifier, out info);
-        }
+    private static void SetPropertyValue(object instance, MatroskaElementInfo info, EbmlReader reader)
+    {
+        var value = GetValue(info, reader);
 
-        private static Dictionary<ulong, MatroskaElementInfo> GetInfoFromCache(Type type)
+        if (value != null)
         {
-            string key = type.FullName;
-            if (!cache.ContainsKey(type.FullName))
+            if (typeof(IList).IsAssignableFrom(info.PropertyInfo.PropertyType))
             {
-                cache[key] = new Dictionary<ulong, MatroskaElementInfo>();
-                foreach (var property in type.GetProperties())
+                var genericTypeElement = info.PropertyInfo.PropertyType.GenericTypeArguments.FirstOrDefault();
+                if (genericTypeElement?.GetTypeInfo().IsClass == true)
                 {
-                    var attribute = property.GetCustomAttributes().OfType<MatroskaElementDescriptorAttribute>().FirstOrDefault();
-                    if (attribute == null)
-                    {
-                        continue;
-                    }
+                    var list = (info.PropertyInfo.GetValue(instance) as IList) ?? CreateList(genericTypeElement);
+                    list.Add(value);
 
-                    var info = new MatroskaElementInfo
-                    {
-                        PropertyInfo = property,
-                        Identifier = attribute.Identifier,
-                        ElementType = attribute.ElementType ?? property.PropertyType,
-                        ElementDescriptor = MatroskaSpecification.ElementDescriptorsByIdentifier[attribute.Identifier]
-                    };
-
-                    cache[key].Add(attribute.Identifier, info);
+                    value = list;
                 }
             }
 
-            return cache[key];
+            info.PropertyInfo.SetValue(instance, value);
         }
+    }
 
-        struct MatroskaElementInfo
+    public static IList CreateList(Type genericType)
+    {
+        return (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(genericType));
+    }
+
+    private static bool TryGetInfoByIdentifier(Type type, ulong identifier, out MatroskaElementInfo info)
+    {
+        return GetInfoFromCache(type).TryGetValue(identifier, out info);
+    }
+
+    private static Dictionary<ulong, MatroskaElementInfo> GetInfoFromCache(Type type)
+    {
+        var key = type.FullName!;
+        if (!cache.ContainsKey(type.FullName))
         {
-            public PropertyInfo PropertyInfo { get; set; }
+            cache[key] = new Dictionary<ulong, MatroskaElementInfo>();
+            foreach (var property in type.GetProperties())
+            {
+                var attribute = property.GetCustomAttributes().OfType<MatroskaElementDescriptorAttribute>().FirstOrDefault();
+                if (attribute == null)
+                {
+                    continue;
+                }
 
-            public ulong Identifier { get; set; }
+                var info = new MatroskaElementInfo
+                {
+                    PropertyInfo = property,
+                    Identifier = attribute.Identifier,
+                    ElementType = attribute.ElementType ?? property.PropertyType,
+                    ElementDescriptor = MatroskaSpecification.ElementDescriptorsByIdentifier[attribute.Identifier]
+                };
 
-            public Type ElementType { get; set; }
-
-            public ElementDescriptor ElementDescriptor { get; set; }
+                cache[key].Add(attribute.Identifier, info);
+            }
         }
+
+        return cache[key];
+    }
+
+    private struct MatroskaElementInfo
+    {
+        public PropertyInfo PropertyInfo { get; set; }
+
+        public ulong Identifier { get; set; }
+
+        public Type ElementType { get; set; }
+
+        public ElementDescriptor ElementDescriptor { get; set; }
     }
 }
