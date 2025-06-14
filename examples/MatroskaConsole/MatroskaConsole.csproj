@@ -2,21 +2,19 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyName>MatroskaConsole</AssemblyName>
     <RootNamespace>Matroska</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Concentus.OggFile" Version="1.0.4" />
     <PackageReference Include="CSCore" Version="1.2.1.2" />
-    <PackageReference Include="CSCore.Ogg" Version="1.0.0" />
-    <PackageReference Include="CSCore.Opus" Version="1.0.1" />
-    <PackageReference Include="NEbml" Version="0.11.0" />
+    <PackageReference Include="CSCore.Ogg" Version="1.0.0.1" />
+    <PackageReference Include="CSCore.Opus" Version="1.0.1.1" />
     <PackageReference Include="OggVorbisEncoder" Version="1.2.2" />
     <PackageReference Include="System.Runtime.Caching" Version="5.0.0" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
-    <PackageReference Include="z440.atl.core" Version="3.25.0" />
+    <PackageReference Include="z440.atl.core" Version="6.25.0" />
   </ItemGroup>
 
   <ItemGroup>
