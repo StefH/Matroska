@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{0A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1B2BED7F-A089-4A26-999B-F0F96CCAD905}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\BuildAndTest.yml = .github\workflows\BuildAndTest.yml
+		.github\workflows\CreateRelease.yml = .github\workflows\CreateRelease.yml
 		Directory.Build.props = Directory.Build.props
 		Generate-ReleaseNotes.bat = Generate-ReleaseNotes.bat
 		PackageReleaseNotes.template = PackageReleaseNotes.template
