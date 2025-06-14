@@ -1,4 +1,4 @@
-# Projects
+# ![Icon](./resources/logo_32x32.png) Projects
 
 ## Matroska
 An Ebml based serializer to deserialize a Matroska file (.mkv or .webm).
